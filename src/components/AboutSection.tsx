@@ -3,10 +3,10 @@ import { Play } from "lucide-react";
 
 export function AboutSection() {
   return (
-    <section id="about" className="py-20 bg-black/80">
+    <section id="about" className="py-20 bg-kindred-darker/95">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl md:text-5xl font-display font-bold text-center mb-16">
-          <span className="text-gaming-primary">ABOUT</span> US
+          <span className="text-kindred-accent">ABOUT</span> US
         </h2>
         
         <div className="relative rounded-xl overflow-hidden mx-auto max-w-4xl glass-card p-1">
@@ -15,13 +15,13 @@ export function AboutSection() {
             <div 
               className="w-full h-full bg-cover bg-center"
               style={{ 
-                backgroundImage: "url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=2000&q=80')" 
+                backgroundImage: "url('https://images.unsplash.com/photo-1600861194942-f883de0dfe96?auto=format&fit=crop&w=2000&q=80')" 
               }}
             ></div>
             
             <div className="absolute inset-0 flex items-center justify-center">
-              <button className="w-16 h-16 bg-gaming-primary/90 rounded-full flex items-center justify-center transition-transform hover:scale-110">
-                <Play size={32} className="text-gaming-dark ml-1" />
+              <button className="w-16 h-16 bg-kindred-accent/90 rounded-full flex items-center justify-center transition-transform hover:scale-110">
+                <Play size={32} className="text-kindred-darker ml-1" />
               </button>
             </div>
           </div>
@@ -33,8 +33,9 @@ export function AboutSection() {
               {/* Replace with actual images */}
               <div 
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-                style={{ backgroundImage: `url('https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&w=500&q=60')` }}
+                style={{ backgroundImage: `url('https://images.unsplash.com/photo-1560419015-7c427e8ae5ba?auto=format&fit=crop&w=500&q=60')` }}
               ></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-kindred-darker via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
           ))}
         </div>
@@ -45,8 +46,9 @@ export function AboutSection() {
               {/* Replace with actual images */}
               <div 
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-                style={{ backgroundImage: `url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=500&q=60')` }}
+                style={{ backgroundImage: `url('https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=500&q=60')` }}
               ></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-kindred-darker via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
           ))}
         </div>
