@@ -1,3 +1,6 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,16 +16,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 41 100% 50%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217 91% 60%;
+    --secondary-foreground: 210 40% 98%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
+    --accent: 338 90% 62%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
@@ -35,19 +38,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -61,16 +57,16 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
+    --primary: 41 100% 50%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 217 91% 60%;
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 338 90% 62%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -94,8 +90,68 @@
   * {
     @apply border-border;
   }
-
   body {
-    @apply bg-background text-foreground;
+    @apply bg-gaming-dark text-white;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .glow-text {
+    text-shadow: 0 0 8px rgba(255, 193, 7, 0.6);
+  }
+  
+  .nav-link {
+    @apply relative px-3 py-2 text-sm font-medium transition-colors hover:text-gaming-primary;
+  }
+  
+  .nav-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-gaming-primary transition-all duration-300;
+  }
+  
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+  
+  .glass-card {
+    @apply backdrop-blur-md bg-white/10 border border-white/20 rounded-xl transition-all duration-300;
+  }
+  
+  .glass-card:hover {
+    @apply bg-white/15 border-white/30 shadow-lg shadow-black/20;
+  }
+  
+  .btn-primary {
+    @apply bg-gaming-primary text-gaming-dark font-bold uppercase px-6 py-3 rounded-md hover:bg-gaming-primary/90 transition-all shadow-md hover:shadow-gaming-primary/20 hover:shadow-lg;
+  }
+  
+  .hero-container {
+    @apply relative overflow-hidden;
+  }
+  
+  .hero-container::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-t from-gaming-dark via-transparent to-transparent z-10;
+  }
+  
+  .server-stat {
+    @apply flex flex-col items-center justify-center p-2;
+  }
+  
+  .server-stat-value {
+    @apply text-2xl font-bold text-gaming-primary;
+  }
+  
+  .server-stat-label {
+    @apply text-xs uppercase text-gray-400;
+  }
+  
+  .feature-card {
+    @apply p-6 rounded-xl border border-gray-800 bg-gradient-to-br from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 transition-all duration-300;
+  }
+  
+  .social-card {
+    @apply relative overflow-hidden rounded-xl flex items-center p-4 transition-transform duration-300 hover:scale-105;
   }
 }
