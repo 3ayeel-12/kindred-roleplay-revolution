@@ -39,10 +39,11 @@ export function Navbar() {
       <div className="container mx-auto px-4 flex items-center justify-between">
         <div className="flex items-center">
           <a href="/" className="flex items-center">
-            <div className="w-12 h-12 bg-kindred-primary rounded-md flex items-center justify-center mr-2 overflow-hidden">
-              {/* Replace with actual logo once available */}
-              <span className="text-white font-bold text-xl">K</span>
-            </div>
+            <img 
+              src="/kindred-logo.png" 
+              alt="KindreD Logo" 
+              className="h-12 w-auto mr-2"
+            />
             <span className="font-display font-bold text-white text-xl">KindreD</span>
           </a>
         </div>

@@ -26,6 +26,14 @@ export function Hero() {
       </div>
       
       <div className="container mx-auto px-4 py-20 flex flex-col items-center justify-center min-h-[80vh] relative z-10">
+        <div className="flex justify-center mb-8">
+          <img 
+            src="/kindred-logo.png" 
+            alt="KindreD Logo" 
+            className="h-32 w-auto animate-pulse-slow"
+          />
+        </div>
+        
         <div className="text-center max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-7xl font-display font-bold text-white mb-4 animate-fade-in">
             <span className="text-kindred-accent glow-text">GTA SAMP</span> INTERNATIONAL

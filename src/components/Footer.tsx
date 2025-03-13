@@ -17,9 +17,11 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           <div>
             <a href="/" className="flex items-center mb-4">
-              <div className="w-10 h-10 bg-kindred-primary rounded-md flex items-center justify-center mr-2">
-                <span className="text-white font-bold text-xl">K</span>
-              </div>
+              <img 
+                src="/kindred-logo.png" 
+                alt="KindreD Logo" 
+                className="h-10 w-auto mr-2"
+              />
               <span className="font-display font-bold text-white text-xl">KindreD</span>
             </a>
             <p className="text-kindred-light text-sm mb-4">
