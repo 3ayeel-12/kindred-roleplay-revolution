@@ -6,20 +6,28 @@ import { HowToPlay } from "@/components/HowToPlay";
 import { FeatureSection } from "@/components/FeatureSection";
 import { CommunitySection } from "@/components/CommunitySection";
 import { Footer } from "@/components/Footer";
-import { LanguageProvider } from "@/contexts/LanguageContext";
+import { LanguageProvider, useLanguage } from "@/contexts/LanguageContext";
+
+const IndexContent = () => {
+  const { theme } = useLanguage();
+  
+  return (
+    <div className={`min-h-screen bg-kindred-darkest text-white ${theme === 'light' ? 'light-mode' : ''} overflow-hidden`}>
+      <Navbar />
+      <Hero />
+      <AboutSection />
+      <HowToPlay />
+      <FeatureSection />
+      <CommunitySection />
+      <Footer />
+    </div>
+  );
+};
 
 const Index = () => {
   return (
     <LanguageProvider>
-      <div className="min-h-screen bg-kindred-darkest text-white overflow-hidden">
-        <Navbar />
-        <Hero />
-        <AboutSection />
-        <HowToPlay />
-        <FeatureSection />
-        <CommunitySection />
-        <Footer />
-      </div>
+      <IndexContent />
     </LanguageProvider>
   );
 };

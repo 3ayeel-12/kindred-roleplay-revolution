@@ -1,17 +1,16 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown, Globe } from "lucide-react";
+import { Menu, X, ChevronDown, Globe, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-type Language = 'en' | 'fr' | 'ar';
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export function Navbar() {
+  const { language, setLanguage, theme, toggleTheme, t } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
-  const [currentLang, setCurrentLang] = useState<Language>('en');
   
   const languages = {
     en: { name: 'English', flag: '🇬🇧' },
@@ -19,35 +18,15 @@ export function Navbar() {
     ar: { name: 'العربية', flag: '🇸🇦' }
   };
   
-  const navItems = {
-    en: [
-      { id: "home", label: "Home", href: "#" },
-      { id: "about", label: "About", href: "#about" },
-      { id: "how-to-play", label: "How to Play", href: "#how-to-play" },
-      { id: "features", label: "Features", href: "#features" },
-      { id: "community", label: "Community", href: "#community" }
-    ],
-    fr: [
-      { id: "home", label: "Accueil", href: "#" },
-      { id: "about", label: "À Propos", href: "#about" },
-      { id: "how-to-play", label: "Comment Jouer", href: "#how-to-play" },
-      { id: "features", label: "Fonctionnalités", href: "#features" },
-      { id: "community", label: "Communauté", href: "#community" }
-    ],
-    ar: [
-      { id: "home", label: "الرئيسية", href: "#" },
-      { id: "about", label: "حول", href: "#about" },
-      { id: "how-to-play", label: "كيفية اللعب", href: "#how-to-play" },
-      { id: "features", label: "الميزات", href: "#features" },
-      { id: "community", label: "المجتمع", href: "#community" }
-    ]
-  };
+  const navItems = [
+    { id: "home", label: t("home"), href: "#" },
+    { id: "about", label: t("about"), href: "#about" },
+    { id: "how-to-play", label: t("howToPlay"), href: "#how-to-play" },
+    { id: "features", label: t("features"), href: "#features" },
+    { id: "community", label: t("community"), href: "#community" }
+  ];
   
-  const ctaText = {
-    en: "Start Playing",
-    fr: "Commencer à Jouer",
-    ar: "ابدأ اللعب"
-  };
+  const ctaText = t("startPlaying");
   
   useEffect(() => {
     const handleScroll = () => {
@@ -71,15 +50,15 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const toggleLanguage = (lang: Language) => {
-    setCurrentLang(lang);
+  const toggleLanguage = (lang: typeof language) => {
+    setLanguage(lang);
     setIsLangMenuOpen(false);
   };
 
   return (
     <header className={cn(
       "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-      isScrolled ? "bg-kindred-darkest/90 backdrop-blur-md py-2 shadow-md" : "bg-transparent py-4"
+      isScrolled ? "bg-kindred-darkest/90 backdrop-blur-md py-2 shadow-md light-mode:bg-kindred-light/90" : "bg-transparent py-4"
     )}>
       <div className="container mx-auto px-4 flex items-center justify-between">
         <div className="flex items-center">
@@ -89,19 +68,19 @@ export function Navbar() {
               alt="KindreD Logo" 
               className="h-12 w-auto mr-2"
             />
-            <span className="font-display font-bold text-white text-xl">KindreD</span>
+            <span className="font-display font-bold text-white light-mode:text-kindred-dark text-xl">KindreD</span>
           </a>
         </div>
         
         <nav className="hidden md:flex items-center space-x-1">
-          {navItems[currentLang].map((item) => (
+          {navItems.map((item) => (
             <a 
               key={item.id}
               href={item.href} 
               className={cn(
                 "nav-link",
-                activeSection === item.id ? "text-kindred-accent" : "text-white hover:text-kindred-accent",
-                currentLang === 'ar' ? "font-[Tajawal]" : ""
+                activeSection === item.id ? "text-kindred-accent" : "text-white light-mode:text-kindred-dark hover:text-kindred-accent",
+                language === 'ar' ? "font-[Tajawal]" : ""
               )}
             >
               {item.label}
@@ -113,28 +92,51 @@ export function Navbar() {
         </nav>
         
         <div className="hidden md:flex items-center space-x-4">
+          {/* Theme Toggle */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleTheme} 
+            className="text-white light-mode:text-kindred-dark hover:bg-kindred-primary/20"
+            aria-label={theme === 'dark' ? t('lightMode') : t('darkMode')}
+          >
+            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </Button>
+          
+          {/* Language Selector */}
           <div className="relative">
             <Button 
               variant="ghost" 
-              size="icon" 
-              className="text-white hover:bg-kindred-primary/20"
+              size="sm"
+              className={cn(
+                "text-white light-mode:text-kindred-dark hover:bg-kindred-primary/20 flex items-center gap-2",
+                language === 'ar' ? "font-[Tajawal]" : ""
+              )}
               onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
             >
-              <Globe className="h-5 w-5" />
-              <span className="ml-2">{languages[currentLang].flag}</span>
+              <Globe className="h-4 w-4" />
+              <span>{languages[language].flag}</span>
+              <span>{language.toUpperCase()}</span>
+              <ChevronDown className="h-4 w-4" />
             </Button>
             
             {isLangMenuOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-kindred-darkest/95 backdrop-blur-md rounded-md shadow-lg py-1 z-50 border border-kindred-primary/20 animate-fade-in">
+              <div className="absolute right-0 mt-2 w-48 bg-kindred-darkest/95 light-mode:bg-white/95 backdrop-blur-md rounded-md shadow-lg py-1 z-50 border border-kindred-primary/20 animate-fade-in">
+                <p className={cn(
+                  "px-4 py-2 text-xs uppercase text-gray-400 light-mode:text-gray-600 border-b border-kindred-primary/20",
+                  language === 'ar' ? "font-[Tajawal] text-right" : ""
+                )}>
+                  {t('selectLanguage')}
+                </p>
                 {Object.entries(languages).map(([code, { name, flag }]) => (
                   <button
                     key={code}
                     className={cn(
-                      "flex items-center w-full px-4 py-2 text-sm text-white hover:bg-kindred-primary/20",
-                      code === currentLang ? "bg-kindred-primary/20" : "",
+                      "flex items-center w-full px-4 py-2 text-sm text-white light-mode:text-kindred-dark hover:bg-kindred-primary/20",
+                      code === language ? "bg-kindred-primary/20" : "",
                       code === 'ar' ? "font-[Tajawal] text-right justify-end" : "text-left"
                     )}
-                    onClick={() => toggleLanguage(code as Language)}
+                    onClick={() => toggleLanguage(code as typeof language)}
                   >
                     <span className="mr-2">{flag}</span>
                     <span>{name}</span>
@@ -145,12 +147,12 @@ export function Navbar() {
           </div>
           
           <Button className="btn-accent">
-            {ctaText[currentLang]}
+            {ctaText}
           </Button>
         </div>
         
         <button 
-          className="md:hidden text-white p-2 bg-kindred-primary/20 rounded-md hover:bg-kindred-primary/30 transition-colors"
+          className="md:hidden text-white light-mode:text-kindred-dark p-2 bg-kindred-primary/20 rounded-md hover:bg-kindred-primary/30 transition-colors"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle menu"
         >
@@ -158,19 +160,38 @@ export function Navbar() {
         </button>
       </div>
       
-      {/* Animated Mobile menu */}
+      {/* Mobile menu */}
       <div 
         className={cn(
-          "md:hidden bg-kindred-darkest/95 backdrop-blur-md transition-all duration-300 ease-in-out overflow-hidden",
+          "md:hidden bg-kindred-darkest/95 light-mode:bg-white/95 backdrop-blur-md transition-all duration-300 ease-in-out overflow-hidden",
           isMobileMenuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
         )}
       >
         <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between mb-4 pb-4 border-b border-kindred-primary/20">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={toggleTheme} 
+              className={cn(
+                "light-mode:text-kindred-dark text-white hover:bg-kindred-primary/20",
+                language === 'ar' ? "font-[Tajawal]" : ""
+              )}
+            >
+              {theme === 'dark' ? (
+                <><Sun className="h-4 w-4 mr-2" /> {t('lightMode')}</>
+              ) : (
+                <><Moon className="h-4 w-4 mr-2" /> {t('darkMode')}</>
+              )}
+            </Button>
+          </div>
+          
           <div className="mb-4 border-b border-kindred-primary/20 pb-4">
-            <p className="text-kindred-accent text-sm mb-2">
-              {currentLang === 'en' ? 'Select Language' : 
-               currentLang === 'fr' ? 'Choisir la Langue' : 
-               'اختر اللغة'}
+            <p className={cn(
+              "text-kindred-accent text-sm mb-2",
+              language === 'ar' ? "font-[Tajawal] text-right" : ""
+            )}>
+              {t('selectLanguage')}
             </p>
             <div className="grid grid-cols-3 gap-2">
               {Object.entries(languages).map(([code, { name, flag }], index) => (
@@ -178,13 +199,13 @@ export function Navbar() {
                   key={code}
                   className={cn(
                     "flex items-center justify-center p-2 rounded-md",
-                    code === currentLang 
+                    code === language 
                       ? "bg-kindred-primary/30 text-kindred-accent" 
-                      : "bg-kindred-primary/10 text-white hover:bg-kindred-primary/20",
+                      : "bg-kindred-primary/10 text-white light-mode:text-kindred-dark hover:bg-kindred-primary/20",
                     "animate-slide-down",
                     code === 'ar' ? "font-[Tajawal]" : ""
                   )}
-                  onClick={() => toggleLanguage(code as Language)}
+                  onClick={() => toggleLanguage(code as typeof language)}
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <span className="mr-1">{flag}</span>
@@ -195,15 +216,17 @@ export function Navbar() {
           </div>
           
           <nav className="flex flex-col space-y-4">
-            {navItems[currentLang].map((item, index) => (
+            {navItems.map((item, index) => (
               <a 
                 key={item.id}
                 href={item.href} 
                 className={cn(
                   "px-4 py-2 rounded-md transition-colors flex items-center justify-between",
-                  activeSection === item.id ? "bg-kindred-primary/20 text-kindred-accent" : "text-white hover:bg-kindred-primary/10",
+                  activeSection === item.id 
+                    ? "bg-kindred-primary/20 text-kindred-accent" 
+                    : "text-white light-mode:text-kindred-dark hover:bg-kindred-primary/10",
                   "animate-slide-down",
-                  currentLang === 'ar' ? "font-[Tajawal] flex-row-reverse" : "",
+                  language === 'ar' ? "font-[Tajawal] flex-row-reverse" : "",
                 )}
                 onClick={() => setIsMobileMenuOpen(false)}
                 style={{ animationDelay: `${index * 50}ms` }}
@@ -215,12 +238,12 @@ export function Navbar() {
             <Button 
               className={cn(
                 "btn-accent mt-4 w-full animate-slide-down",
-                currentLang === 'ar' ? "font-[Tajawal]" : ""
+                language === 'ar' ? "font-[Tajawal]" : ""
               )}
               onClick={() => setIsMobileMenuOpen(false)}
               style={{ animationDelay: '250ms' }}
             >
-              {ctaText[currentLang]}
+              {ctaText}
             </Button>
           </nav>
         </div>

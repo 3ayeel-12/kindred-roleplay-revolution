@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -70,7 +71,7 @@ export default {
 					primary: '#205781',    // Deep blue
 					secondary: '#4F959D',  // Teal
 					accent: '#98D2C0',     // Mint
-					light: '#F6F8D5',      // Light cream
+					light: '#F6F8D5',      // Light cream for light mode background
 					dark: '#163A56',       // Darker blue
 					darker: '#0F2738',     // Darkest blue
 					darkest: '#081520'     // Even darker for the new darker theme
@@ -136,6 +137,9 @@ export default {
 				'footer-pattern': 'linear-gradient(rgba(8, 21, 32, 0.98), rgba(8, 21, 32, 0.99))',
 				'kindred-gradient': 'linear-gradient(90deg, #205781 0%, #4F959D 100%)',
 				'kindred-accent': 'linear-gradient(90deg, #4F959D 0%, #98D2C0 100%)',
+				'light-hero-pattern': 'linear-gradient(rgba(246, 248, 213, 0.9), rgba(246, 248, 213, 0.95)), url("/background.jpg")',
+				'light-gradient-game': 'linear-gradient(rgba(246, 248, 213, 0.95), rgba(246, 248, 213, 0.9))',
+				'light-footer-pattern': 'linear-gradient(rgba(246, 248, 213, 0.98), rgba(246, 248, 213, 0.99))',
 			}
 		}
 	},

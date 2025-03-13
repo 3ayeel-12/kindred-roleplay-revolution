@@ -4,10 +4,11 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { LanguageProvider } from "@/contexts/LanguageContext";
+import { LanguageProvider, useLanguage } from "@/contexts/LanguageContext";
 
-const NotFound = () => {
+const NotFoundContent = () => {
   const location = useLocation();
+  const { theme, t } = useLanguage();
 
   useEffect(() => {
     console.error(
@@ -17,20 +18,26 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <LanguageProvider>
-      <div className="min-h-screen bg-kindred-darkest text-white">
-        <Navbar />
-        <div className="min-h-screen flex items-center justify-center bg-black/40 px-4">
-          <div className="text-center glass-card p-12 max-w-lg mx-auto">
-            <h1 className="text-4xl md:text-6xl font-display font-bold mb-4 text-kindred-accent">404</h1>
-            <p className="text-xl text-gray-300 mb-8">Oops! Page not found</p>
-            <Button className="btn-primary" asChild>
-              <a href="/">Return to Home</a>
-            </Button>
-          </div>
+    <div className={`min-h-screen bg-kindred-darkest text-white ${theme === 'light' ? 'light-mode' : ''}`}>
+      <Navbar />
+      <div className="min-h-screen flex items-center justify-center bg-black/40 light-mode:bg-black/10 px-4">
+        <div className="text-center glass-card p-12 max-w-lg mx-auto">
+          <h1 className="text-4xl md:text-6xl font-display font-bold mb-4 text-kindred-accent">404</h1>
+          <p className="text-xl text-gray-300 light-mode:text-gray-700 mb-8">Oops! Page not found</p>
+          <Button className="btn-primary" asChild>
+            <a href="/">{t('home')}</a>
+          </Button>
         </div>
-        <Footer />
       </div>
+      <Footer />
+    </div>
+  );
+};
+
+const NotFound = () => {
+  return (
+    <LanguageProvider>
+      <NotFoundContent />
     </LanguageProvider>
   );
 };
