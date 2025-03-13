@@ -12,13 +12,13 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-kindred-darker py-12 border-t border-kindred-primary/20">
+    <footer className="bg-kindred-darkest py-12 border-t border-kindred-primary/20">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           <div>
             <a href="/" className="flex items-center mb-4">
               <img 
-                src="/kindred-logo.png" 
+                src="/lovable-uploads/d5ced8f3-15d4-498c-ba38-4b75645c0bad.png" 
                 alt="KindreD Logo" 
                 className="h-10 w-auto mr-2"
               />
@@ -44,8 +44,17 @@ export function Footer() {
           <div>
             <h4 className="text-white font-display font-bold mb-4">HELP / REFERENCES</h4>
             <p className="text-kindred-light text-sm">
-              EN-US AND ALL OTHER LANGUAGES ARE WELCOME IN-GAME, BUT ON THE SITES WE'LL STICK TO ENGLISH
+              EN-US AND ALL OTHER LANGUAGES ARE WELCOME IN-GAME, BUT ON THE SITES WE'LL STICK TO ENGLISH, FRENCH AND ARABIC
             </p>
+            
+            <div className="mt-4 flex items-center space-x-2">
+              <span className="text-xs text-kindred-light">Languages:</span>
+              <a href="#" className="text-xs text-kindred-light hover:text-kindred-accent">English</a>
+              <span className="text-kindred-light">|</span>
+              <a href="#" className="text-xs text-kindred-light hover:text-kindred-accent">Français</a>
+              <span className="text-kindred-light">|</span>
+              <a href="#" className="text-xs text-kindred-light hover:text-kindred-accent">العربية</a>
+            </div>
           </div>
         </div>
         

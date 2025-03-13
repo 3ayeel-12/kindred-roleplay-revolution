@@ -1,5 +1,4 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -91,8 +90,12 @@
     @apply border-border;
   }
   body {
-    @apply bg-kindred-darker text-white;
+    @apply bg-kindred-darkest text-white;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  [dir="rtl"] {
+    text-align: right;
   }
 }
 
@@ -115,11 +118,11 @@
   }
   
   .glass-card {
-    @apply backdrop-blur-md bg-kindred-dark/60 border border-kindred-primary/20 rounded-xl transition-all duration-300;
+    @apply backdrop-blur-md bg-kindred-darkest/60 border border-kindred-primary/20 rounded-xl transition-all duration-300;
   }
   
   .glass-card:hover {
-    @apply bg-kindred-dark/70 border-kindred-primary/30 shadow-lg shadow-kindred-primary/10;
+    @apply bg-kindred-darkest/70 border-kindred-primary/30 shadow-lg shadow-kindred-primary/10;
   }
   
   .btn-primary {
@@ -131,7 +134,7 @@
   }
   
   .btn-accent {
-    @apply bg-kindred-accent text-kindred-dark font-bold uppercase px-6 py-3 rounded-md hover:bg-kindred-accent/90 transition-all shadow-md hover:shadow-kindred-accent/20 hover:shadow-lg;
+    @apply bg-kindred-accent text-kindred-darkest font-bold uppercase px-6 py-3 rounded-md hover:bg-kindred-accent/90 transition-all shadow-md hover:shadow-kindred-accent/20 hover:shadow-lg;
   }
   
   .hero-container {
@@ -140,7 +143,7 @@
   
   .hero-container::before {
     content: '';
-    @apply absolute inset-0 bg-gradient-to-t from-kindred-darker via-transparent to-transparent z-10;
+    @apply absolute inset-0 bg-gradient-to-t from-kindred-darkest via-transparent to-transparent z-10;
   }
   
   .server-stat {
@@ -175,7 +178,6 @@
     @apply scrollbar-thin scrollbar-thumb-kindred-secondary scrollbar-track-kindred-dark/30;
   }
   
-  /* Animation for logo pulse */
   @keyframes pulse-slow {
     0% {
       opacity: 0.8;
@@ -196,14 +198,13 @@
   }
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-kindred-darker;
+  @apply bg-kindred-darkest;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -212,4 +213,13 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-kindred-accent;
+}
+
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.font-ar {
+  font-family: 'Tajawal', sans-serif;
 }

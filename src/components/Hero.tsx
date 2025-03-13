@@ -17,7 +17,7 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-game"></div>
         {/* We'll replace this with a real image later */}
         <div 
-          className="w-full h-full bg-center bg-cover opacity-70"
+          className="w-full h-full bg-center bg-cover opacity-60"
           style={{ 
             backgroundImage: "url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=2000&q=80')",
             backgroundPosition: "center 20%"
@@ -28,7 +28,7 @@ export function Hero() {
       <div className="container mx-auto px-4 py-20 flex flex-col items-center justify-center min-h-[80vh] relative z-10">
         <div className="flex justify-center mb-8">
           <img 
-            src="/kindred-logo.png" 
+            src="/lovable-uploads/d5ced8f3-15d4-498c-ba38-4b75645c0bad.png" 
             alt="KindreD Logo" 
             className="h-32 w-auto animate-pulse-slow"
           />

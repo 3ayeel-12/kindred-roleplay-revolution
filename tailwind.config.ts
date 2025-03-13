@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -73,7 +72,8 @@ export default {
 					accent: '#98D2C0',     // Mint
 					light: '#F6F8D5',      // Light cream
 					dark: '#163A56',       // Darker blue
-					darker: '#0F2738'      // Darkest blue
+					darker: '#0F2738',     // Darkest blue
+					darkest: '#081520'     // Even darker for the new darker theme
 				}
 			},
 			borderRadius: {
@@ -109,6 +109,14 @@ export default {
 				'slide-down': {
 					'0%': { transform: 'translateY(-100%)', opacity: '0' },
 					'100%': { transform: 'translateY(0)', opacity: '1' }
+				},
+				'slide-in-right': {
+					'0%': { transform: 'translateX(100%)', opacity: '0' },
+					'100%': { transform: 'translateX(0)', opacity: '1' }
+				},
+				'slide-in-left': {
+					'0%': { transform: 'translateX(-100%)', opacity: '0' },
+					'100%': { transform: 'translateX(0)', opacity: '1' }
 				}
 			},
 			animation: {
@@ -118,12 +126,14 @@ export default {
 				'float': 'float 6s ease-in-out infinite',
 				'slide-in': 'slide-in 0.6s ease-out',
 				'fade-in': 'fade-in 0.8s ease-out',
-				'slide-down': 'slide-down 0.5s ease-out'
+				'slide-down': 'slide-down 0.5s ease-out',
+				'slide-in-right': 'slide-in-right 0.5s ease-out',
+				'slide-in-left': 'slide-in-left 0.5s ease-out'
 			},
 			backgroundImage: {
-				'hero-pattern': 'linear-gradient(rgba(22, 58, 86, 0.8), rgba(15, 39, 56, 0.9)), url("/background.jpg")',
-				'gradient-game': 'linear-gradient(rgba(15, 39, 56, 0.9), rgba(22, 58, 86, 0.8))',
-				'footer-pattern': 'linear-gradient(rgba(15, 39, 56, 0.95), rgba(15, 39, 56, 0.98))',
+				'hero-pattern': 'linear-gradient(rgba(15, 39, 56, 0.9), rgba(8, 21, 32, 0.95)), url("/background.jpg")',
+				'gradient-game': 'linear-gradient(rgba(8, 21, 32, 0.95), rgba(15, 39, 56, 0.9))',
+				'footer-pattern': 'linear-gradient(rgba(8, 21, 32, 0.98), rgba(8, 21, 32, 0.99))',
 				'kindred-gradient': 'linear-gradient(90deg, #205781 0%, #4F959D 100%)',
 				'kindred-accent': 'linear-gradient(90deg, #4F959D 0%, #98D2C0 100%)',
 			}
