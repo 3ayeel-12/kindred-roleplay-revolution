@@ -10,13 +10,14 @@ interface LanguageContextType {
   theme: Theme;
   toggleTheme: () => void;
   t: (key: string) => string;
+  direction: 'ltr' | 'rtl';
 }
 
 interface LanguageProviderProps {
   children: ReactNode;
 }
 
-// Simple translation object
+// Enhanced translation object with more keys
 const translations = {
   en: {
     'home': 'Home',
@@ -30,7 +31,16 @@ const translations = {
     'language': 'Language',
     'toggleTheme': 'Toggle Theme',
     'selectLanguage': 'Select Language',
-    // Add more translations as needed
+    'techSupport': 'Technical Support',
+    'contactUs': 'Contact Us',
+    'welcomeMessage': 'Welcome to KindreD - A New Gaming Experience',
+    'exploreWorld': 'Explore a Magical World of Adventures',
+    'joinCommunity': 'Join Our Community Today',
+    'learnMore': 'Learn More',
+    'notFound': 'Page Not Found',
+    'backToHome': 'Back to Home',
+    'privacyPolicy': 'Privacy Policy',
+    'termsOfService': 'Terms of Service',
   },
   fr: {
     'home': 'Accueil',
@@ -44,7 +54,16 @@ const translations = {
     'language': 'Langue',
     'toggleTheme': 'Changer de Thème',
     'selectLanguage': 'Choisir la Langue',
-    // Add more translations as needed
+    'techSupport': 'Support Technique',
+    'contactUs': 'Contactez-Nous',
+    'welcomeMessage': 'Bienvenue à KindreD - Une Nouvelle Expérience de Jeu',
+    'exploreWorld': 'Explorez un Monde Magique d\'Aventures',
+    'joinCommunity': 'Rejoignez Notre Communauté Aujourd\'hui',
+    'learnMore': 'En Savoir Plus',
+    'notFound': 'Page Non Trouvée',
+    'backToHome': 'Retour à l\'Accueil',
+    'privacyPolicy': 'Politique de Confidentialité',
+    'termsOfService': 'Conditions d\'Utilisation',
   },
   ar: {
     'home': 'الرئيسية',
@@ -58,7 +77,16 @@ const translations = {
     'language': 'اللغة',
     'toggleTheme': 'تبديل السمة',
     'selectLanguage': 'اختر اللغة',
-    // Add more translations as needed
+    'techSupport': 'الدعم الفني',
+    'contactUs': 'اتصل بنا',
+    'welcomeMessage': 'مرحبًا بك في كيندرد - تجربة ألعاب جديدة',
+    'exploreWorld': 'استكشف عالمًا سحريًا من المغامرات',
+    'joinCommunity': 'انضم إلى مجتمعنا اليوم',
+    'learnMore': 'معرفة المزيد',
+    'notFound': 'الصفحة غير موجودة',
+    'backToHome': 'العودة إلى الرئيسية',
+    'privacyPolicy': 'سياسة الخصوصية',
+    'termsOfService': 'شروط الخدمة',
   }
 };
 
@@ -67,7 +95,9 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const [language, setLanguage] = useState<Language>('en');
   const [theme, setTheme] = useState<Theme>('dark');
+  const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
 
+  // Load preferences on mount
   useEffect(() => {
     // Check for saved preferences in localStorage
     const savedLanguage = localStorage.getItem('language') as Language;
@@ -75,6 +105,7 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
     
     if (savedLanguage) {
       setLanguage(savedLanguage);
+      setDirection(savedLanguage === 'ar' ? 'rtl' : 'ltr');
     }
     
     if (savedTheme) {
@@ -86,6 +117,17 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   // Save preferences when they change
   useEffect(() => {
     localStorage.setItem('language', language);
+    setDirection(language === 'ar' ? 'rtl' : 'ltr');
+    
+    // Apply RTL/LTR to document
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+    
+    // Apply Arabic font if needed
+    if (language === 'ar') {
+      document.documentElement.classList.add('font-ar');
+    } else {
+      document.documentElement.classList.remove('font-ar');
+    }
   }, [language]);
 
   useEffect(() => {
@@ -97,14 +139,14 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
 
-  // Simple translation function
+  // Translation function with fallback
   const t = (key: string): string => {
     return translations[language][key as keyof typeof translations[typeof language]] || key;
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, theme, toggleTheme, t }}>
-      <div dir={language === 'ar' ? 'rtl' : 'ltr'} className={language === 'ar' ? 'rtl' : ''}>
+    <LanguageContext.Provider value={{ language, setLanguage, theme, toggleTheme, t, direction }}>
+      <div dir={direction} className={language === 'ar' ? 'rtl font-ar' : ''}>
         {children}
       </div>
     </LanguageContext.Provider>
