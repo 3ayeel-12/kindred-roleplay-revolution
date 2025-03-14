@@ -1,5 +1,5 @@
 
-import { Building, Briefcase, Car, Users, Money, Gun } from "lucide-react";
+import { Building, Briefcase, Car, Users, DollarSign, Target } from "lucide-react";
 import { useState } from "react";
 
 const features = [
@@ -12,13 +12,13 @@ const features = [
   {
     title: "GET AHEAD OF THE RESIDENTS",
     description: "IMPROVE SKILLS AND MORE THAN $10.000",
-    icon: Money,
+    icon: DollarSign,
     color: "text-kindred-secondary bg-kindred-secondary/10"
   },
   {
     title: "BECOME A GANGSTER",
     description: "WORK HARD ON THE DARK SIDE OF SAMP",
-    icon: Gun,
+    icon: Target,
     color: "text-kindred-primary bg-kindred-primary/10"
   },
   {
