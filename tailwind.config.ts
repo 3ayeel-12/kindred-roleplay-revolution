@@ -75,7 +75,8 @@ export default {
 					light: '#F6F8D5',      // Light cream for light mode background
 					dark: '#163A56',       // Darker blue
 					darker: '#0F2738',     // Darkest blue
-					darkest: '#081520'     // Even darker for the new darker theme
+					darkest: '#081520',    // Even darker for the new darker theme
+					highlight: '#FFD166'   // New highlight color for better visibility
 				}
 			},
 			borderRadius: {
@@ -119,6 +120,18 @@ export default {
 				'slide-in-left': {
 					'0%': { transform: 'translateX(-100%)', opacity: '0' },
 					'100%': { transform: 'translateX(0)', opacity: '1' }
+				},
+				'logo-spin': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' }
+				},
+				'logo-pulse': {
+					'0%, 100%': { transform: 'scale(1)' },
+					'50%': { transform: 'scale(1.1)' }
+				},
+				'sparkle': {
+					'0%, 100%': { opacity: '0', transform: 'scale(0)' },
+					'50%': { opacity: '1', transform: 'scale(1)' }
 				}
 			},
 			animation: {
@@ -130,7 +143,10 @@ export default {
 				'fade-in': 'fade-in 0.8s ease-out',
 				'slide-down': 'slide-down 0.5s ease-out',
 				'slide-in-right': 'slide-in-right 0.5s ease-out',
-				'slide-in-left': 'slide-in-left 0.5s ease-out'
+				'slide-in-left': 'slide-in-left 0.5s ease-out',
+				'logo-spin': 'logo-spin 10s linear infinite',
+				'logo-pulse': 'logo-pulse 3s ease-in-out infinite',
+				'sparkle': 'sparkle 2s ease-in-out infinite'
 			},
 			backgroundImage: {
 				'hero-pattern': 'linear-gradient(rgba(15, 39, 56, 0.9), rgba(8, 21, 32, 0.95)), url("/background.jpg")',

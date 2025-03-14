@@ -1,22 +1,17 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown, Globe, Sun, Moon } from "lucide-react";
+import { Menu, X, ChevronDown, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { AnimatedLogo } from './AnimatedLogo';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 export function Navbar() {
-  const { language, setLanguage, theme, toggleTheme, t } = useLanguage();
+  const { theme, toggleTheme, t } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
-  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
-  
-  const languages = {
-    en: { name: 'English', flag: '🇬🇧' },
-    fr: { name: 'Français', flag: '🇫🇷' },
-    ar: { name: 'العربية', flag: '🇸🇦' }
-  };
   
   const navItems = [
     { id: "home", label: t("home"), href: "#" },
@@ -50,25 +45,20 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const toggleLanguage = (lang: typeof language) => {
-    setLanguage(lang);
-    setIsLangMenuOpen(false);
-  };
-
   return (
     <header className={cn(
       "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-      isScrolled ? "bg-kindred-darkest/90 backdrop-blur-md py-2 shadow-md light-mode:bg-kindred-light/90" : "bg-transparent py-4"
+      isScrolled 
+        ? "backdrop-blur-md py-2 shadow-lg border-b" 
+        : "bg-transparent py-4",
+      theme === 'dark' 
+        ? isScrolled ? "bg-kindred-darkest/80 border-kindred-primary/10" : "" 
+        : isScrolled ? "bg-white/80 border-kindred-primary/10" : ""
     )}>
       <div className="container mx-auto px-4 flex items-center justify-between">
         <div className="flex items-center">
           <a href="/" className="flex items-center">
-            <img 
-              src="/lovable-uploads/d5ced8f3-15d4-498c-ba38-4b75645c0bad.png" 
-              alt="KindreD Logo" 
-              className="h-12 w-auto mr-2"
-            />
-            <span className="font-display font-bold text-white light-mode:text-kindred-dark text-xl">KindreD</span>
+            <AnimatedLogo />
           </a>
         </div>
         
@@ -78,93 +68,64 @@ export function Navbar() {
               key={item.id}
               href={item.href} 
               className={cn(
-                "nav-link",
-                activeSection === item.id ? "text-kindred-accent" : "text-white light-mode:text-kindred-dark hover:text-kindred-accent",
-                language === 'ar' ? "font-[Tajawal]" : ""
+                "nav-link relative overflow-hidden group",
+                activeSection === item.id 
+                  ? "text-kindred-highlight" 
+                  : "text-white light-mode:text-kindred-dark hover:text-kindred-accent"
               )}
             >
-              {item.label}
+              <span className="relative z-10">{item.label}</span>
               {activeSection === item.id && (
-                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-kindred-accent" />
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-kindred-highlight" />
               )}
+              <span className="absolute inset-0 bg-kindred-primary/10 scale-0 group-hover:scale-100 transition-transform duration-300 rounded-md" />
             </a>
           ))}
         </nav>
         
-        <div className="hidden md:flex items-center space-x-4">
+        <div className="hidden md:flex items-center space-x-3">
           {/* Theme Toggle */}
           <Button 
             variant="ghost" 
             size="icon" 
             onClick={toggleTheme} 
-            className="text-white light-mode:text-kindred-dark hover:bg-kindred-primary/20"
+            className="text-white light-mode:text-kindred-dark hover:bg-kindred-primary/20 rounded-lg"
             aria-label={theme === 'dark' ? t('lightMode') : t('darkMode')}
           >
-            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            {theme === 'dark' ? (
+              <Sun className="h-5 w-5 text-kindred-highlight animate-pulse-slow" />
+            ) : (
+              <Moon className="h-5 w-5 text-kindred-dark animate-pulse-slow" />
+            )}
           </Button>
           
           {/* Language Selector */}
-          <div className="relative">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className={cn(
-                "text-white light-mode:text-kindred-dark hover:bg-kindred-primary/20 flex items-center gap-2",
-                language === 'ar' ? "font-[Tajawal]" : ""
-              )}
-              onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-            >
-              <Globe className="h-4 w-4" />
-              <span>{languages[language].flag}</span>
-              <span>{language.toUpperCase()}</span>
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-            
-            {isLangMenuOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-kindred-darkest/95 light-mode:bg-white/95 backdrop-blur-md rounded-md shadow-lg py-1 z-50 border border-kindred-primary/20 animate-fade-in">
-                <p className={cn(
-                  "px-4 py-2 text-xs uppercase text-gray-400 light-mode:text-gray-600 border-b border-kindred-primary/20",
-                  language === 'ar' ? "font-[Tajawal] text-right" : ""
-                )}>
-                  {t('selectLanguage')}
-                </p>
-                {Object.entries(languages).map(([code, { name, flag }]) => (
-                  <button
-                    key={code}
-                    className={cn(
-                      "flex items-center w-full px-4 py-2 text-sm text-white light-mode:text-kindred-dark hover:bg-kindred-primary/20",
-                      code === language ? "bg-kindred-primary/20" : "",
-                      code === 'ar' ? "font-[Tajawal] text-right justify-end" : "text-left"
-                    )}
-                    onClick={() => toggleLanguage(code as typeof language)}
-                  >
-                    <span className="mr-2">{flag}</span>
-                    <span>{name}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <LanguageSwitcher />
           
-          <Button className="btn-accent">
+          <Button className="bg-kindred-accent hover:bg-kindred-accent/90 text-kindred-darkest font-bold transition-all duration-300 shadow-md hover:shadow-kindred-accent/20 hover:shadow-lg rounded-lg">
             {ctaText}
           </Button>
         </div>
         
         <button 
-          className="md:hidden text-white light-mode:text-kindred-dark p-2 bg-kindred-primary/20 rounded-md hover:bg-kindred-primary/30 transition-colors"
+          className="md:hidden p-2 rounded-lg transition-colors"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle menu"
         >
-          {isMobileMenuOpen ? <X /> : <Menu />}
+          {isMobileMenuOpen ? (
+            <X className="w-6 h-6 text-kindred-accent" />
+          ) : (
+            <Menu className="w-6 h-6 text-white light-mode:text-kindred-dark" />
+          )}
         </button>
       </div>
       
       {/* Mobile menu */}
       <div 
         className={cn(
-          "md:hidden bg-kindred-darkest/95 light-mode:bg-white/95 backdrop-blur-md transition-all duration-300 ease-in-out overflow-hidden",
-          isMobileMenuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+          "md:hidden backdrop-blur-lg transition-all duration-300 ease-in-out overflow-hidden",
+          isMobileMenuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0",
+          theme === 'dark' ? "bg-kindred-darkest/90" : "bg-white/90"
         )}
       >
         <div className="container mx-auto px-4 py-4">
@@ -173,60 +134,29 @@ export function Navbar() {
               variant="ghost" 
               size="sm"
               onClick={toggleTheme} 
-              className={cn(
-                "light-mode:text-kindred-dark text-white hover:bg-kindred-primary/20",
-                language === 'ar' ? "font-[Tajawal]" : ""
-              )}
+              className="text-white light-mode:text-kindred-dark hover:bg-kindred-primary/20 rounded-lg"
             >
               {theme === 'dark' ? (
-                <><Sun className="h-4 w-4 mr-2" /> {t('lightMode')}</>
+                <><Sun className="h-4 w-4 mr-2 text-kindred-highlight" /> {t('lightMode')}</>
               ) : (
-                <><Moon className="h-4 w-4 mr-2" /> {t('darkMode')}</>
+                <><Moon className="h-4 w-4 mr-2 text-kindred-dark" /> {t('darkMode')}</>
               )}
             </Button>
           </div>
           
-          <div className="mb-4 border-b border-kindred-primary/20 pb-4">
-            <p className={cn(
-              "text-kindred-accent text-sm mb-2",
-              language === 'ar' ? "font-[Tajawal] text-right" : ""
-            )}>
-              {t('selectLanguage')}
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              {Object.entries(languages).map(([code, { name, flag }], index) => (
-                <button
-                  key={code}
-                  className={cn(
-                    "flex items-center justify-center p-2 rounded-md",
-                    code === language 
-                      ? "bg-kindred-primary/30 text-kindred-accent" 
-                      : "bg-kindred-primary/10 text-white light-mode:text-kindred-dark hover:bg-kindred-primary/20",
-                    "animate-slide-down",
-                    code === 'ar' ? "font-[Tajawal]" : ""
-                  )}
-                  onClick={() => toggleLanguage(code as typeof language)}
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <span className="mr-1">{flag}</span>
-                  <span>{name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+          <LanguageSwitcher variant="mobile" />
           
-          <nav className="flex flex-col space-y-4">
+          <nav className="flex flex-col space-y-2">
             {navItems.map((item, index) => (
               <a 
                 key={item.id}
                 href={item.href} 
                 className={cn(
-                  "px-4 py-2 rounded-md transition-colors flex items-center justify-between",
+                  "px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-between",
                   activeSection === item.id 
-                    ? "bg-kindred-primary/20 text-kindred-accent" 
+                    ? "bg-kindred-primary/20 text-kindred-highlight" 
                     : "text-white light-mode:text-kindred-dark hover:bg-kindred-primary/10",
                   "animate-slide-down",
-                  language === 'ar' ? "font-[Tajawal] flex-row-reverse" : "",
                 )}
                 onClick={() => setIsMobileMenuOpen(false)}
                 style={{ animationDelay: `${index * 50}ms` }}
@@ -236,10 +166,7 @@ export function Navbar() {
               </a>
             ))}
             <Button 
-              className={cn(
-                "btn-accent mt-4 w-full animate-slide-down",
-                language === 'ar' ? "font-[Tajawal]" : ""
-              )}
+              className="bg-kindred-accent hover:bg-kindred-accent/90 text-kindred-darkest font-bold mt-4 w-full animate-slide-down rounded-lg"
               onClick={() => setIsMobileMenuOpen(false)}
               style={{ animationDelay: '250ms' }}
             >
