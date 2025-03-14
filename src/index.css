@@ -207,11 +207,11 @@
   }
   
   .custom-scrollbar {
-    @apply scrollbar-thin scrollbar-thumb-kindred-secondary scrollbar-track-kindred-dark/30;
+    @apply overflow-auto;
   }
   
   .light-mode .custom-scrollbar {
-    @apply scrollbar-thin scrollbar-thumb-kindred-secondary bg-kindred-light bg-opacity-30;
+    @apply bg-kindred-light bg-opacity-30;
   }
   
   @keyframes pulse-slow {

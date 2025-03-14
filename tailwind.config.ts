@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 import plugin from "tailwindcss/plugin";
 
@@ -145,6 +146,7 @@ export default {
 	},
 	plugins: [
 		require("tailwindcss-animate"),
+		require('tailwind-scrollbar'),
 		plugin(function({ addVariant }) {
 			addVariant('light-mode', '.light-mode &');
 		})
