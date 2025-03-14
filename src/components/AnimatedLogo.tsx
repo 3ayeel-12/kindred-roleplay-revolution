@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Sparkles, Car } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 export const AnimatedLogo = () => {
   const { language } = useLanguage();
@@ -22,7 +23,12 @@ export const AnimatedLogo = () => {
   }, [isHovering]);
 
   return (
-    <div className="flex items-center relative group">
+    <motion.div 
+      className="flex items-center relative group"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div 
         className="relative"
         onMouseEnter={() => {
@@ -34,52 +40,80 @@ export const AnimatedLogo = () => {
           setIsHovering(false);
         }}
       >
-        <div className="relative overflow-hidden rounded-full">
-          <img 
+        <motion.div 
+          className="relative overflow-hidden rounded-full bg-gradient-to-r from-kindred-primary/30 to-kindred-accent/30 p-0.5"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        >
+          <motion.img 
             src="/lovable-uploads/d5ced8f3-15d4-498c-ba38-4b75645c0bad.png" 
             alt="KindreD Logo" 
             className={cn(
-              "h-12 w-auto mr-2 transition-all duration-300 hover:scale-110 drop-shadow-glow",
-              isSpinning ? "animate-logo-spin" : "animate-logo-pulse"
+              "h-12 w-auto drop-shadow-glow rounded-full"
             )}
+            animate={isSpinning ? {
+              rotate: 360,
+              transition: { duration: 3, ease: "easeInOut" }
+            } : {
+              scale: [1, 1.05, 1],
+              transition: { duration: 2, repeat: Infinity, repeatType: "reverse" }
+            }}
           />
-          <Car 
-            className={cn(
-              "absolute bottom-0 right-0 text-kindred-highlight opacity-0 transition-opacity duration-300 transform -translate-x-1 translate-y-2 scale-75",
-              isSpinning ? "opacity-100 animate-car-drive" : "group-hover:opacity-70"
-            )}
-            size={16}
-          />
-        </div>
-        <Sparkles 
-          className={cn(
-            "absolute top-0 right-0 text-kindred-highlight opacity-0 transition-opacity duration-300",
-            isSpinning ? "opacity-100 animate-sparkle" : "group-hover:opacity-70"
-          )}
-          size={18}
-        />
+          <motion.div
+            className="absolute bottom-0 right-0 text-kindred-highlight transform -translate-x-1 translate-y-2 scale-75"
+            animate={isSpinning ? {
+              x: [-20, 30],
+              opacity: [0, 1, 0],
+              transition: { duration: 2, repeat: Infinity }
+            } : {}}
+          >
+            <Car size={16} />
+          </motion.div>
+        </motion.div>
+        <motion.div
+          className="absolute top-0 right-0 text-kindred-highlight"
+          animate={isSpinning ? {
+            scale: [0.8, 1.2, 0.8],
+            opacity: [0.3, 1, 0.3],
+            transition: { duration: 1.5, repeat: Infinity }
+          } : {
+            opacity: isHovering ? 0.7 : 0
+          }}
+        >
+          <Sparkles size={18} />
+        </motion.div>
       </div>
-      <div className="flex flex-col items-start">
-        <span 
+      <motion.div 
+        className="flex flex-col items-start ml-2"
+        whileHover={{ x: 3 }}
+        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+      >
+        <motion.span 
           className={cn(
-            "font-display font-bold bg-gradient-to-r from-white to-kindred-accent bg-clip-text text-transparent text-xl transition-all duration-300",
+            "font-display font-bold bg-gradient-to-r from-white to-kindred-accent bg-clip-text text-transparent text-xl",
             "light-mode:from-kindred-dark light-mode:to-kindred-secondary",
-            "hover:from-kindred-accent hover:to-white light-mode:hover:from-kindred-secondary light-mode:hover:to-kindred-dark",
             language === 'ar' ? "font-[Tajawal]" : "",
             "drop-shadow-text"
           )}
+          whileHover={{
+            backgroundPosition: ["0%", "100%"],
+            transition: { duration: 1, repeat: Infinity, repeatType: "reverse" }
+          }}
         >
           KindreD
-        </span>
-        <span 
+        </motion.span>
+        <motion.span 
           className={cn(
             "text-xs text-kindred-accent/80 font-medium tracking-wider",
             language === 'ar' ? "font-[Tajawal]" : ""
           )}
+          initial={{ opacity: 0, x: -5 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
         >
           GTA SAMP ROLE PLAY
-        </span>
-      </div>
-    </div>
+        </motion.span>
+      </motion.div>
+    </motion.div>
   );
 };
