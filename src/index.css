@@ -269,6 +269,23 @@
   .text-glow {
     text-shadow: 0 0 10px rgba(152, 210, 192, 0.7), 0 0 5px rgba(152, 210, 192, 0.4);
   }
+  
+  /* San Andreas specific styles */
+  .sa-button {
+    @apply relative overflow-hidden bg-gradient-to-r from-kindred-orange to-kindred-highlight text-kindred-darkest font-bold uppercase px-6 py-3 rounded-md transition-all shadow-md;
+  }
+  
+  .sa-card {
+    @apply backdrop-blur-md bg-black/40 border border-kindred-orange/20 rounded-xl transition-all duration-300;
+  }
+  
+  .sa-card:hover {
+    @apply bg-black/50 border-kindred-orange/40 shadow-lg shadow-kindred-orange/10;
+  }
+  
+  .parallax-bg {
+    @apply bg-fixed bg-center bg-cover;
+  }
 }
 
 ::-webkit-scrollbar {

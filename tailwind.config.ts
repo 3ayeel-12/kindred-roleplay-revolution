@@ -76,7 +76,9 @@ export default {
 					dark: '#163A56',       // Darker blue
 					darker: '#0F2738',     // Darkest blue
 					darkest: '#081520',    // Even darker for the new darker theme
-					highlight: '#FFD166'   // New highlight color for better visibility
+					highlight: '#FFD166',   // New highlight color for better visibility
+					orange: '#FF6B35',     // San Andreas orange
+					green: '#4CAF50',      // San Andreas green
 				}
 			},
 			borderRadius: {
@@ -132,6 +134,15 @@ export default {
 				'sparkle': {
 					'0%, 100%': { opacity: '0', transform: 'scale(0)' },
 					'50%': { opacity: '1', transform: 'scale(1)' }
+				},
+				'car-drive': {
+					'0%': { transform: 'translateX(-20px)', opacity: '0' },
+					'50%': { transform: 'translateX(10px)', opacity: '1' },
+					'100%': { transform: 'translateX(30px)', opacity: '0' }
+				},
+				'parallax-slide': {
+					'0%': { backgroundPosition: '0% 0%' },
+					'100%': { backgroundPosition: '100% 0%' }
 				}
 			},
 			animation: {
@@ -146,7 +157,9 @@ export default {
 				'slide-in-left': 'slide-in-left 0.5s ease-out',
 				'logo-spin': 'logo-spin 10s linear infinite',
 				'logo-pulse': 'logo-pulse 3s ease-in-out infinite',
-				'sparkle': 'sparkle 2s ease-in-out infinite'
+				'sparkle': 'sparkle 2s ease-in-out infinite',
+				'car-drive': 'car-drive 2s ease-in-out infinite',
+				'parallax-slide': 'parallax-slide 20s linear infinite'
 			},
 			backgroundImage: {
 				'hero-pattern': 'linear-gradient(rgba(15, 39, 56, 0.9), rgba(8, 21, 32, 0.95)), url("/background.jpg")',
@@ -157,12 +170,19 @@ export default {
 				'light-hero-pattern': 'linear-gradient(rgba(246, 248, 213, 0.9), rgba(246, 248, 213, 0.95)), url("/background.jpg")',
 				'light-gradient-game': 'linear-gradient(rgba(246, 248, 213, 0.95), rgba(246, 248, 213, 0.9))',
 				'light-footer-pattern': 'linear-gradient(rgba(246, 248, 213, 0.98), rgba(246, 248, 213, 0.99))',
+				'san-andreas-gradient': 'linear-gradient(90deg, #FF6B35 0%, #FFD166 100%)',
+			},
+			dropShadow: {
+				'glow': '0 0 8px rgba(152, 210, 192, 0.4)'
+			},
+			opacity: {
+				'15': '0.15',
 			}
 		}
 	},
 	plugins: [
 		require("tailwindcss-animate"),
-		require('tailwind-scrollbar'),
+		require('@tailwindcss/forms'),
 		plugin(function({ addVariant }) {
 			addVariant('light-mode', '.light-mode &');
 		})
