@@ -42,7 +42,7 @@ const ServerStats = () => {
               <span className="w-6 h-6 flex items-center justify-center text-sm font-medium bg-gray-800 rounded">
                 {stat.players}
               </span>
-              <span className="text-xs text-gray-400">{stat.country}</span>
+              <span className="text-xs text-gray-400 light-mode:text-gray-600">{stat.country}</span>
             </div>
           ))}
         </div>
