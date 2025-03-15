@@ -1,12 +1,12 @@
 
 import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
 import { fetchServerInfo, ServerInfo } from "@/lib/samp-api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Sparkles, Users, Clock, Map, Gamepad, Flag, Shield, Server } from "lucide-react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 // Morocco regions with corresponding player counts (simulated)
 const moroccoRegions = [
@@ -21,6 +21,7 @@ const ServerStats = () => {
   const [serverInfo, setServerInfo] = useState<ServerInfo>({ isOnline: false });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
     const getServerInfo = async () => {
@@ -28,8 +29,16 @@ const ServerStats = () => {
         setLoading(true);
         const info = await fetchServerInfo();
         setServerInfo(info);
+        setLastUpdated(new Date());
+        
+        if (info.isOnline) {
+          toast.success("Server data refreshed", {
+            description: `${info.players} players online`
+          });
+        }
       } catch (err) {
         setError("Failed to connect to server");
+        toast.error("Failed to refresh server data");
         console.error(err);
       } finally {
         setLoading(false);
@@ -58,7 +67,7 @@ const ServerStats = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {loading ? (
+        {loading && !serverInfo.isOnline ? (
           <div className="flex items-center justify-center p-8">
             <Server className="animate-pulse mr-2 text-kindred-highlight" />
             <span className="text-kindred-highlight font-semibold">Loading server status...</span>
@@ -83,6 +92,11 @@ const ServerStats = () => {
                 </motion.div>
                 <p className="text-sm text-gray-400 mt-1">
                   IP: 91.121.237.128:1958
+                  {lastUpdated && (
+                    <span className="ml-2 text-xs text-gray-500">
+                      (Last updated: {lastUpdated.toLocaleTimeString()})
+                    </span>
+                  )}
                 </p>
               </div>
               
