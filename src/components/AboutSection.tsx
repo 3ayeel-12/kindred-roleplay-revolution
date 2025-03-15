@@ -3,15 +3,9 @@ import { Play } from "lucide-react";
 import { useState } from "react";
 
 export function AboutSection() {
-  const [activeImage, setActiveImage] = useState(0);
   const [showVideo, setShowVideo] = useState(false);
   
-  const gtaImages = [
-    "/lovable-uploads/6245ce6f-3ebb-4fe1-9d2d-9e74569dc0cd.png",
-    "/lovable-uploads/96e43fb8-bb29-428f-859e-1eb7be925dc7.png",
-    "/lovable-uploads/0fcf2d2d-a0cd-459e-8a64-4dfcfc2a0d29.png",
-    "/lovable-uploads/fad85541-f410-4c51-b858-d5c293c3a2b4.png"
-  ];
+  const featuredImage = "/lovable-uploads/6245ce6f-3ebb-4fe1-9d2d-9e74569dc0cd.png";
 
   return (
     <section id="about" className="py-20 bg-kindred-darker/95 relative overflow-hidden">
@@ -19,7 +13,7 @@ export function AboutSection() {
       <div className="absolute inset-0 opacity-15">
         <div 
           className="absolute inset-0 bg-cover bg-center blur-sm"
-          style={{ backgroundImage: `url('${gtaImages[2]}')` }}
+          style={{ backgroundImage: `url('${featuredImage}')` }}
         ></div>
         <div className="absolute inset-0 bg-kindred-darker/80"></div>
       </div>
@@ -94,7 +88,7 @@ export function AboutSection() {
           </p>
         </div>
         
-        <div className="relative rounded-xl overflow-hidden mx-auto max-w-4xl glass-card p-1 mb-12">
+        <div className="relative rounded-xl overflow-hidden mx-auto max-w-3xl glass-card p-1 mb-12">
           {showVideo ? (
             <div className="relative aspect-video rounded-lg overflow-hidden">
               <iframe 
@@ -109,7 +103,7 @@ export function AboutSection() {
             <div className="relative aspect-video rounded-lg overflow-hidden">
               <div 
                 className="w-full h-full bg-cover bg-center transition-transform duration-700 hover:scale-105"
-                style={{ backgroundImage: `url('${gtaImages[activeImage]}')` }}
+                style={{ backgroundImage: `url('${featuredImage}')` }}
               ></div>
               
               <div className="absolute inset-0 flex items-center justify-center">
@@ -126,28 +120,6 @@ export function AboutSection() {
               </div>
             </div>
           )}
-        </div>
-        
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-4 gap-6">
-          {gtaImages.map((img, index) => (
-            <div 
-              key={index} 
-              className="glass-card p-1 aspect-video relative overflow-hidden group cursor-pointer"
-              onClick={() => {
-                setActiveImage(index);
-                setShowVideo(false);
-              }}
-            >
-              <div 
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-                style={{ backgroundImage: `url('${img}')` }}
-              ></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-kindred-darker via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              {activeImage === index && !showVideo && (
-                <div className="absolute inset-0 border-2 border-kindred-accent rounded-lg z-10"></div>
-              )}
-            </div>
-          ))}
         </div>
       </div>
     </section>

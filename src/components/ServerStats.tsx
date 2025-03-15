@@ -4,9 +4,10 @@ import { fetchServerInfo, ServerInfo } from "@/lib/samp-api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, Users, Clock, Map, Gamepad, Flag, Shield, Server, Youtube } from "lucide-react";
+import { Sparkles, Users, Clock, Map, Gamepad, Flag, Shield, Server } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Morocco regions with corresponding player counts (simulated)
 const moroccoRegions = [
@@ -22,7 +23,8 @@ const ServerStats = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-
+  const { theme } = useLanguage();
+  
   useEffect(() => {
     const getServerInfo = async () => {
       try {
@@ -62,7 +64,7 @@ const ServerStats = () => {
   return (
     <div className="w-full animate-fade-in">
       <motion.div 
-        className="sa-card p-6 mb-8 border-2 border-kindred-orange/30"
+        className={`sa-card p-6 mb-8 ${theme === 'light' ? 'bg-white/70 border-kindred-primary/30' : 'bg-black/40 border-kindred-orange/30'} border-2 rounded-xl transition-all duration-300`}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -90,10 +92,10 @@ const ServerStats = () => {
                     ONLINE
                   </Badge>
                 </motion.div>
-                <p className="text-sm text-gray-400 mt-1">
+                <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'} mt-1`}>
                   IP: 91.121.237.128:1958
                   {lastUpdated && (
-                    <span className="ml-2 text-xs text-gray-500">
+                    <span className={`ml-2 text-xs ${theme === 'light' ? 'text-gray-500' : 'text-gray-500'}`}>
                       (Last updated: {lastUpdated.toLocaleTimeString()})
                     </span>
                   )}
@@ -106,20 +108,20 @@ const ServerStats = () => {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                <Badge variant="outline" className="bg-kindred-primary/20 border-kindred-primary/30 flex items-center gap-1">
+                <Badge variant="outline" className={`${theme === 'light' ? 'bg-kindred-primary/10' : 'bg-kindred-primary/20'} border-kindred-primary/30 flex items-center gap-1`}>
                   <Gamepad size={14} />
                   {serverInfo.gamemode || "Roleplay"}
                 </Badge>
-                <Badge variant="outline" className="bg-kindred-secondary/20 border-kindred-secondary/30 flex items-center gap-1">
+                <Badge variant="outline" className={`${theme === 'light' ? 'bg-kindred-secondary/10' : 'bg-kindred-secondary/20'} border-kindred-secondary/30 flex items-center gap-1`}>
                   <Map size={14} />
                   {serverInfo.mapname || "San Andreas"}
                 </Badge>
-                <Badge variant="outline" className="bg-kindred-accent/20 border-kindred-accent/30 flex items-center gap-1">
+                <Badge variant="outline" className={`${theme === 'light' ? 'bg-kindred-accent/10' : 'bg-kindred-accent/20'} border-kindred-accent/30 flex items-center gap-1`}>
                   <Clock size={14} />
                   {serverInfo.worldtime || "10:00"}
                 </Badge>
                 {serverInfo.passworded && (
-                  <Badge variant="outline" className="bg-kindred-orange/20 border-kindred-orange/30 flex items-center gap-1">
+                  <Badge variant="outline" className={`${theme === 'light' ? 'bg-kindred-orange/10' : 'bg-kindred-orange/20'} border-kindred-orange/30 flex items-center gap-1`}>
                     <Shield size={14} />
                     Password Protected
                   </Badge>
@@ -136,7 +138,7 @@ const ServerStats = () => {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <Users size={18} className="text-kindred-accent" />
-                  <span className="text-sm font-medium">
+                  <span className={`text-sm font-medium ${theme === 'light' ? 'text-kindred-dark' : 'text-white'}`}>
                     Players Online
                   </span>
                 </div>
@@ -144,7 +146,7 @@ const ServerStats = () => {
                   {serverInfo.players} / {serverInfo.maxplayers}
                 </span>
               </div>
-              <Progress value={playerPercentage} className="h-2 bg-kindred-darker/80">
+              <Progress value={playerPercentage} className={`h-2 ${theme === 'light' ? 'bg-gray-200' : 'bg-kindred-darker/80'}`}>
                 <div className="h-full bg-gradient-to-r from-kindred-accent to-kindred-highlight" style={{ width: `${playerPercentage}%` }} />
               </Progress>
             </motion.div>
@@ -156,18 +158,22 @@ const ServerStats = () => {
                 transition={{ delay: 0.5 }}
                 className="col-span-1 md:col-span-5"
               >
-                <Card className="bg-gradient-to-r from-kindred-orange/20 to-kindred-highlight/10 border-kindred-orange/20">
+                <Card className={`${theme === 'light' 
+                  ? 'bg-gradient-to-r from-kindred-primary/10 to-kindred-highlight/5 border-kindred-primary/20' 
+                  : 'bg-gradient-to-r from-kindred-orange/20 to-kindred-highlight/10 border-kindred-orange/20'}`}>
                   <CardHeader className="pb-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Flag className="text-kindred-highlight" />
                         <CardTitle className="text-base">Morocco Player Distribution</CardTitle>
                       </div>
-                      <Badge variant="outline" className="bg-kindred-highlight/10 text-kindred-highlight border-kindred-highlight/20">
+                      <Badge variant="outline" className={`${theme === 'light' 
+                        ? 'bg-kindred-highlight/5 text-kindred-primary border-kindred-highlight/10' 
+                        : 'bg-kindred-highlight/10 text-kindred-highlight border-kindred-highlight/20'}`}>
                         {serverInfo.language || "Arabic/French"}
                       </Badge>
                     </div>
-                    <CardDescription>
+                    <CardDescription className={theme === 'light' ? 'text-gray-600' : ''}>
                       Player distribution across different regions of Morocco
                     </CardDescription>
                   </CardHeader>
@@ -179,12 +185,14 @@ const ServerStats = () => {
                           initial={{ y: 20, opacity: 0 }}
                           animate={{ y: 0, opacity: 1 }}
                           transition={{ delay: 0.6 + index * 0.1 }}
-                          className="flex flex-col items-center p-3 rounded-lg bg-black/30 border border-kindred-highlight/10"
+                          className={`flex flex-col items-center p-3 rounded-lg ${theme === 'light' 
+                            ? 'bg-kindred-primary/5 border border-kindred-primary/10'
+                            : 'bg-black/30 border border-kindred-highlight/10'}`}
                         >
                           <span className="text-xl font-bold text-kindred-highlight">
                             {region.players}
                           </span>
-                          <span className="text-xs text-gray-400 mt-1">
+                          <span className={`text-xs ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'} mt-1`}>
                             {region.region}
                           </span>
                         </motion.div>
@@ -199,7 +207,7 @@ const ServerStats = () => {
           <div className="flex flex-col items-center justify-center p-8 text-center">
             <Server className="text-red-500 mb-2" size={32} />
             <h3 className="text-lg font-bold text-red-500">Server Offline</h3>
-            <p className="text-gray-400 max-w-md mt-2">
+            <p className={`${theme === 'light' ? 'text-gray-600' : 'text-gray-400'} max-w-md mt-2`}>
               The server at 91.121.237.128:1958 is currently offline or not responding. Please check back later.
             </p>
           </div>

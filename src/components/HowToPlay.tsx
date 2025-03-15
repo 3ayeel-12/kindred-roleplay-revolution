@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Download, User, ArrowRight } from "lucide-react";
+import { Download, Smartphone, Laptop, ArrowRight } from "lucide-react";
 
 export function HowToPlay() {
   return (
@@ -10,85 +10,124 @@ export function HowToPlay() {
           HOW TO START <span className="text-kindred-accent">PLAYING</span>
         </h2>
         
-        <p className="text-center text-gray-400 max-w-2xl mx-auto mb-16">
-          <Button variant="link" className="text-kindred-secondary hover:text-kindred-accent transition-colors">
-            HOW TO SETUP FOR 5 MINUTES →
-          </Button>
+        <p className="text-center text-gray-400 max-w-2xl mx-auto mb-12">
+          <span className="text-kindred-secondary font-medium">
+            A simple 4-step guide to install SA-MP on both PC and Mobile
+          </span>
         </p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          {/* Mobile Installation */}
+          <div className="glass-card p-8 relative overflow-hidden transition-all hover:translate-y-[-5px]">
+            <div className="absolute top-4 left-4 bg-kindred-secondary text-kindred-darker text-xs font-bold px-2 py-1 rounded">
+              MOBILE
+            </div>
+            
+            <div className="pt-10">
+              <h3 className="text-2xl font-display font-bold mb-6 text-kindred-secondary flex items-center gap-2">
+                <Smartphone size={24} />
+                INSTALL ON ANDROID
+              </h3>
+              
+              <ol className="space-y-4 text-left">
+                <li className="flex items-start">
+                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-kindred-secondary/20 text-kindred-secondary font-bold text-xs mr-3 mt-0.5">1</span>
+                  <div>
+                    <span className="font-semibold text-kindred-light">Download SA-MP Mobile Launcher</span>
+                    <p className="text-sm text-gray-400 mt-1">Search for "SA-MP Launcher" in Play Store</p>
+                  </div>
+                </li>
+                
+                <li className="flex items-start">
+                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-kindred-secondary/20 text-kindred-secondary font-bold text-xs mr-3 mt-0.5">2</span>
+                  <div>
+                    <span className="font-semibold text-kindred-light">Install GTA: San Andreas APK + Data</span>
+                    <p className="text-sm text-gray-400 mt-1">Find a legal copy or use your existing one</p>
+                  </div>
+                </li>
+                
+                <li className="flex items-start">
+                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-kindred-secondary/20 text-kindred-secondary font-bold text-xs mr-3 mt-0.5">3</span>
+                  <div>
+                    <span className="font-semibold text-kindred-light">Open the SA-MP Launcher</span>
+                    <p className="text-sm text-gray-400 mt-1">Enter server IP: <span className="text-kindred-accent">91.121.237.128:1958</span></p>
+                  </div>
+                </li>
+                
+                <li className="flex items-start">
+                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-kindred-secondary/20 text-kindred-secondary font-bold text-xs mr-3 mt-0.5">4</span>
+                  <div>
+                    <span className="font-semibold text-kindred-light">Connect & Play</span>
+                    <p className="text-sm text-gray-400 mt-1">Customize your name, hit Join, and start roleplaying!</p>
+                  </div>
+                </li>
+              </ol>
+              
+              <Button className="flex items-center gap-2 bg-kindred-secondary hover:bg-kindred-secondary/90 text-white border-0 mt-6">
+                <Download size={16} />
+                DOWNLOAD LAUNCHER
+              </Button>
+            </div>
+          </div>
+          
+          {/* PC Installation */}
           <div className="glass-card p-8 relative overflow-hidden transition-all hover:translate-y-[-5px]">
             <div className="absolute top-4 left-4 bg-kindred-accent text-kindred-darker text-xs font-bold px-2 py-1 rounded">
-              STEP 01
+              PC
             </div>
             
             <div className="pt-10">
-              <h3 className="text-2xl font-display font-bold mb-4 text-kindred-accent">
-                REGISTER AN ACCOUNT
+              <h3 className="text-2xl font-display font-bold mb-6 text-kindred-accent flex items-center gap-2">
+                <Laptop size={24} />
+                INSTALL ON PC
               </h3>
               
-              <p className="text-kindred-light mb-6">
-                Social, Email, SMS & Extended GTA Samp access to our lively role play server. You'll need to register first.
-              </p>
-              
-              <Button className="flex items-center gap-2 bg-kindred-primary hover:bg-kindred-primary/90 text-white border-0">
-                <User size={16} />
-                REGISTRATION
-              </Button>
-            </div>
-          </div>
-          
-          <div className="glass-card p-8 relative overflow-hidden transition-all hover:translate-y-[-5px]">
-            <div className="absolute top-4 left-4 bg-kindred-secondary text-white text-xs font-bold px-2 py-1 rounded">
-              STEP 02
-            </div>
-            
-            <div className="pt-10">
-              <h3 className="text-2xl font-display font-bold mb-4 text-kindred-secondary">
-                DOWNLOAD THE LAUNCHER
-              </h3>
-              
-              <p className="text-kindred-light mb-6">
-                Download our custom launcher to get the best possible gaming experience with GTA SAMP.
-              </p>
-              
-              <Button className="flex items-center gap-2 bg-kindred-secondary hover:bg-kindred-secondary/90 text-white border-0">
-                <Download size={16} />
-                DOWNLOAD
-              </Button>
-            </div>
-          </div>
-        </div>
-        
-        <div className="text-center mt-16 mb-20">
-          <h3 className="text-2xl font-display font-bold mb-8 text-white">
-            THAT'S ALL! ENJOY THE GAME!
-          </h3>
-        </div>
-        
-        <div className="glass-card p-8 max-w-5xl mx-auto hover:shadow-xl transition-all duration-300">
-          <h3 className="text-2xl font-display font-bold mb-8 text-center text-kindred-accent">
-            CHOOSE YOUR CAR AFTER REGISTRATION
-            <span className="block text-white text-lg mt-2">ON THE 3RD LEVEL</span>
-          </h3>
-          
-          <div className="relative">
-            <div className="grid grid-cols-3 gap-4">
-              {[1, 2, 3].map((item) => (
-                <div key={item} className="relative aspect-[4/3] rounded-lg overflow-hidden group">
-                  {/* Replace with actual car images */}
-                  <div 
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
-                    style={{ backgroundImage: `url('https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=500&q=80')` }}
-                  ></div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-kindred-darker via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="absolute bottom-2 left-2 text-xs font-bold bg-kindred-primary/70 backdrop-blur-sm px-2 py-1 rounded">
-                    $25K
+              <ol className="space-y-4 text-left">
+                <li className="flex items-start">
+                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-kindred-accent/20 text-kindred-accent font-bold text-xs mr-3 mt-0.5">1</span>
+                  <div>
+                    <span className="font-semibold text-kindred-light">Download & Install GTA: San Andreas</span>
+                    <p className="text-sm text-gray-400 mt-1">Make sure you have the original game, not the Definitive Edition!</p>
                   </div>
-                </div>
-              ))}
+                </li>
+                
+                <li className="flex items-start">
+                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-kindred-accent/20 text-kindred-accent font-bold text-xs mr-3 mt-0.5">2</span>
+                  <div>
+                    <span className="font-semibold text-kindred-light">Download SA-MP Client</span>
+                    <p className="text-sm text-gray-400 mt-1">Get it from <a href="https://www.sa-mp.com/download.php" target="_blank" rel="noopener noreferrer" className="text-kindred-accent hover:underline">sa-mp.com</a></p>
+                  </div>
+                </li>
+                
+                <li className="flex items-start">
+                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-kindred-accent/20 text-kindred-accent font-bold text-xs mr-3 mt-0.5">3</span>
+                  <div>
+                    <span className="font-semibold text-kindred-light">Install SA-MP</span>
+                    <p className="text-sm text-gray-400 mt-1">Install in your GTA: San Andreas directory</p>
+                  </div>
+                </li>
+                
+                <li className="flex items-start">
+                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-kindred-accent/20 text-kindred-accent font-bold text-xs mr-3 mt-0.5">4</span>
+                  <div>
+                    <span className="font-semibold text-kindred-light">Launch SA-MP</span>
+                    <p className="text-sm text-gray-400 mt-1">Add our server IP: <span className="text-kindred-accent">91.121.237.128:1958</span> and start playing!</p>
+                  </div>
+                </li>
+              </ol>
+              
+              <Button className="flex items-center gap-2 bg-kindred-accent hover:bg-kindred-accent/90 text-kindred-darker border-0 mt-6">
+                <Download size={16} />
+                DOWNLOAD SA-MP
+              </Button>
             </div>
           </div>
+        </div>
+        
+        <div className="text-center mt-16">
+          <h3 className="text-2xl font-display font-bold mb-4 text-white">
+            🔥 Now you're ready to dive into SA-MP and start your roleplay journey! 🔥
+          </h3>
         </div>
       </div>
     </section>
