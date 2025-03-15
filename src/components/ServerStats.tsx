@@ -4,7 +4,7 @@ import { fetchServerInfo, ServerInfo } from "@/lib/samp-api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, Users, Clock, Map, Gamepad, Flag, Shield, Server } from "lucide-react";
+import { Sparkles, Users, Clock, Map, Gamepad, Flag, Shield, Server, Youtube } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
@@ -144,7 +144,9 @@ const ServerStats = () => {
                   {serverInfo.players} / {serverInfo.maxplayers}
                 </span>
               </div>
-              <Progress value={playerPercentage} className="h-2" />
+              <Progress value={playerPercentage} className="h-2 bg-kindred-darker/80">
+                <div className="h-full bg-gradient-to-r from-kindred-accent to-kindred-highlight" style={{ width: `${playerPercentage}%` }} />
+              </Progress>
             </motion.div>
             
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
