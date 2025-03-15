@@ -1,22 +1,14 @@
 
 import { useEffect, useState } from "react";
-import { fetchServerInfo, ServerInfo } from "@/lib/samp-api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Sparkles, Users, Clock, Map, Gamepad, Flag, Shield, Server } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { fetchServerInfo, ServerInfo } from "@/lib/samp-api";
 import { useLanguage } from "@/contexts/LanguageContext";
-
-// Morocco regions with corresponding player counts (simulated)
-const moroccoRegions = [
-  { region: "CASABLANCA", players: 143, code: "MA-CAS" },
-  { region: "RABAT", players: 89, code: "MA-RAB" },
-  { region: "MARRAKECH", players: 76, code: "MA-MAR" },
-  { region: "FEZ", players: 54, code: "MA-FEZ" },
-  { region: "TANGIER", players: 48, code: "MA-TAN" },
-];
+import { ServerHeader } from "./server/ServerHeader";
+import { PlayerStats } from "./server/PlayerStats";
+import { MoroccoRegionStats } from "./server/MoroccoRegionStats";
+import { ServerOffline } from "./server/ServerOffline";
+import { ServerLoading } from "./server/ServerLoading";
 
 const ServerStats = () => {
   const [serverInfo, setServerInfo] = useState<ServerInfo>({ isOnline: false });
@@ -56,11 +48,6 @@ const ServerStats = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Calculate player percentage
-  const playerPercentage = serverInfo.isOnline && serverInfo.maxplayers 
-    ? (serverInfo.players! / serverInfo.maxplayers) * 100 
-    : 0;
-
   return (
     <div className="w-full animate-fade-in">
       <motion.div 
@@ -70,147 +57,18 @@ const ServerStats = () => {
         transition={{ duration: 0.5 }}
       >
         {loading && !serverInfo.isOnline ? (
-          <div className="flex items-center justify-center p-8">
-            <Server className="animate-pulse mr-2 text-kindred-highlight" />
-            <span className="text-kindred-highlight font-semibold">Loading server status...</span>
-          </div>
+          <ServerLoading />
         ) : serverInfo.isOnline ? (
           <>
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-              <div className="flex-1">
-                <motion.div 
-                  className="flex items-center gap-2"
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <Sparkles className="text-kindred-highlight" />
-                  <h2 className="text-xl font-display text-kindred-highlight font-bold">
-                    {serverInfo.hostname || "KindreD GTA SAMP Server"}
-                  </h2>
-                  <Badge variant="outline" className="bg-green-500/20 text-green-400 border-green-500/30">
-                    ONLINE
-                  </Badge>
-                </motion.div>
-                <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'} mt-1`}>
-                  IP: 91.121.237.128:1958
-                  {lastUpdated && (
-                    <span className={`ml-2 text-xs ${theme === 'light' ? 'text-gray-500' : 'text-gray-500'}`}>
-                      (Last updated: {lastUpdated.toLocaleTimeString()})
-                    </span>
-                  )}
-                </p>
-              </div>
-              
-              <motion.div 
-                className="flex flex-wrap gap-3"
-                initial={{ y: -10, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                <Badge variant="outline" className={`${theme === 'light' ? 'bg-kindred-primary/10' : 'bg-kindred-primary/20'} border-kindred-primary/30 flex items-center gap-1`}>
-                  <Gamepad size={14} />
-                  {serverInfo.gamemode || "Roleplay"}
-                </Badge>
-                <Badge variant="outline" className={`${theme === 'light' ? 'bg-kindred-secondary/10' : 'bg-kindred-secondary/20'} border-kindred-secondary/30 flex items-center gap-1`}>
-                  <Map size={14} />
-                  {serverInfo.mapname || "San Andreas"}
-                </Badge>
-                <Badge variant="outline" className={`${theme === 'light' ? 'bg-kindred-accent/10' : 'bg-kindred-accent/20'} border-kindred-accent/30 flex items-center gap-1`}>
-                  <Clock size={14} />
-                  {serverInfo.worldtime || "10:00"}
-                </Badge>
-                {serverInfo.passworded && (
-                  <Badge variant="outline" className={`${theme === 'light' ? 'bg-kindred-orange/10' : 'bg-kindred-orange/20'} border-kindred-orange/30 flex items-center gap-1`}>
-                    <Shield size={14} />
-                    Password Protected
-                  </Badge>
-                )}
-              </motion.div>
-            </div>
-            
-            <motion.div 
-              className="mb-6"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Users size={18} className="text-kindred-accent" />
-                  <span className={`text-sm font-medium ${theme === 'light' ? 'text-kindred-dark' : 'text-white'}`}>
-                    Players Online
-                  </span>
-                </div>
-                <span className="text-kindred-highlight font-bold">
-                  {serverInfo.players} / {serverInfo.maxplayers}
-                </span>
-              </div>
-              <Progress value={playerPercentage} className={`h-2 ${theme === 'light' ? 'bg-gray-200' : 'bg-kindred-darker/80'}`}>
-                <div className="h-full bg-gradient-to-r from-kindred-accent to-kindred-highlight" style={{ width: `${playerPercentage}%` }} />
-              </Progress>
-            </motion.div>
+            <ServerHeader serverInfo={serverInfo} lastUpdated={lastUpdated} />
+            <PlayerStats serverInfo={serverInfo} />
             
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5 }}
-                className="col-span-1 md:col-span-5"
-              >
-                <Card className={`${theme === 'light' 
-                  ? 'bg-gradient-to-r from-kindred-primary/10 to-kindred-highlight/5 border-kindred-primary/20' 
-                  : 'bg-gradient-to-r from-kindred-orange/20 to-kindred-highlight/10 border-kindred-orange/20'}`}>
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Flag className="text-kindred-highlight" />
-                        <CardTitle className="text-base">Morocco Player Distribution</CardTitle>
-                      </div>
-                      <Badge variant="outline" className={`${theme === 'light' 
-                        ? 'bg-kindred-highlight/5 text-kindred-primary border-kindred-highlight/10' 
-                        : 'bg-kindred-highlight/10 text-kindred-highlight border-kindred-highlight/20'}`}>
-                        {serverInfo.language || "Arabic/French"}
-                      </Badge>
-                    </div>
-                    <CardDescription className={theme === 'light' ? 'text-gray-600' : ''}>
-                      Player distribution across different regions of Morocco
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                      {moroccoRegions.map((region, index) => (
-                        <motion.div
-                          key={region.region}
-                          initial={{ y: 20, opacity: 0 }}
-                          animate={{ y: 0, opacity: 1 }}
-                          transition={{ delay: 0.6 + index * 0.1 }}
-                          className={`flex flex-col items-center p-3 rounded-lg ${theme === 'light' 
-                            ? 'bg-kindred-primary/5 border border-kindred-primary/10'
-                            : 'bg-black/30 border border-kindred-highlight/10'}`}
-                        >
-                          <span className="text-xl font-bold text-kindred-highlight">
-                            {region.players}
-                          </span>
-                          <span className={`text-xs ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'} mt-1`}>
-                            {region.region}
-                          </span>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
+              <MoroccoRegionStats />
             </div>
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center p-8 text-center">
-            <Server className="text-red-500 mb-2" size={32} />
-            <h3 className="text-lg font-bold text-red-500">Server Offline</h3>
-            <p className={`${theme === 'light' ? 'text-gray-600' : 'text-gray-400'} max-w-md mt-2`}>
-              The server at 91.121.237.128:1958 is currently offline or not responding. Please check back later.
-            </p>
-          </div>
+          <ServerOffline />
         )}
       </motion.div>
     </div>
