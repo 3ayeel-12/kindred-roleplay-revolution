@@ -5,7 +5,7 @@ import { fetchServerInfo, ServerInfo } from "@/lib/samp-api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, Users, Clock, Map, Gamepad, Morocco, Shield, Server } from "lucide-react";
+import { Sparkles, Users, Clock, Map, Gamepad, Flag, Shield, Server } from "lucide-react";
 import { motion } from "framer-motion";
 
 // Morocco regions with corresponding player counts (simulated)
@@ -144,7 +144,7 @@ const ServerStats = () => {
                   <CardHeader className="pb-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Morocco className="text-kindred-highlight" />
+                        <Flag className="text-kindred-highlight" />
                         <CardTitle className="text-base">Morocco Player Distribution</CardTitle>
                       </div>
                       <Badge variant="outline" className="bg-kindred-highlight/10 text-kindred-highlight border-kindred-highlight/20">
