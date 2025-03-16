@@ -1,6 +1,6 @@
 
 import { cn } from "@/lib/utils";
-import { Discord, TikTok, Youtube } from "lucide-react";
+import { Youtube, MessageCircle, Video } from "lucide-react";
 
 const socialPlatforms = [
   {
@@ -16,7 +16,7 @@ const socialPlatforms = [
     subscribers: "13.3K members",
     color: "from-kindred-secondary to-kindred-accent",
     textColor: "text-kindred-darker",
-    icon: Discord,
+    icon: MessageCircle,
     url: "https://discord.gg/dNUAA5sX9D"
   },
   {
@@ -24,7 +24,7 @@ const socialPlatforms = [
     subscribers: "36K likes",
     color: "from-kindred-accent to-kindred-light",
     textColor: "text-kindred-darker",
-    icon: TikTok,
+    icon: Video,
     url: "https://www.tiktok.com/@splintatv"
   }
 ];
