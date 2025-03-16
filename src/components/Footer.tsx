@@ -1,7 +1,11 @@
 
 import { ArrowUp } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { cn } from "@/lib/utils";
 
 export function Footer() {
+  const { t, language } = useLanguage();
+  
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -24,43 +28,62 @@ export function Footer() {
               />
               <span className="font-display font-bold text-white text-xl">KindreD</span>
             </a>
-            <p className="text-kindred-light text-sm mb-4">
-              If you have questions:
+            <p className={cn("text-kindred-light text-sm mb-4", language === 'ar' ? "text-right" : "")}>
+              {t('contactUs')}:
             </p>
             <a href="mailto:support@kindredrp.com" className="text-kindred-accent hover:underline">
               support@kindredrp.com
             </a>
           </div>
           
-          <div>
-            <h4 className="text-white font-display font-bold mb-4">TECHNICAL SUPPORT</h4>
+          <div className={language === 'ar' ? "text-right" : ""}>
+            <h4 className="text-white font-display font-bold mb-4">
+              {t('techSupport')}
+            </h4>
             <ul className="space-y-2">
-              <li><a href="#" className="text-kindred-light hover:text-kindred-accent transition-colors">Privacy Policy</a></li>
+              <li><a href="#" className="text-kindred-light hover:text-kindred-accent transition-colors">{t('privacyPolicy')}</a></li>
               <li><a href="#" className="text-kindred-light hover:text-kindred-accent transition-colors">FAQ</a></li>
-              <li><a href="#" className="text-kindred-light hover:text-kindred-accent transition-colors">Terms of Service</a></li>
+              <li><a href="#" className="text-kindred-light hover:text-kindred-accent transition-colors">{t('termsOfService')}</a></li>
             </ul>
           </div>
           
-          <div>
-            <h4 className="text-white font-display font-bold mb-4">HELP / REFERENCES</h4>
+          <div className={language === 'ar' ? "text-right" : ""}>
+            <h4 className="text-white font-display font-bold mb-4">
+              {t('helpReferences')}
+            </h4>
             <p className="text-kindred-light text-sm">
-              EN-US AND ALL OTHER LANGUAGES ARE WELCOME IN-GAME, BUT ON THE SITES WE'LL STICK TO ENGLISH, FRENCH AND ARABIC
+              {t('languageNote')}
             </p>
             
-            <div className="mt-4 flex items-center space-x-2">
-              <span className="text-xs text-kindred-light">Languages:</span>
-              <a href="#" className="text-xs text-kindred-light hover:text-kindred-accent">English</a>
+            <div className={cn("mt-4 flex items-center", language === 'ar' ? "justify-end space-x-reverse space-x-2" : "space-x-2")}>
+              <span className="text-xs text-kindred-light">{t('languages')}:</span>
+              <button 
+                onClick={() => language !== 'en' && document.dispatchEvent(new CustomEvent('change-language', { detail: 'en' }))} 
+                className={cn("text-xs", language === 'en' ? "text-kindred-accent" : "text-kindred-light hover:text-kindred-accent")}
+              >
+                English
+              </button>
               <span className="text-kindred-light">|</span>
-              <a href="#" className="text-xs text-kindred-light hover:text-kindred-accent">Français</a>
+              <button 
+                onClick={() => language !== 'fr' && document.dispatchEvent(new CustomEvent('change-language', { detail: 'fr' }))} 
+                className={cn("text-xs", language === 'fr' ? "text-kindred-accent" : "text-kindred-light hover:text-kindred-accent")}
+              >
+                Français
+              </button>
               <span className="text-kindred-light">|</span>
-              <a href="#" className="text-xs text-kindred-light hover:text-kindred-accent">العربية</a>
+              <button 
+                onClick={() => language !== 'ar' && document.dispatchEvent(new CustomEvent('change-language', { detail: 'ar' }))} 
+                className={cn("text-xs", language === 'ar' ? "text-kindred-accent" : "text-kindred-light hover:text-kindred-accent font-[Tajawal]")}
+              >
+                العربية
+              </button>
             </div>
           </div>
         </div>
         
         <div className="border-t border-kindred-primary/20 pt-6 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-kindred-light text-sm mb-4 md:mb-0">
-            © {currentYear} KindreD Role Play. All rights reserved.
+          <p className={cn("text-kindred-light text-sm mb-4 md:mb-0", language === 'ar' ? "text-right" : "")}>
+            © {currentYear} KindreD Role Play. {t('allRightsReserved')}.
           </p>
           <button 
             onClick={scrollToTop}

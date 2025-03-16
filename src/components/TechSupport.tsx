@@ -4,12 +4,13 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { LifeBuoy, X } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
+import { cn } from '@/lib/utils';
 
 export const TechSupport = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-  const { t, theme } = useLanguage();
+  const { t, theme, language } = useLanguage();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,8 +20,8 @@ export const TechSupport = () => {
     
     // Show success message
     toast({
-      title: "Support request submitted",
-      description: "We'll get back to you as soon as possible.",
+      title: t('supportRequest'),
+      description: t('getBackToYou'),
       duration: 3000,
     });
     
@@ -47,7 +48,7 @@ export const TechSupport = () => {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className={`glass-card max-w-md w-full mx-4 p-6 animate-scale-in ${theme === 'light' ? 'light-mode' : ''}`}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-kindred-accent">{t('techSupport')}</h2>
+          <h2 className={cn("text-xl font-bold text-kindred-accent", language === 'ar' ? "text-right" : "")}>{t('techSupport')}</h2>
           <Button 
             variant="ghost" 
             size="icon" 
@@ -60,7 +61,7 @@ export const TechSupport = () => {
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-1">
+            <label htmlFor="email" className={cn("block text-sm font-medium mb-1", language === 'ar' ? "text-right" : "")}>
               Email
             </label>
             <input
@@ -69,12 +70,13 @@ export const TechSupport = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-3 py-2 bg-kindred-darker/50 light-mode:bg-white/50 border border-kindred-primary/30 rounded-md focus:outline-none focus:ring-2 focus:ring-kindred-accent"
+              className={cn("w-full px-3 py-2 bg-kindred-darker/50 light-mode:bg-white/50 border border-kindred-primary/30 rounded-md focus:outline-none focus:ring-2 focus:ring-kindred-accent", 
+                language === 'ar' ? "text-right" : "")}
             />
           </div>
           
           <div>
-            <label htmlFor="message" className="block text-sm font-medium mb-1">
+            <label htmlFor="message" className={cn("block text-sm font-medium mb-1", language === 'ar' ? "text-right" : "")}>
               {t('message')}
             </label>
             <textarea
@@ -83,7 +85,8 @@ export const TechSupport = () => {
               onChange={(e) => setMessage(e.target.value)}
               required
               rows={4}
-              className="w-full px-3 py-2 bg-kindred-darker/50 light-mode:bg-white/50 border border-kindred-primary/30 rounded-md focus:outline-none focus:ring-2 focus:ring-kindred-accent"
+              className={cn("w-full px-3 py-2 bg-kindred-darker/50 light-mode:bg-white/50 border border-kindred-primary/30 rounded-md focus:outline-none focus:ring-2 focus:ring-kindred-accent", 
+                language === 'ar' ? "text-right" : "")}
             />
           </div>
           

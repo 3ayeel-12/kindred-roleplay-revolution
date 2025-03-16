@@ -3,9 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Play, ChevronDown } from "lucide-react";
 import ServerStats from "./ServerStats";
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { cn } from "@/lib/utils";
 
 export function Hero() {
   const [activeSlide, setActiveSlide] = useState(0);
+  const { t, language } = useLanguage();
+  
   const backgrounds = [
     "/lovable-uploads/fad85541-f410-4c51-b858-d5c293c3a2b4.png",
     "/lovable-uploads/3cb2cca7-a342-487a-bcf1-a14f8fa95aff.png",
@@ -49,24 +53,36 @@ export function Hero() {
         </div>
         
         <div className="text-center max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-7xl font-display font-bold mb-4 animate-fade-in drop-shadow-glow">
-            <span className="text-kindred-accent glow-text light-mode:text-kindred-primary">KINDRED COMMUNITY</span>
-            <br/>SA-MA ROLEPLAY & CHILL
+          <h1 className={cn(
+            "text-4xl md:text-7xl font-display font-bold mb-4 animate-fade-in drop-shadow-glow",
+            language === 'ar' ? "leading-relaxed" : ""
+          )}>
+            <span className="text-kindred-accent glow-text light-mode:text-kindred-primary">
+              {t('kindredCommunityTitle')}
+            </span>
+            <br/>
+            {t('sampRoleplayAndChill')}
           </h1>
-          <p className="text-xl md:text-2xl mb-10 max-w-2xl mx-auto animate-fade-in opacity-90 drop-shadow-md text-kindred-light light-mode:text-kindred-darker font-semibold">
-            CREATING LEGENDARY ROLEPLAY MOMENTS WITH OUR COMMUNITY
+          <p className={cn(
+            "text-xl md:text-2xl mb-10 max-w-2xl mx-auto animate-fade-in opacity-90 drop-shadow-md text-kindred-light light-mode:text-kindred-darker font-semibold",
+            language === 'ar' ? "leading-relaxed" : ""
+          )}>
+            {t('creatingLegendaryMoments')}
           </p>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16 animate-fade-in">
             <Button className="btn-accent group relative overflow-hidden">
-              <span className="relative z-10">START PLAYING</span>
+              <span className="relative z-10">{t('startPlaying')}</span>
               <span className="absolute inset-0 bg-gradient-to-r from-amber-500 to-orange-600 transform translate-y-full transition-transform duration-300 group-hover:translate-y-0"></span>
-              <span className="ml-2 group-hover:translate-x-1 transition-transform relative z-10">→</span>
+              <span className={cn(
+                "ml-2 group-hover:translate-x-1 transition-transform relative z-10",
+                language === 'ar' ? "rotate-180" : ""
+              )}>→</span>
             </Button>
             
             <Button variant="outline" className="bg-transparent border border-kindred-accent/30 text-white hover:bg-kindred-accent/10 hover:border-kindred-accent/50 flex items-center gap-2 group light-mode:border-kindred-primary/30 light-mode:text-kindred-primary light-mode:hover:bg-kindred-primary/10">
               <Play size={16} className="text-kindred-accent group-hover:animate-pulse light-mode:text-kindred-primary" />
-              WATCH TRAILER
+              {t('watchTrailer')}
             </Button>
           </div>
         </div>

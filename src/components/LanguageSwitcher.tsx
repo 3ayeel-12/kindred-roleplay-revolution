@@ -39,6 +39,18 @@ export const LanguageSwitcher = ({ variant = "desktop" }: { variant?: "desktop" 
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, []);
 
+  // Listen for custom language change events from other components
+  useEffect(() => {
+    const handleLanguageChange = (e: CustomEvent) => {
+      if (e.detail && typeof e.detail === 'string' && languages[e.detail as keyof typeof languages]) {
+        setLanguage(e.detail as typeof language);
+      }
+    };
+    
+    document.addEventListener('change-language' as any, handleLanguageChange as EventListener);
+    return () => document.removeEventListener('change-language' as any, handleLanguageChange as EventListener);
+  }, [setLanguage]);
+
   if (variant === "mobile") {
     return (
       <div className="w-full mb-4 space-y-2">
