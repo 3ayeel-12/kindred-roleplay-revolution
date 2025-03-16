@@ -1,0 +1,104 @@
+
+@layer components {
+  .glow-text {
+    text-shadow: 0 0 8px rgba(152, 210, 192, 0.6);
+  }
+  
+  .light-mode .glow-text {
+    text-shadow: 0 0 8px rgba(32, 87, 129, 0.5);
+  }
+  
+  .nav-link {
+    @apply relative px-4 py-2 text-sm font-medium transition-colors hover:text-kindred-accent;
+  }
+  
+  .light-mode .nav-link {
+    @apply hover:text-kindred-primary;
+  }
+  
+  .nav-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-kindred-accent transition-all duration-300;
+  }
+  
+  .light-mode .nav-link::after {
+    @apply bg-kindred-primary;
+  }
+  
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+  
+  .glass-card {
+    @apply backdrop-blur-md bg-kindred-darkest/60 border border-kindred-primary/20 rounded-xl transition-all duration-300;
+  }
+  
+  .light-mode .glass-card {
+    @apply backdrop-blur-md bg-white/70 border border-kindred-primary/20;
+  }
+  
+  .glass-card:hover {
+    @apply bg-kindred-darkest/70 border-kindred-primary/30 shadow-lg shadow-kindred-primary/10;
+  }
+  
+  .light-mode .glass-card:hover {
+    @apply bg-white/80 border-kindred-primary/30 shadow-lg shadow-kindred-primary/10;
+  }
+  
+  .btn-primary {
+    @apply bg-kindred-primary text-white font-bold uppercase px-6 py-3 rounded-md hover:bg-kindred-primary/90 transition-all shadow-md hover:shadow-kindred-primary/20 hover:shadow-lg;
+  }
+  
+  .btn-secondary {
+    @apply bg-kindred-secondary text-white font-bold uppercase px-6 py-3 rounded-md hover:bg-kindred-secondary/90 transition-all shadow-md hover:shadow-kindred-secondary/20 hover:shadow-lg;
+  }
+  
+  .btn-accent {
+    @apply bg-kindred-accent text-kindred-darkest font-bold uppercase px-6 py-3 rounded-md hover:bg-kindred-accent/90 transition-all shadow-md hover:shadow-kindred-accent/20 hover:shadow-lg;
+  }
+  
+  .light-mode .btn-accent {
+    @apply bg-kindred-secondary text-white;
+  }
+  
+  .hero-container {
+    @apply relative overflow-hidden;
+  }
+  
+  .hero-container::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-t from-kindred-darkest via-transparent to-transparent z-10;
+  }
+  
+  .light-mode .hero-container::before {
+    @apply from-kindred-light;
+  }
+  
+  .server-stat {
+    @apply flex flex-col items-center justify-center p-2;
+  }
+  
+  .server-stat-value {
+    @apply text-2xl font-bold text-kindred-accent;
+  }
+  
+  .server-stat-label {
+    @apply text-xs uppercase text-gray-400;
+  }
+  
+  .light-mode .server-stat-label {
+    @apply text-gray-600;
+  }
+  
+  .feature-card {
+    @apply p-6 rounded-xl border border-kindred-primary/30 bg-gradient-to-br from-kindred-dark to-kindred-darker hover:from-kindred-dark/90 hover:to-kindred-darker/90 transition-all duration-300;
+  }
+  
+  .light-mode .feature-card {
+    @apply bg-gradient-to-br from-white to-kindred-light hover:from-white/90 hover:to-kindred-light/90 border-kindred-primary/20;
+  }
+  
+  .social-card {
+    @apply relative overflow-hidden rounded-xl flex items-center p-4 transition-transform duration-300 hover:scale-105;
+  }
+}

@@ -1,0 +1,30 @@
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-kindred-darkest;
+}
+
+.light-mode ::-webkit-scrollbar-track {
+  @apply bg-kindred-light;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-kindred-secondary rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-kindred-accent;
+}
+
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.font-ar {
+  font-family: 'Tajawal', sans-serif;
+}
