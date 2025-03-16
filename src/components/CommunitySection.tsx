@@ -1,34 +1,31 @@
 
 import { cn } from "@/lib/utils";
+import { Discord, TikTok, Youtube } from "lucide-react";
 
 const socialPlatforms = [
   {
     name: "YouTube",
-    subscribers: "20,000+",
+    subscribers: "7.81K followers",
     color: "from-kindred-primary to-kindred-secondary",
     textColor: "text-white",
-    icon: "YouTube"
+    icon: Youtube,
+    url: "https://www.youtube.com/@splintaTV"
   },
   {
     name: "Discord",
-    subscribers: "200,000+",
+    subscribers: "13.3K members",
     color: "from-kindred-secondary to-kindred-accent",
     textColor: "text-kindred-darker",
-    icon: "Discord"
+    icon: Discord,
+    url: "https://discord.gg/dNUAA5sX9D"
   },
   {
     name: "TikTok",
-    subscribers: "11,000+",
+    subscribers: "36K likes",
     color: "from-kindred-accent to-kindred-light",
     textColor: "text-kindred-darker",
-    icon: "TikTok"
-  },
-  {
-    name: "Instagram",
-    subscribers: "4,000+",
-    color: "from-kindred-dark to-kindred-primary",
-    textColor: "text-white",
-    icon: "Instagram"
+    icon: TikTok,
+    url: "https://www.tiktok.com/@splintatv"
   }
 ];
 
@@ -40,25 +37,28 @@ export function CommunitySection() {
           JOIN OUR <span className="text-kindred-accent">COMMUNITY</span>
         </h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 max-w-5xl mx-auto">
           {socialPlatforms.map((platform, index) => (
-            <div 
+            <a 
+              href={platform.url}
+              target="_blank"
+              rel="noopener noreferrer"
               key={index} 
               className={cn(
-                "social-card bg-gradient-to-r hover:shadow-lg",
+                "social-card bg-gradient-to-r hover:shadow-lg transition-all duration-300 hover:-translate-y-1",
                 platform.color
               )}
             >
-              <div className="flex flex-1 items-center justify-between p-4">
+              <div className="flex flex-1 items-center justify-between p-6">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                    <span className={platform.textColor}>{platform.icon}</span>
+                    <platform.icon className={cn("w-6 h-6", platform.textColor)} />
                   </div>
                   <div>
                     <h3 className={cn("text-xl font-display font-bold", platform.textColor)}>
                       {platform.name}
                     </h3>
-                    <p className="text-white/80 text-sm">{platform.subscribers} SUBSCRIBERS</p>
+                    <p className="text-white/80 text-sm">{platform.subscribers}</p>
                   </div>
                 </div>
                 <div>
@@ -67,7 +67,7 @@ export function CommunitySection() {
                   </div>
                 </div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
         
