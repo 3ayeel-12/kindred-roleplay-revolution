@@ -29,11 +29,11 @@ export function Hero() {
   return (
     <section id="home" className="hero-container w-full min-h-screen pt-20 relative overflow-hidden">
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-game"></div>
+        <div className="absolute inset-0 bg-gradient-game light-mode:bg-light-gradient-game"></div>
         {backgrounds.map((bg, index) => (
           <div 
             key={index}
-            className={`absolute inset-0 w-full h-full bg-center bg-cover transition-opacity duration-1000 ${activeSlide === index ? 'opacity-60' : 'opacity-0'}`}
+            className={`absolute inset-0 w-full h-full bg-center bg-cover transition-opacity duration-1000 ${activeSlide === index ? 'opacity-60 light-mode:opacity-40' : 'opacity-0'}`}
             style={{ backgroundImage: `url('${bg}')` }}
           ></div>
         ))}
@@ -49,12 +49,12 @@ export function Hero() {
         </div>
         
         <div className="text-center max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-7xl font-display font-bold text-white mb-4 animate-fade-in drop-shadow-glow">
-            <span className="text-kindred-accent glow-text">GTA SAMP</span> INTERNATIONAL
-            <br />ROLE PLAY SERVERS
+          <h1 className="text-4xl md:text-7xl font-display font-bold mb-4 animate-fade-in drop-shadow-glow">
+            <span className="text-kindred-accent glow-text light-mode:text-kindred-primary">KINDRED COMMUNITY</span>
+            <br/>SA-MA ROLEPLAY & CHILL
           </h1>
-          <p className="text-xl md:text-2xl text-kindred-light mb-10 max-w-2xl mx-auto animate-fade-in opacity-90 drop-shadow-md">
-            WE HAVE BEEN MAKING MOMENTS IN GTA FOR YOU SINCE MORE THAN TEN YEARS
+          <p className="text-xl md:text-2xl mb-10 max-w-2xl mx-auto animate-fade-in opacity-90 drop-shadow-md text-kindred-light light-mode:text-kindred-darker font-semibold">
+            CREATING LEGENDARY ROLEPLAY MOMENTS WITH OUR COMMUNITY
           </p>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16 animate-fade-in">
@@ -64,8 +64,8 @@ export function Hero() {
               <span className="ml-2 group-hover:translate-x-1 transition-transform relative z-10">→</span>
             </Button>
             
-            <Button variant="outline" className="bg-transparent border border-kindred-accent/30 text-white hover:bg-kindred-accent/10 hover:border-kindred-accent/50 flex items-center gap-2 group">
-              <Play size={16} className="text-kindred-accent group-hover:animate-pulse" />
+            <Button variant="outline" className="bg-transparent border border-kindred-accent/30 text-white hover:bg-kindred-accent/10 hover:border-kindred-accent/50 flex items-center gap-2 group light-mode:border-kindred-primary/30 light-mode:text-kindred-primary light-mode:hover:bg-kindred-primary/10">
+              <Play size={16} className="text-kindred-accent group-hover:animate-pulse light-mode:text-kindred-primary" />
               WATCH TRAILER
             </Button>
           </div>
@@ -76,9 +76,9 @@ export function Hero() {
         <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
           <button 
             onClick={scrollToAbout}
-            className="w-10 h-10 rounded-full flex items-center justify-center bg-kindred-primary/20 hover:bg-kindred-primary/30 transition-colors"
+            className="w-10 h-10 rounded-full flex items-center justify-center bg-kindred-primary/20 hover:bg-kindred-primary/30 transition-colors light-mode:bg-kindred-primary/30 light-mode:hover:bg-kindred-primary/50"
           >
-            <ChevronDown className="text-kindred-accent" />
+            <ChevronDown className="text-kindred-accent light-mode:text-kindred-primary" />
           </button>
         </div>
       </div>

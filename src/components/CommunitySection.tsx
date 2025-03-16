@@ -31,10 +31,10 @@ const socialPlatforms = [
 
 export function CommunitySection() {
   return (
-    <section id="community" className="py-20 bg-gradient-to-b from-kindred-dark to-kindred-darker">
+    <section id="community" className="py-20 bg-gradient-to-b from-kindred-dark to-kindred-darker light-mode:from-kindred-light/90 light-mode:to-white">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-5xl font-display font-bold text-center mb-16">
-          JOIN OUR <span className="text-kindred-accent">COMMUNITY</span>
+        <h2 className="text-3xl md:text-5xl font-display font-bold text-center mb-16 light-mode:text-kindred-primary">
+          JOIN OUR <span className="text-kindred-accent light-mode:text-kindred-secondary">COMMUNITY</span>
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 max-w-5xl mx-auto">
@@ -71,12 +71,12 @@ export function CommunitySection() {
           ))}
         </div>
         
-        <div className="mt-16 glass-card p-8 max-w-5xl mx-auto">
+        <div className="mt-16 glass-card p-8 max-w-5xl mx-auto light-mode:bg-white/80 light-mode:border-kindred-primary/30 light-mode:shadow-md">
           <div className="text-center">
-            <h3 className="text-2xl font-display font-bold mb-4 text-kindred-accent">
+            <h3 className="text-2xl font-display font-bold mb-4 text-kindred-accent light-mode:text-kindred-primary">
               SUBSCRIBE TO OUR NEWSLETTER
             </h3>
-            <p className="text-kindred-light mb-6 max-w-2xl mx-auto">
+            <p className="text-kindred-light mb-6 max-w-2xl mx-auto light-mode:text-kindred-darker">
               Stay updated with the latest events, updates, and community highlights from the KindreD Role Play servers.
             </p>
             
@@ -84,9 +84,9 @@ export function CommunitySection() {
               <input 
                 type="email" 
                 placeholder="Your email address" 
-                className="flex-1 px-4 py-3 rounded-md bg-kindred-dark border border-kindred-primary/30 text-white focus:outline-none focus:border-kindred-accent/50"
+                className="flex-1 px-4 py-3 rounded-md bg-kindred-dark border border-kindred-primary/30 text-white focus:outline-none focus:border-kindred-accent/50 light-mode:bg-white light-mode:border-kindred-primary/30 light-mode:text-kindred-darker"
               />
-              <button className="btn-accent">
+              <button className="btn-accent light-mode:bg-kindred-primary light-mode:text-white">
                 SUBSCRIBE
               </button>
             </div>
