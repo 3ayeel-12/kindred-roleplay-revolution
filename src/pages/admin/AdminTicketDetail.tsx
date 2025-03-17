@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, Clock, User, Mail } from 'lucide-react';
-import { useGetSupportTickets } from '@/hooks/use-support';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { 
@@ -14,37 +13,68 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { 
+  getSupportTicketById, 
+  getTicketReplies, 
+  addTicketReply, 
+  updateTicketStatus,
+  SupportTicket,
+  TicketReply
+} from '@/services/supportService';
+import { isAdminLoggedIn } from '@/services/adminAuthService';
 
 export default function AdminTicketDetail() {
-  const { ticketId } = useParams();
+  const { ticketId } = useParams<{ ticketId: string }>();
   const navigate = useNavigate();
-  const { tickets, getTickets, updateTicket, addReply, isLoading } = useGetSupportTickets();
-  const [ticket, setTicket] = useState<any>(null);
+  const [ticket, setTicket] = useState<SupportTicket | null>(null);
+  const [replies, setReplies] = useState<TicketReply[]>([]);
   const [replyMessage, setReplyMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   
   useEffect(() => {
-    const fetchData = async () => {
-      await getTickets();
-    };
-    
-    fetchData();
-  }, []);
-  
-  useEffect(() => {
-    if (tickets.length > 0 && ticketId) {
-      const foundTicket = tickets.find(t => t.id === ticketId);
-      setTicket(foundTicket);
+    if (!isAdminLoggedIn()) {
+      navigate('/admin');
+      return;
     }
-  }, [tickets, ticketId]);
+    
+    if (ticketId) {
+      fetchTicketDetails();
+    }
+  }, [ticketId, navigate]);
   
-  const handleStatusChange = async (status: string) => {
+  const fetchTicketDetails = async () => {
     if (!ticketId) return;
     
+    setIsLoading(true);
     try {
-      await updateTicket(ticketId, { status: status as any });
+      const ticketData = await getSupportTicketById(ticketId);
+      if (ticketData) {
+        setTicket(ticketData);
+        
+        const repliesData = await getTicketReplies(ticketId);
+        setReplies(repliesData);
+      }
+    } catch (error) {
+      console.error('Error fetching ticket details:', error);
+      toast.error('Failed to load ticket details');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const handleStatusChange = async (status: string) => {
+    if (!ticketId || !ticket) return;
+    
+    try {
+      await updateTicketStatus(ticketId, status as 'open' | 'in-progress' | 'resolved');
+      
+      // Update local state
+      setTicket(prev => prev ? { ...prev, status: status as 'open' | 'in-progress' | 'resolved' } : null);
+      
       toast.success(`Ticket status updated to ${status}`);
     } catch (error) {
+      console.error('Failed to update ticket status:', error);
       toast.error('Failed to update ticket status');
     }
   };
@@ -55,10 +85,18 @@ export default function AdminTicketDetail() {
     setIsSending(true);
     
     try {
-      await addReply(ticketId, replyMessage, true);
+      const newReply = await addTicketReply(ticketId, replyMessage, true);
+      
+      // Add the new reply to the list
+      setReplies(prev => [...prev, newReply]);
+      
+      // Update ticket status in the UI
+      setTicket(prev => prev ? { ...prev, status: 'in-progress' } : null);
+      
       setReplyMessage('');
       toast.success('Reply sent successfully');
     } catch (error) {
+      console.error('Failed to send reply:', error);
       toast.error('Failed to send reply');
     } finally {
       setIsSending(false);
@@ -104,7 +142,7 @@ export default function AdminTicketDetail() {
           <div className="border rounded-lg p-4 bg-card">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 className="font-semibold text-lg">Original Message</h2>
+                <h2 className="font-semibold text-lg">{ticket.subject || 'Support Request'}</h2>
                 <p className="mt-2 whitespace-pre-wrap">{ticket.message}</p>
               </div>
               <div className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -133,24 +171,24 @@ export default function AdminTicketDetail() {
                   <p className="whitespace-pre-wrap">{ticket.message}</p>
                 </div>
                 <div className="flex gap-2 mt-1 text-xs text-muted-foreground">
-                  <span className="font-medium">{ticket.email}</span>
+                  <span className="font-medium">{ticket.user_name || ticket.user_email}</span>
                   <span>•</span>
-                  <span>{new Date(ticket.createdAt).toLocaleString()}</span>
+                  <span>{new Date(ticket.created_at).toLocaleString()}</span>
                 </div>
               </div>
             </div>
             
             {/* Replies */}
-            {ticket.replies && ticket.replies.length > 0 ? (
-              ticket.replies.map((reply: any) => (
+            {replies.length > 0 ? (
+              replies.map((reply) => (
                 <div key={reply.id} className="flex gap-4 items-start">
                   <div className={cn(
                     "w-8 h-8 rounded-full flex items-center justify-center shrink-0",
-                    reply.isAdmin 
+                    reply.is_admin 
                       ? "bg-primary text-primary-foreground" 
                       : "bg-gray-200 text-gray-700"
                   )}>
-                    {reply.isAdmin ? (
+                    {reply.is_admin ? (
                       <Mail className="h-4 w-4" />
                     ) : (
                       <User className="h-4 w-4" />
@@ -159,7 +197,7 @@ export default function AdminTicketDetail() {
                   <div className="flex-1">
                     <div className={cn(
                       "p-3 rounded-lg",
-                      reply.isAdmin 
+                      reply.is_admin 
                         ? "bg-primary text-primary-foreground" 
                         : "bg-accent"
                     )}>
@@ -167,10 +205,10 @@ export default function AdminTicketDetail() {
                     </div>
                     <div className="flex gap-2 mt-1 text-xs text-muted-foreground">
                       <span className="font-medium">
-                        {reply.isAdmin ? 'Support Team' : ticket.email}
+                        {reply.is_admin ? 'Support Team' : ticket.user_name || ticket.user_email}
                       </span>
                       <span>•</span>
-                      <span>{new Date(reply.createdAt).toLocaleString()}</span>
+                      <span>{new Date(reply.created_at).toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
@@ -224,21 +262,26 @@ export default function AdminTicketDetail() {
             </div>
             
             <div>
+              <p className="text-sm text-muted-foreground">User Name</p>
+              <p className="mt-1 font-medium">{ticket.user_name || 'Not provided'}</p>
+            </div>
+            
+            <div>
               <p className="text-sm text-muted-foreground">User Email</p>
-              <p className="mt-1 font-medium">{ticket.email}</p>
+              <p className="mt-1 font-medium">{ticket.user_email}</p>
             </div>
             
             <div>
               <p className="text-sm text-muted-foreground">Created</p>
               <div className="mt-1 flex items-center gap-2">
                 <Clock className="h-4 w-4 text-muted-foreground" />
-                <span>{new Date(ticket.createdAt).toLocaleString()}</span>
+                <span>{new Date(ticket.created_at).toLocaleString()}</span>
               </div>
             </div>
             
             <div>
               <p className="text-sm text-muted-foreground">Replies</p>
-              <p className="mt-1 font-medium">{ticket.replies?.length || 0}</p>
+              <p className="mt-1 font-medium">{replies.length}</p>
             </div>
           </div>
           

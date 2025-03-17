@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Filter, ArrowUpDown } from 'lucide-react';
-import { useGetSupportTickets } from '@/hooks/use-support';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -14,17 +13,39 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { getSupportTickets, SupportTicket } from '@/services/supportService';
+import { isAdminLoggedIn } from '@/services/adminAuthService';
+import { toast } from 'sonner';
 
 export default function AdminTickets() {
-  const { tickets, getTickets, isLoading } = useGetSupportTickets();
+  const [tickets, setTickets] = useState<SupportTicket[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const navigate = useNavigate();
   
   useEffect(() => {
-    getTickets();
-  }, []);
+    if (!isAdminLoggedIn()) {
+      navigate('/admin');
+      return;
+    }
+    
+    fetchTickets();
+  }, [navigate]);
+  
+  const fetchTickets = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getSupportTickets();
+      setTickets(data);
+    } catch (error) {
+      console.error('Error fetching tickets:', error);
+      toast.error('Failed to load tickets');
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
   const handleSortChange = () => {
     setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -38,8 +59,9 @@ export default function AdminTickets() {
       const query = searchQuery.toLowerCase();
       filteredTickets = filteredTickets.filter(
         ticket => 
-          ticket.email.toLowerCase().includes(query) || 
-          ticket.message.toLowerCase().includes(query)
+          ticket.user_email.toLowerCase().includes(query) || 
+          ticket.message.toLowerCase().includes(query) ||
+          (ticket.user_name && ticket.user_name.toLowerCase().includes(query))
       );
     }
     
@@ -50,8 +72,8 @@ export default function AdminTickets() {
     
     // Apply sorting
     filteredTickets.sort((a, b) => {
-      const dateA = new Date(a.createdAt).getTime();
-      const dateB = new Date(b.createdAt).getTime();
+      const dateA = new Date(a.created_at).getTime();
+      const dateB = new Date(b.created_at).getTime();
       
       return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
     });
@@ -97,7 +119,7 @@ export default function AdminTickets() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[180px]">Email</TableHead>
+              <TableHead className="w-[180px]">User</TableHead>
               <TableHead className="hidden md:table-cell">Message</TableHead>
               <TableHead className="w-[100px]">Status</TableHead>
               <TableHead className="w-[150px]">
@@ -132,7 +154,9 @@ export default function AdminTickets() {
                   className="cursor-pointer hover:bg-muted/50"
                   onClick={() => navigate(`/admin/tickets/${ticket.id}`)}
                 >
-                  <TableCell className="font-medium">{ticket.email}</TableCell>
+                  <TableCell className="font-medium">
+                    {ticket.user_name ? `${ticket.user_name} (${ticket.user_email})` : ticket.user_email}
+                  </TableCell>
                   <TableCell className="hidden md:table-cell">
                     <span className="line-clamp-1">{ticket.message}</span>
                   </TableCell>
@@ -148,7 +172,7 @@ export default function AdminTickets() {
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {new Date(ticket.createdAt).toLocaleDateString()}
+                    {new Date(ticket.created_at).toLocaleDateString()}
                   </TableCell>
                 </TableRow>
               ))

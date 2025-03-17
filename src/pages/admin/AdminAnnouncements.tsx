@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from 'react';
-import { useAdminAnnouncements } from '@/hooks/use-support';
 import { Button } from '@/components/ui/button';
 import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
@@ -16,31 +15,52 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { 
+  getAllAnnouncements,
+  createAnnouncement,
+  updateAnnouncement,
+  deleteAnnouncement,
+  Announcement 
+} from '@/services/announcementService';
+import { isAdminLoggedIn } from '@/services/adminAuthService';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminAnnouncements() {
-  const { getAnnouncements, createAnnouncement, updateAnnouncement, deleteAnnouncement, isLoading } = useAdminAnnouncements();
-  const [announcements, setAnnouncements] = useState<any[]>([]);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedAnnouncement, setSelectedAnnouncement] = useState<any>(null);
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const navigate = useNavigate();
+  
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    imageUrl: '',
-    videoUrl: '',
-    isPublished: true
+    image_url: '',
+    video_url: '',
+    is_published: true
   });
   
   useEffect(() => {
+    if (!isAdminLoggedIn()) {
+      navigate('/admin');
+      return;
+    }
+    
     loadAnnouncements();
-  }, []);
+  }, [navigate]);
   
   const loadAnnouncements = async () => {
+    setIsLoading(true);
     try {
-      const data = await getAnnouncements();
+      const data = await getAllAnnouncements();
       setAnnouncements(data);
     } catch (error) {
+      console.error('Error loading announcements:', error);
       toast.error('Failed to load announcements');
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -49,26 +69,26 @@ export default function AdminAnnouncements() {
     setFormData({
       title: '',
       content: '',
-      imageUrl: '',
-      videoUrl: '',
-      isPublished: true
+      image_url: '',
+      video_url: '',
+      is_published: true
     });
     setIsDialogOpen(true);
   };
   
-  const handleEdit = (announcement: any) => {
+  const handleEdit = (announcement: Announcement) => {
     setSelectedAnnouncement(announcement);
     setFormData({
       title: announcement.title,
       content: announcement.content,
-      imageUrl: announcement.imageUrl || '',
-      videoUrl: announcement.videoUrl || '',
-      isPublished: announcement.isPublished
+      image_url: announcement.image_url || '',
+      video_url: announcement.video_url || '',
+      is_published: announcement.is_published
     });
     setIsDialogOpen(true);
   };
   
-  const handleDelete = (announcement: any) => {
+  const handleDelete = (announcement: Announcement) => {
     setSelectedAnnouncement(announcement);
     setIsDeleteDialogOpen(true);
   };
@@ -78,10 +98,14 @@ export default function AdminAnnouncements() {
     
     try {
       await deleteAnnouncement(selectedAnnouncement.id);
+      
+      // Update local state
+      setAnnouncements(prev => prev.filter(a => a.id !== selectedAnnouncement.id));
+      
       toast.success('Announcement deleted');
-      loadAnnouncements();
       setIsDeleteDialogOpen(false);
     } catch (error) {
+      console.error('Error deleting announcement:', error);
       toast.error('Failed to delete announcement');
     }
   };
@@ -92,25 +116,42 @@ export default function AdminAnnouncements() {
   };
   
   const handleSwitchChange = (checked: boolean) => {
-    setFormData(prev => ({ ...prev, isPublished: checked }));
+    setFormData(prev => ({ ...prev, is_published: checked }));
   };
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSaving(true);
     
     try {
       if (selectedAnnouncement) {
+        // Update existing announcement
         await updateAnnouncement(selectedAnnouncement.id, formData);
+        
+        // Update local state
+        setAnnouncements(prev => 
+          prev.map(a => a.id === selectedAnnouncement.id ? 
+            { ...a, ...formData, updated_at: new Date().toISOString() } : a
+          )
+        );
+        
         toast.success('Announcement updated');
       } else {
-        await createAnnouncement(formData);
+        // Create new announcement
+        const newAnnouncement = await createAnnouncement(formData);
+        
+        // Update local state
+        setAnnouncements(prev => [newAnnouncement, ...prev]);
+        
         toast.success('Announcement created');
       }
       
-      loadAnnouncements();
       setIsDialogOpen(false);
     } catch (error) {
+      console.error('Error saving announcement:', error);
       toast.error('Failed to save announcement');
+    } finally {
+      setIsSaving(false);
     }
   };
   
@@ -144,12 +185,15 @@ export default function AdminAnnouncements() {
         <div className="grid gap-4 md:grid-cols-2">
           {announcements.map(announcement => (
             <div key={announcement.id} className="border rounded-lg overflow-hidden bg-card">
-              {announcement.imageUrl && (
+              {announcement.image_url && (
                 <div className="aspect-video w-full overflow-hidden bg-muted">
                   <img
-                    src={announcement.imageUrl}
+                    src={announcement.image_url}
                     alt={announcement.title}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x225?text=Invalid+Image+URL';
+                    }}
                   />
                 </div>
               )}
@@ -158,7 +202,7 @@ export default function AdminAnnouncements() {
                 <div className="flex items-start justify-between">
                   <h2 className="text-lg font-semibold">{announcement.title}</h2>
                   <div className="flex items-center gap-1">
-                    {announcement.isPublished ? (
+                    {announcement.is_published ? (
                       <Eye className="h-4 w-4 text-green-500" />
                     ) : (
                       <EyeOff className="h-4 w-4 text-muted-foreground" />
@@ -168,7 +212,7 @@ export default function AdminAnnouncements() {
                 
                 <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{announcement.content}</p>
                 
-                {announcement.videoUrl && getYouTubeId(announcement.videoUrl) && (
+                {announcement.video_url && getYouTubeId(announcement.video_url) && (
                   <div className="mt-3 text-xs text-blue-500">
                     YouTube video embedded
                   </div>
@@ -176,7 +220,7 @@ export default function AdminAnnouncements() {
                 
                 <div className="mt-4 flex justify-between items-center">
                   <span className="text-xs text-muted-foreground">
-                    {new Date(announcement.createdAt).toLocaleString()}
+                    {new Date(announcement.created_at).toLocaleString()}
                   </span>
                   
                   <div className="flex items-center gap-2">
@@ -245,18 +289,18 @@ export default function AdminAnnouncements() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="imageUrl">Image URL (optional)</Label>
+              <Label htmlFor="image_url">Image URL (optional)</Label>
               <Input
-                id="imageUrl"
-                name="imageUrl"
-                value={formData.imageUrl}
+                id="image_url"
+                name="image_url"
+                value={formData.image_url}
                 onChange={handleInputChange}
                 placeholder="https://example.com/image.jpg"
               />
-              {formData.imageUrl && (
+              {formData.image_url && (
                 <div className="mt-2 aspect-video max-h-[150px] overflow-hidden rounded-md border">
                   <img
-                    src={formData.imageUrl}
+                    src={formData.image_url}
                     alt="Preview"
                     className="w-full h-full object-cover"
                     onError={(e) => {
@@ -268,20 +312,20 @@ export default function AdminAnnouncements() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="videoUrl">YouTube Video URL (optional)</Label>
+              <Label htmlFor="video_url">YouTube Video URL (optional)</Label>
               <Input
-                id="videoUrl"
-                name="videoUrl"
-                value={formData.videoUrl}
+                id="video_url"
+                name="video_url"
+                value={formData.video_url}
                 onChange={handleInputChange}
                 placeholder="https://youtube.com/watch?v=..."
               />
-              {formData.videoUrl && getYouTubeId(formData.videoUrl) && (
+              {formData.video_url && getYouTubeId(formData.video_url) && (
                 <div className="mt-2 aspect-video max-h-[150px] overflow-hidden rounded-md border">
                   <iframe
                     width="100%"
                     height="100%"
-                    src={`https://www.youtube.com/embed/${getYouTubeId(formData.videoUrl)}`}
+                    src={`https://www.youtube.com/embed/${getYouTubeId(formData.video_url)}`}
                     title="YouTube video"
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -293,19 +337,19 @@ export default function AdminAnnouncements() {
             
             <div className="flex items-center space-x-2">
               <Switch
-                id="isPublished"
-                checked={formData.isPublished}
+                id="is_published"
+                checked={formData.is_published}
                 onCheckedChange={handleSwitchChange}
               />
-              <Label htmlFor="isPublished">Publish announcement</Label>
+              <Label htmlFor="is_published">Publish announcement</Label>
             </div>
             
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isSaving}>
                 Cancel
               </Button>
-              <Button type="submit">
-                {selectedAnnouncement ? 'Update' : 'Create'}
+              <Button type="submit" disabled={isSaving}>
+                {isSaving ? 'Saving...' : selectedAnnouncement ? 'Update' : 'Create'}
               </Button>
             </DialogFooter>
           </form>

@@ -8,20 +8,30 @@ import { Label } from '@/components/ui/label';
 import { LifeBuoy, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { useCreateSupportTicket } from '@/hooks/use-support';
+import { createSupportTicket } from '@/services/supportService';
 
 export const TechSupport = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { t, theme, language } = useLanguage();
-  const { createTicket, isLoading } = useCreateSupportTicket();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!email || !message) {
+      toast.error(t('errorOccurred'), {
+        description: "Please fill all required fields",
+      });
+      return;
+    }
+    
+    setIsLoading(true);
+    
     try {
-      await createTicket({ email, message });
+      await createSupportTicket(email, message, name);
       
       // Show success message
       toast.success(t('supportRequest'), {
@@ -29,13 +39,17 @@ export const TechSupport = () => {
       });
       
       // Reset form and close modal
+      setName('');
       setEmail('');
       setMessage('');
       setIsOpen(false);
     } catch (error) {
+      console.error('Error submitting support ticket:', error);
       toast.error(t('errorOccurred'), {
         description: t('tryAgainLater'),
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -69,8 +83,22 @@ export const TechSupport = () => {
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
+            <Label htmlFor="name" className={cn("block mb-1", language === 'ar' ? "text-right w-full" : "")}>
+              Name (Optional)
+            </Label>
+            <Input
+              type="text"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className={cn("bg-kindred-darker/50 light-mode:bg-white/50 border border-kindred-primary/30", 
+                language === 'ar' ? "text-right" : "")}
+            />
+          </div>
+          
+          <div>
             <Label htmlFor="email" className={cn("block mb-1", language === 'ar' ? "text-right w-full" : "")}>
-              Email
+              Email*
             </Label>
             <Input
               type="email"
@@ -85,7 +113,7 @@ export const TechSupport = () => {
           
           <div>
             <Label htmlFor="message" className={cn("block mb-1", language === 'ar' ? "text-right w-full" : "")}>
-              {t('message')}
+              {t('message')}*
             </Label>
             <Textarea
               id="message"

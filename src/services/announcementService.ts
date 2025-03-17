@@ -1,0 +1,91 @@
+
+import { supabase } from "@/integrations/supabase/client";
+
+export interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  image_url?: string;
+  video_url?: string;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export const getPublishedAnnouncements = async (): Promise<Announcement[]> => {
+  const { data, error } = await supabase
+    .from('announcements')
+    .select('*')
+    .eq('is_published', true)
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('Error fetching announcements:', error);
+    throw error;
+  }
+  
+  return data || [];
+};
+
+export const getAllAnnouncements = async (): Promise<Announcement[]> => {
+  const { data, error } = await supabase
+    .from('announcements')
+    .select('*')
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('Error fetching all announcements:', error);
+    throw error;
+  }
+  
+  return data || [];
+};
+
+export const createAnnouncement = async (announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>): Promise<Announcement> => {
+  const { data, error } = await supabase
+    .from('announcements')
+    .insert(announcement)
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('Error creating announcement:', error);
+    throw error;
+  }
+  
+  return data;
+};
+
+export const updateAnnouncement = async (
+  id: string, 
+  updates: Partial<Omit<Announcement, 'id' | 'created_at'>>
+): Promise<Announcement> => {
+  const { data, error } = await supabase
+    .from('announcements')
+    .update({
+      ...updates,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', id)
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('Error updating announcement:', error);
+    throw error;
+  }
+  
+  return data;
+};
+
+export const deleteAnnouncement = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from('announcements')
+    .delete()
+    .eq('id', id);
+  
+  if (error) {
+    console.error('Error deleting announcement:', error);
+    throw error;
+  }
+};

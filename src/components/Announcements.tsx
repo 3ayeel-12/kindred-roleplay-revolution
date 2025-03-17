@@ -5,16 +5,7 @@ import { Bell, ChevronRight, ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
-
-interface Announcement {
-  id: string;
-  title: string;
-  content: string;
-  imageUrl?: string;
-  videoUrl?: string;
-  createdAt: string;
-  isPublished: boolean;
-}
+import { getPublishedAnnouncements, Announcement } from '@/services/announcementService';
 
 export const Announcements = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
@@ -26,16 +17,7 @@ export const Announcements = () => {
     const fetchAnnouncements = async () => {
       try {
         setIsLoading(true);
-        // Get announcements from localStorage
-        const storedData = localStorage.getItem('admin-announcements');
-        let data: Announcement[] = storedData ? JSON.parse(storedData) : [];
-        
-        // Filter out unpublished announcements
-        data = data.filter(announcement => announcement.isPublished);
-        
-        // Sort by date (newest first)
-        data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        
+        const data = await getPublishedAnnouncements();
         setAnnouncements(data);
       } catch (error) {
         console.error('Error fetching announcements', error);
@@ -118,10 +100,10 @@ export const Announcements = () => {
       <div className="p-4">
         <h2 className={cn("text-xl font-bold mb-2", language === 'ar' ? "text-right" : "")}>{currentAnnouncement.title}</h2>
         
-        {currentAnnouncement.imageUrl && (
+        {currentAnnouncement.image_url && (
           <div className="mb-4 rounded-md overflow-hidden">
             <img
-              src={currentAnnouncement.imageUrl}
+              src={currentAnnouncement.image_url}
               alt={currentAnnouncement.title}
               className="w-full h-auto max-h-96 object-cover"
             />
@@ -130,12 +112,12 @@ export const Announcements = () => {
         
         <p className={cn("whitespace-pre-wrap mb-4", language === 'ar' ? "text-right" : "")}>{currentAnnouncement.content}</p>
         
-        {currentAnnouncement.videoUrl && getYouTubeId(currentAnnouncement.videoUrl) && (
+        {currentAnnouncement.video_url && getYouTubeId(currentAnnouncement.video_url) && (
           <div className="aspect-video w-full mb-4 rounded-md overflow-hidden">
             <iframe
               width="100%"
               height="100%"
-              src={`https://www.youtube.com/embed/${getYouTubeId(currentAnnouncement.videoUrl)}`}
+              src={`https://www.youtube.com/embed/${getYouTubeId(currentAnnouncement.video_url)}`}
               title="YouTube video"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -145,7 +127,7 @@ export const Announcements = () => {
         )}
         
         <div className="text-xs text-muted-foreground text-right">
-          {new Date(currentAnnouncement.createdAt).toLocaleDateString()}
+          {new Date(currentAnnouncement.created_at).toLocaleDateString()}
         </div>
       </div>
     </motion.div>

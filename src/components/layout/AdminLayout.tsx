@@ -11,44 +11,47 @@ import {
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-
-// Mock admin authentication (replace with real auth system)
-const ADMIN_PASSWORD = 'admin123'; // This is just a placeholder, not secure!
+import { adminLogin, adminLogout, isAdminLoggedIn, initializeAdminUser } from '@/services/adminAuthService';
 
 export const AdminLayout = () => {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const { t, theme } = useLanguage();
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Initialize admin user if none exists
+    initializeAdminUser();
+    
     // Check if admin is already authenticated
-    const adminAuth = localStorage.getItem('adminAuth');
-    if (adminAuth) {
-      setIsAdmin(true);
-    }
+    setIsAdmin(isAdminLoggedIn());
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsAuthenticating(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      if (password === ADMIN_PASSWORD) {
-        localStorage.setItem('adminAuth', 'true');
+    try {
+      const success = await adminLogin(email, password);
+      
+      if (success) {
         setIsAdmin(true);
         toast.success('Logged in successfully');
       } else {
-        toast.error('Invalid password');
+        toast.error('Invalid credentials');
       }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Login failed');
+    } finally {
       setIsAuthenticating(false);
-    }, 1000);
+    }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('adminAuth');
+    adminLogout();
     setIsAdmin(false);
     navigate('/admin');
     toast.success('Logged out successfully');
@@ -63,10 +66,21 @@ export const AdminLayout = () => {
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+                className="w-full p-3 rounded-md bg-black/30 border border-kindred-primary/30 text-white focus:outline-none focus:ring-2 focus:ring-kindred-accent/50"
+                required
+              />
+            </div>
+            
+            <div>
+              <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Admin Password"
+                placeholder="Password"
                 className="w-full p-3 rounded-md bg-black/30 border border-kindred-primary/30 text-white focus:outline-none focus:ring-2 focus:ring-kindred-accent/50"
                 required
               />
@@ -90,6 +104,12 @@ export const AdminLayout = () => {
               <ChevronLeft className="w-4 h-4 mr-1" />
               Back to Website
             </Button>
+          </div>
+          
+          <div className="mt-4 text-center text-sm text-gray-500">
+            <p>Default credentials for demo:</p>
+            <p>Email: admin@example.com</p>
+            <p>Password: admin123</p>
           </div>
         </div>
       </div>
