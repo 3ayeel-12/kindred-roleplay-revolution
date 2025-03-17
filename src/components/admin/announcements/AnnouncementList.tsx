@@ -3,6 +3,13 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { Announcement } from '@/services/announcementService';
 import { AnnouncementCard } from './AnnouncementCard';
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationNext, 
+  PaginationPrevious 
+} from '@/components/ui/pagination';
 
 interface AnnouncementListProps {
   announcements: Announcement[];
@@ -10,6 +17,9 @@ interface AnnouncementListProps {
   onCreateNew: () => void;
   onEdit: (announcement: Announcement) => void;
   onDelete: (announcement: Announcement) => void;
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
 }
 
 export const AnnouncementList = ({
@@ -17,7 +27,10 @@ export const AnnouncementList = ({
   isLoading,
   onCreateNew,
   onEdit,
-  onDelete
+  onDelete,
+  currentPage,
+  totalPages,
+  onPageChange
 }: AnnouncementListProps) => {
   if (isLoading) {
     return <p className="text-center py-8">Loading announcements...</p>;
@@ -33,15 +46,52 @@ export const AnnouncementList = ({
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
-      {announcements.map(announcement => (
-        <AnnouncementCard
-          key={announcement.id}
-          announcement={announcement}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
-      ))}
+    <div className="space-y-6">
+      <div className="grid gap-4 md:grid-cols-2">
+        {announcements.map(announcement => (
+          <AnnouncementCard
+            key={announcement.id}
+            announcement={announcement}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        ))}
+      </div>
+
+      {totalPages > 1 && (
+        <Pagination className="mt-8">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious 
+                onClick={() => onPageChange(currentPage - 1)} 
+                aria-disabled={currentPage === 1}
+                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+              />
+            </PaginationItem>
+            
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <PaginationItem key={page}>
+                <Button
+                  variant={currentPage === page ? "outline" : "ghost"}
+                  size="icon"
+                  onClick={() => onPageChange(page)}
+                  className="w-10 h-10"
+                >
+                  {page}
+                </Button>
+              </PaginationItem>
+            ))}
+            
+            <PaginationItem>
+              <PaginationNext 
+                onClick={() => onPageChange(currentPage + 1)} 
+                aria-disabled={currentPage === totalPages}
+                className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 };
