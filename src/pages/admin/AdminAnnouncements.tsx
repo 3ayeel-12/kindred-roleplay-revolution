@@ -1,9 +1,11 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
-import { Dialog } from '@/components/ui/dialog';
+import { 
+  Dialog,
+  DialogContent
+} from '@/components/ui/dialog';
 import { 
   getAllAnnouncements,
   createAnnouncement,
