@@ -43,7 +43,11 @@ export const createSupportTicket = async (
     throw error;
   }
   
-  return data;
+  // Cast the status to the expected type
+  return {
+    ...data,
+    status: data.status as 'open' | 'in-progress' | 'resolved'
+  };
 };
 
 export const getSupportTickets = async (): Promise<SupportTicket[]> => {
@@ -57,7 +61,11 @@ export const getSupportTickets = async (): Promise<SupportTicket[]> => {
     throw error;
   }
   
-  return data || [];
+  // Cast each ticket's status to the expected type
+  return (data || []).map(ticket => ({
+    ...ticket,
+    status: ticket.status as 'open' | 'in-progress' | 'resolved'
+  }));
 };
 
 export const getSupportTicketById = async (id: string): Promise<SupportTicket | null> => {
@@ -72,7 +80,11 @@ export const getSupportTicketById = async (id: string): Promise<SupportTicket | 
     return null;
   }
   
-  return data;
+  // Cast the status to the expected type
+  return {
+    ...data,
+    status: data.status as 'open' | 'in-progress' | 'resolved'
+  };
 };
 
 export const updateTicketStatus = async (id: string, status: 'open' | 'in-progress' | 'resolved'): Promise<void> => {
