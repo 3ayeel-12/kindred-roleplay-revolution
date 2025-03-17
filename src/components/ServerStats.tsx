@@ -9,6 +9,7 @@ import { PlayerStats } from "./server/PlayerStats";
 import { MoroccoRegionStats } from "./server/MoroccoRegionStats";
 import { ServerOffline } from "./server/ServerOffline";
 import { ServerLoading } from "./server/ServerLoading";
+import { Announcements } from "./Announcements";
 
 const ServerStats = () => {
   const [serverInfo, setServerInfo] = useState<ServerInfo>({ isOnline: false });
@@ -50,6 +51,9 @@ const ServerStats = () => {
 
   return (
     <div className="w-full animate-fade-in">
+      {/* Announcements component will automatically hide if there are no announcements */}
+      <Announcements />
+      
       <motion.div 
         className={`sa-card p-6 mb-8 ${theme === 'light' ? 'bg-white/70 border-kindred-primary/30' : 'bg-black/40 border-kindred-orange/30'} border-2 rounded-xl transition-all duration-300`}
         initial={{ opacity: 0, y: 20 }}
