@@ -1,18 +1,20 @@
 
 import { Button } from '@/components/ui/button';
-import { Eye, EyeOff, Edit, Trash2 } from 'lucide-react';
+import { Eye, EyeOff, Edit, Trash2, Monitor } from 'lucide-react';
 import { Announcement } from '@/services/announcementService';
 
 interface AnnouncementCardProps {
   announcement: Announcement;
   onEdit: (announcement: Announcement) => void;
   onDelete: (announcement: Announcement) => void;
+  onPreview: (announcement: Announcement) => void;
 }
 
 export const AnnouncementCard = ({ 
   announcement, 
   onEdit, 
-  onDelete 
+  onDelete,
+  onPreview 
 }: AnnouncementCardProps) => {
   const getYouTubeId = (url: string) => {
     if (!url) return null;
@@ -64,6 +66,14 @@ export const AnnouncementCard = ({
           </span>
           
           <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => onPreview(announcement)}
+            >
+              <Monitor className="h-4 w-4 mr-1" />
+              Preview
+            </Button>
             <Button 
               variant="outline" 
               size="sm"

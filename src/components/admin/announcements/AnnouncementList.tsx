@@ -17,6 +17,7 @@ interface AnnouncementListProps {
   onCreateNew: () => void;
   onEdit: (announcement: Announcement) => void;
   onDelete: (announcement: Announcement) => void;
+  onPreview: (announcement: Announcement) => void;
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
@@ -28,6 +29,7 @@ export const AnnouncementList = ({
   onCreateNew,
   onEdit,
   onDelete,
+  onPreview,
   currentPage,
   totalPages,
   onPageChange
@@ -54,6 +56,7 @@ export const AnnouncementList = ({
             announcement={announcement}
             onEdit={onEdit}
             onDelete={onDelete}
+            onPreview={onPreview}
           />
         ))}
       </div>

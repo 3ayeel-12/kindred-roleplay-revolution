@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { AnnouncementForm, AnnouncementFormData } from '@/components/admin/announcements/AnnouncementForm';
 import { AnnouncementList } from '@/components/admin/announcements/AnnouncementList';
 import { DeleteAnnouncementDialog } from '@/components/admin/announcements/DeleteAnnouncementDialog';
+import { AnnouncementPreview } from '@/components/admin/announcements/AnnouncementPreview';
 
 // Number of announcements per page
 const ITEMS_PER_PAGE = 6;
@@ -25,6 +26,7 @@ export default function AdminAnnouncements() {
   const [paginatedAnnouncements, setPaginatedAnnouncements] = useState<Announcement[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -86,6 +88,11 @@ export default function AdminAnnouncements() {
   const handleDelete = (announcement: Announcement) => {
     setSelectedAnnouncement(announcement);
     setIsDeleteDialogOpen(true);
+  };
+
+  const handlePreview = (announcement: Announcement) => {
+    setSelectedAnnouncement(announcement);
+    setIsPreviewDialogOpen(true);
   };
   
   const confirmDelete = async () => {
@@ -170,6 +177,7 @@ export default function AdminAnnouncements() {
         onCreateNew={handleCreateNew}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        onPreview={handlePreview}
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageChange}
@@ -197,6 +205,13 @@ export default function AdminAnnouncements() {
           />
         </DialogContent>
       </Dialog>
+
+      {/* Preview Dialog */}
+      <AnnouncementPreview
+        announcement={selectedAnnouncement}
+        isOpen={isPreviewDialogOpen}
+        onClose={() => setIsPreviewDialogOpen(false)}
+      />
     </div>
   );
 }
