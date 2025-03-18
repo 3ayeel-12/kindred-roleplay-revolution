@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { 
@@ -11,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { adminLogin, adminLogout, isAdminLoggedIn, initializeAdminUser } from '@/services/adminAuthService';
+import { adminLogin, adminLogout, isAdminLoggedIn } from '@/services/adminAuthService';
 
 export const AdminLayout = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -22,16 +21,12 @@ export const AdminLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Initialize admin user if none exists
-    initializeAdminUser();
-    
     // Check if admin is already authenticated
     setIsAdmin(isAdminLoggedIn());
     
-    // Get default admin email from localStorage for easier testing
-    const defaultAdminEmail = localStorage.getItem('defaultAdminEmail');
-    if (defaultAdminEmail && email === '') {
-      setEmail(defaultAdminEmail);
+    // Set default email for easier testing
+    if (email === '') {
+      setEmail('admin@kindred.com');
     }
   }, []);
 
@@ -110,12 +105,6 @@ export const AdminLayout = () => {
               <ChevronLeft className="w-4 h-4 mr-1" />
               Back to Website
             </Button>
-          </div>
-          
-          <div className="mt-4 text-center text-sm text-gray-400">
-            <p>Admin credentials for this demo:</p>
-            <p>Email: admin@kindred.com</p>
-            <p>Password: kindredadmin@123</p>
           </div>
         </div>
       </div>

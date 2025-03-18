@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { SupportTicket } from './types';
 import { getLocalTickets, saveLocalTickets } from './localStorage';
@@ -10,13 +9,13 @@ export const createSupportTicket = async (
   subject: string = "Support Request"
 ): Promise<SupportTicket> => {
   try {
-    // First try to create in Supabase
+    // Create in Supabase
     const { data, error } = await supabase
       .from('support_tickets')
       .insert({
         user_email: email,
         message,
-        user_name: userName,
+        user_name: userName || "", // Ensure it's not null
         subject,
         status: 'open'
       })
