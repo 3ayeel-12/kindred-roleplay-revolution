@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Announcement {
@@ -11,6 +10,8 @@ export interface Announcement {
   created_at: string;
   updated_at: string;
 }
+
+export type AnnouncementInput = Omit<Announcement, 'id' | 'created_at' | 'updated_at'>;
 
 export const getPublishedAnnouncements = async (): Promise<Announcement[]> => {
   const { data, error } = await supabase
@@ -41,7 +42,7 @@ export const getAllAnnouncements = async (): Promise<Announcement[]> => {
   return data || [];
 };
 
-export const createAnnouncement = async (announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>): Promise<Announcement> => {
+export const createAnnouncement = async (announcement: AnnouncementInput): Promise<Announcement> => {
   const { data, error } = await supabase
     .from('announcements')
     .insert(announcement)
@@ -58,7 +59,7 @@ export const createAnnouncement = async (announcement: Omit<Announcement, 'id' |
 
 export const updateAnnouncement = async (
   id: string, 
-  updates: Partial<Omit<Announcement, 'id' | 'created_at'>>
+  updates: Partial<AnnouncementInput>
 ): Promise<Announcement> => {
   const { data, error } = await supabase
     .from('announcements')
