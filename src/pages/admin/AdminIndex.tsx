@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageSquare, Users, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { getSupportTickets, SupportTicket } from '@/services/supportService';
+import { getSupportTickets, SupportTicket } from '@/services/support';
 import { useState } from 'react';
 
 export default function AdminIndex() {

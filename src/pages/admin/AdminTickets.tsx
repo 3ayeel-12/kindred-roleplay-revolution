@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { getSupportTickets, SupportTicket } from '@/services/supportService';
+import { getSupportTickets, SupportTicket } from '@/services/support';
 import { isAdminLoggedIn } from '@/services/adminAuthService';
 import { toast } from 'sonner';
 

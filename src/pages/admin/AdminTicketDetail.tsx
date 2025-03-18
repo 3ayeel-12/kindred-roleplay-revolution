@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, Clock, User, Mail } from 'lucide-react';
@@ -20,7 +19,7 @@ import {
   updateTicketStatus,
   SupportTicket,
   TicketReply
-} from '@/services/supportService';
+} from '@/services/support';
 import { isAdminLoggedIn } from '@/services/adminAuthService';
 
 export default function AdminTicketDetail() {
