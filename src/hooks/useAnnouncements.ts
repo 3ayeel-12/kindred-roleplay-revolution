@@ -24,7 +24,7 @@ export interface UseAnnouncementsReturn {
   setSelectedAnnouncement: (announcement: Announcement | null) => void;
   handlePageChange: (page: number) => void;
   loadAnnouncements: () => Promise<void>;
-  handleCreateAnnouncement: (formData: AnnouncementInput) => Promise<void>;
+  handleCreateAnnouncement: (formData: AnnouncementInput) => Promise<Announcement>;
   handleUpdateAnnouncement: (id: string, formData: AnnouncementInput) => Promise<void>;
   handleDeleteAnnouncement: (id: string) => Promise<void>;
 }
