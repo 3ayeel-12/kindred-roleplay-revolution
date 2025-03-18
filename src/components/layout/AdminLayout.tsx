@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { 
@@ -27,6 +26,12 @@ export const AdminLayout = () => {
     
     // Check if admin is already authenticated
     setIsAdmin(isAdminLoggedIn());
+    
+    // Get default admin email from localStorage for easier testing
+    const defaultAdminEmail = localStorage.getItem('defaultAdminEmail');
+    if (defaultAdminEmail && email === '') {
+      setEmail(defaultAdminEmail);
+    }
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -107,9 +112,9 @@ export const AdminLayout = () => {
           </div>
           
           <div className="mt-4 text-center text-sm text-gray-500">
-            <p>Default credentials for demo:</p>
-            <p>Email: admin@example.com</p>
-            <p>Password: admin123</p>
+            <p>Admin credentials for this demo:</p>
+            <p>Email: admin@kindred.com</p>
+            <p>Password: kindredadmin@123</p>
           </div>
         </div>
       </div>
