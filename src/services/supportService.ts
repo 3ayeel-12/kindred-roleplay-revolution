@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 export interface SupportTicket {
@@ -21,6 +22,7 @@ export interface TicketReply {
 
 // Local storage key for support tickets when Supabase fails
 const LOCAL_TICKETS_KEY = 'local_support_tickets';
+const LOCAL_REPLIES_KEY = 'local_ticket_replies';
 
 // Helper to get local tickets
 const getLocalTickets = (): SupportTicket[] => {
@@ -31,6 +33,17 @@ const getLocalTickets = (): SupportTicket[] => {
 // Helper to save local tickets
 const saveLocalTickets = (tickets: SupportTicket[]) => {
   localStorage.setItem(LOCAL_TICKETS_KEY, JSON.stringify(tickets));
+};
+
+// Helper to get local replies
+const getLocalReplies = (): TicketReply[] => {
+  const repliesJSON = localStorage.getItem(LOCAL_REPLIES_KEY);
+  return repliesJSON ? JSON.parse(repliesJSON) : [];
+};
+
+// Helper to save local replies
+const saveLocalReplies = (replies: TicketReply[]) => {
+  localStorage.setItem(LOCAL_REPLIES_KEY, JSON.stringify(replies));
 };
 
 export const createSupportTicket = async (
@@ -111,52 +124,83 @@ export const getSupportTickets = async (): Promise<SupportTicket[]> => {
 };
 
 export const getSupportTicketById = async (id: string): Promise<SupportTicket | null> => {
-  const { data, error } = await supabase
-    .from('support_tickets')
-    .select('*')
-    .eq('id', id)
-    .single();
-  
-  if (error) {
-    console.error('Error fetching support ticket:', error);
-    return null;
+  try {
+    // Try Supabase first
+    const { data, error } = await supabase
+      .from('support_tickets')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (error) {
+      console.error('Error fetching support ticket from Supabase (using local fallback):', error);
+      throw error;
+    }
+    
+    // Cast the status to the expected type
+    return {
+      ...data,
+      status: data.status as 'open' | 'in-progress' | 'resolved'
+    };
+  } catch (error) {
+    // Fallback to local storage
+    console.log('Fetching support ticket from local storage instead');
+    const localTickets = getLocalTickets();
+    const ticket = localTickets.find(t => t.id === id);
+    return ticket || null;
   }
-  
-  // Cast the status to the expected type
-  return {
-    ...data,
-    status: data.status as 'open' | 'in-progress' | 'resolved'
-  };
 };
 
 export const updateTicketStatus = async (id: string, status: 'open' | 'in-progress' | 'resolved'): Promise<void> => {
-  const { error } = await supabase
-    .from('support_tickets')
-    .update({ 
-      status,
-      updated_at: new Date().toISOString()
-    })
-    .eq('id', id);
-  
-  if (error) {
-    console.error('Error updating ticket status:', error);
-    throw error;
+  try {
+    // Try Supabase first
+    const { error } = await supabase
+      .from('support_tickets')
+      .update({ 
+        status,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id);
+    
+    if (error) {
+      console.error('Error updating ticket status in Supabase (using local fallback):', error);
+      throw error;
+    }
+  } catch (error) {
+    // Fallback to local storage
+    console.log('Updating ticket status in local storage instead');
+    const localTickets = getLocalTickets();
+    const ticketIndex = localTickets.findIndex(t => t.id === id);
+    
+    if (ticketIndex !== -1) {
+      localTickets[ticketIndex].status = status;
+      localTickets[ticketIndex].updated_at = new Date().toISOString();
+      saveLocalTickets(localTickets);
+    }
   }
 };
 
 export const getTicketReplies = async (ticketId: string): Promise<TicketReply[]> => {
-  const { data, error } = await supabase
-    .from('ticket_replies')
-    .select('*')
-    .eq('ticket_id', ticketId)
-    .order('created_at', { ascending: true });
-  
-  if (error) {
-    console.error('Error fetching ticket replies:', error);
-    throw error;
+  try {
+    // Try Supabase first
+    const { data, error } = await supabase
+      .from('ticket_replies')
+      .select('*')
+      .eq('ticket_id', ticketId)
+      .order('created_at', { ascending: true });
+    
+    if (error) {
+      console.error('Error fetching ticket replies from Supabase (using local fallback):', error);
+      throw error;
+    }
+    
+    return data || [];
+  } catch (error) {
+    // Fallback to local storage
+    console.log('Fetching ticket replies from local storage instead');
+    const localReplies = getLocalReplies();
+    return localReplies.filter(r => r.ticket_id === ticketId);
   }
-  
-  return data || [];
 };
 
 export const addTicketReply = async (
@@ -191,13 +235,6 @@ export const addTicketReply = async (
     // Fallback to local storage
     console.log('Adding ticket reply to local storage instead');
     
-    const localTickets = getLocalTickets();
-    const ticketIndex = localTickets.findIndex(t => t.id === ticketId);
-    
-    if (ticketIndex === -1) {
-      throw new Error('Ticket not found in local storage');
-    }
-    
     // Create the reply
     const newReply: TicketReply = {
       id: `local-reply-${Date.now()}`,
@@ -207,13 +244,14 @@ export const addTicketReply = async (
       created_at: new Date().toISOString()
     };
     
+    const localReplies = getLocalReplies();
+    localReplies.push(newReply);
+    saveLocalReplies(localReplies);
+    
     // Update the ticket status if this is an admin reply
     if (isAdmin) {
-      localTickets[ticketIndex].status = 'in-progress';
-      localTickets[ticketIndex].updated_at = new Date().toISOString();
+      await updateTicketStatus(ticketId, 'in-progress');
     }
-    
-    saveLocalTickets(localTickets);
     
     return newReply;
   }

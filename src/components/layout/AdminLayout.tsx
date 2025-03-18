@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { 
@@ -111,7 +112,7 @@ export const AdminLayout = () => {
             </Button>
           </div>
           
-          <div className="mt-4 text-center text-sm text-gray-500">
+          <div className="mt-4 text-center text-sm text-gray-400">
             <p>Admin credentials for this demo:</p>
             <p>Email: admin@kindred.com</p>
             <p>Password: kindredadmin@123</p>
@@ -124,7 +125,7 @@ export const AdminLayout = () => {
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Sidebar */}
-      <div className={`${theme === 'light' ? 'bg-gray-100 text-gray-800' : 'bg-kindred-darker text-white'} w-full md:w-64 p-4 md:min-h-screen flex flex-col`}>
+      <div className={`${theme === 'light' ? 'bg-gray-100 text-gray-800' : 'bg-gray-900 text-white'} w-full md:w-64 p-4 md:min-h-screen flex flex-col border-r border-gray-200 dark:border-gray-700`}>
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-xl font-bold text-kindred-accent">Admin Dashboard</h1>
           <Button 
@@ -177,7 +178,7 @@ export const AdminLayout = () => {
       </div>
       
       {/* Main content */}
-      <div className="flex-1 p-6 overflow-auto">
+      <div className="flex-1 p-6 overflow-auto bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
         <Outlet />
       </div>
     </div>

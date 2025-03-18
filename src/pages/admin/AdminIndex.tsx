@@ -2,15 +2,29 @@
 import { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageSquare, Users, Bell } from 'lucide-react';
-import { useGetSupportTickets } from '@/hooks/use-support';
 import { useNavigate } from 'react-router-dom';
+import { getSupportTickets, SupportTicket } from '@/services/supportService';
+import { useState } from 'react';
 
 export default function AdminIndex() {
-  const { tickets, getTickets, isLoading } = useGetSupportTickets();
+  const [tickets, setTickets] = useState<SupportTicket[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   
   useEffect(() => {
-    getTickets();
+    const fetchTickets = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getSupportTickets();
+        setTickets(data);
+      } catch (error) {
+        console.error('Error fetching tickets:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchTickets();
   }, []);
   
   const openTickets = tickets.filter(ticket => ticket.status === 'open').length;
@@ -93,7 +107,7 @@ export default function AdminIndex() {
                   >
                     <div className="flex justify-between items-start">
                       <div>
-                        <p className="font-medium">{ticket.email}</p>
+                        <p className="font-medium">{ticket.user_email}</p>
                         <p className="text-sm text-muted-foreground line-clamp-1">{ticket.message}</p>
                       </div>
                       <div className={`px-2 py-1 rounded-full text-xs ${
@@ -107,7 +121,7 @@ export default function AdminIndex() {
                       </div>
                     </div>
                     <div className="text-xs text-muted-foreground mt-2">
-                      {new Date(ticket.createdAt).toLocaleString()}
+                      {new Date(ticket.created_at).toLocaleString()}
                     </div>
                   </div>
                 ))}
