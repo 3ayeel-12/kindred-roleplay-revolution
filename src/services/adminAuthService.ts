@@ -6,20 +6,17 @@ export const adminLogin = async (email: string, password: string): Promise<boole
   try {
     console.log('Attempting login with:', email);
     
-    // For the specific admin user, check the credentials against the database
-    const { data, error } = await supabase
-      .from('admin_users')
-      .select('*')
-      .eq('email', email)
-      .single();
-    
-    if (error) {
-      console.error('Admin login error:', error);
+    // First check if this is the default admin user
+    if (email === 'admin@kindred.com' && password === 'kindredadmin@123') {
+      // Check if admin user already exists
+      const { data, error } = await supabase
+        .from('admin_users')
+        .select('*')
+        .eq('email', 'admin@kindred.com')
+        .maybeSingle();
       
-      // If the error is because no rows were found, we should first check
-      // if this is the default admin credentials
-      if (email === 'admin@kindred.com' && password === 'kindredadmin@123') {
-        // Create the default admin user
+      if (!data) {
+        // Create the default admin user if it doesn't exist
         console.log('Creating default admin user...');
         const { data: insertData, error: insertError } = await supabase
           .from('admin_users')
@@ -44,8 +41,35 @@ export const adminLogin = async (email: string, password: string): Promise<boole
         localStorage.setItem('adminId', insertData[0].id);
         
         return true;
+      } else {
+        // Admin exists, verify password
+        if (data.password_hash === password) {
+          console.log('Default admin login successful');
+          
+          // Store admin session in localStorage for persistent login
+          localStorage.setItem('adminAuth', 'true');
+          localStorage.setItem('adminEmail', email);
+          localStorage.setItem('adminId', data.id);
+          
+          return true;
+        }
       }
-      
+    }
+    
+    // For non-default admin, check the credentials against the database
+    const { data, error } = await supabase
+      .from('admin_users')
+      .select('*')
+      .eq('email', email)
+      .maybeSingle();
+    
+    if (error) {
+      console.error('Admin login error:', error);
+      return false;
+    }
+    
+    if (!data) {
+      console.error('No admin user found with email:', email);
       return false;
     }
     
@@ -84,7 +108,7 @@ export const isAdminLoggedIn = (): boolean => {
   return localStorage.getItem('adminAuth') === 'true';
 };
 
-// No need to initialize admin user as it's now in the database
+// Initialize the admin user on app startup
 export const initializeAdminUser = async (): Promise<void> => {
   try {
     // Check if admin user already exists
@@ -92,9 +116,9 @@ export const initializeAdminUser = async (): Promise<void> => {
       .from('admin_users')
       .select('*')
       .eq('email', 'admin@kindred.com')
-      .single();
+      .maybeSingle();
     
-    if (error) {
+    if (!data) {
       console.log('Admin user does not exist, creating...');
       // Create default admin user
       const { error: insertError } = await supabase
