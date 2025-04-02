@@ -7,7 +7,7 @@ export const adminLogin = async (email: string, password: string): Promise<boole
     console.log('Attempting login with:', email);
     
     // First check if this is the default admin user
-    if (email === 'admin@kindred.com' && password === 'kindredadmin@123') {
+    if (email === 'admin@kindred.com' && (password === 'kindredadmin@123' || password === 'admin123')) {
       // Check if admin user already exists
       const { data, error } = await supabase
         .from('admin_users')
@@ -23,7 +23,7 @@ export const adminLogin = async (email: string, password: string): Promise<boole
           .insert([
             { 
               email: 'admin@kindred.com', 
-              password_hash: 'kindredadmin@123' 
+              password_hash: 'admin123' 
             }
           ])
           .select();
@@ -42,8 +42,8 @@ export const adminLogin = async (email: string, password: string): Promise<boole
         
         return true;
       } else {
-        // Admin exists, verify password
-        if (data.password_hash === password) {
+        // Admin exists, verify password - allow both the old password and new password
+        if (data.password_hash === 'admin123' || data.password_hash === 'kindredadmin@123') {
           console.log('Default admin login successful');
           
           // Store admin session in localStorage for persistent login
@@ -126,7 +126,7 @@ export const initializeAdminUser = async (): Promise<void> => {
         .insert([
           { 
             email: 'admin@kindred.com', 
-            password_hash: 'kindredadmin@123' 
+            password_hash: 'admin123' 
           }
         ]);
         
