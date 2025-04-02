@@ -23,7 +23,9 @@ const queryClient = new QueryClient();
 const App = () => {
   useEffect(() => {
     // Initialize default admin user if none exists
-    initializeAdminUser();
+    initializeAdminUser().catch(err => {
+      console.error("Failed to initialize admin user:", err);
+    });
   }, []);
 
   return (

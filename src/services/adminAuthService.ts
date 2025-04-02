@@ -13,8 +13,39 @@ export const adminLogin = async (email: string, password: string): Promise<boole
       .eq('email', email)
       .single();
     
-    if (error || !data) {
+    if (error) {
       console.error('Admin login error:', error);
+      
+      // If the error is because no rows were found, we should first check
+      // if this is the default admin credentials
+      if (email === 'admin@kindred.com' && password === 'kindredadmin@123') {
+        // Create the default admin user
+        console.log('Creating default admin user...');
+        const { data: insertData, error: insertError } = await supabase
+          .from('admin_users')
+          .insert([
+            { 
+              email: 'admin@kindred.com', 
+              password_hash: 'kindredadmin@123' 
+            }
+          ])
+          .select();
+          
+        if (insertError) {
+          console.error('Failed to create admin user:', insertError);
+          return false;
+        }
+        
+        console.log('Default admin user created successfully:', insertData);
+        
+        // Store admin session in localStorage for persistent login
+        localStorage.setItem('adminAuth', 'true');
+        localStorage.setItem('adminEmail', email);
+        localStorage.setItem('adminId', insertData[0].id);
+        
+        return true;
+      }
+      
       return false;
     }
     
@@ -55,6 +86,35 @@ export const isAdminLoggedIn = (): boolean => {
 
 // No need to initialize admin user as it's now in the database
 export const initializeAdminUser = async (): Promise<void> => {
-  // We don't need to initialize anything as the admin user is already in the database
-  // The SQL migration has already inserted the admin user
+  try {
+    // Check if admin user already exists
+    const { data, error } = await supabase
+      .from('admin_users')
+      .select('*')
+      .eq('email', 'admin@kindred.com')
+      .single();
+    
+    if (error) {
+      console.log('Admin user does not exist, creating...');
+      // Create default admin user
+      const { error: insertError } = await supabase
+        .from('admin_users')
+        .insert([
+          { 
+            email: 'admin@kindred.com', 
+            password_hash: 'kindredadmin@123' 
+          }
+        ]);
+        
+      if (insertError) {
+        console.error('Failed to create admin user:', insertError);
+      } else {
+        console.log('Default admin user created successfully');
+      }
+    } else {
+      console.log('Admin user already exists');
+    }
+  } catch (error) {
+    console.error('Error initializing admin user:', error);
+  }
 };
