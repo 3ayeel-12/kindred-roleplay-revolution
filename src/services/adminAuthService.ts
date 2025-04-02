@@ -1,18 +1,25 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 // For admin authentication, we'll use Supabase
 export const adminLogin = async (email: string, password: string): Promise<boolean> => {
   try {
-    // Get the admin user with the matching email
+    // For the specific admin user, check the credentials against the database
     const { data, error } = await supabase
       .from('admin_users')
       .select('*')
       .eq('email', email)
-      .eq('password_hash', password)
       .single();
     
     if (error || !data) {
       console.error('Admin login error:', error);
+      return false;
+    }
+    
+    // Check if the password matches - for this demo we're using plaintext password
+    // In a production app, you should use proper password hashing
+    if (data.password_hash !== password) {
+      console.error('Password does not match');
       return false;
     }
     
