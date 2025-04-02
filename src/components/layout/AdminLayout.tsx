@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { 
@@ -35,6 +36,7 @@ export const AdminLayout = () => {
     setIsAuthenticating(true);
     
     try {
+      console.log('Login attempt:', email, password);
       const success = await adminLogin(email, password);
       
       if (success) {
