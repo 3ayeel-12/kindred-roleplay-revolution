@@ -18,6 +18,7 @@ export const getTicketReplies = async (ticketId: string): Promise<TicketReply[]>
       throw error;
     }
     
+    console.log(`Fetched ${data?.length || 0} replies for ticket ${ticketId}`);
     return data || [];
   } catch (error) {
     // Fallback to local storage
@@ -48,6 +49,8 @@ export const addTicketReply = async (
       console.error('Error adding ticket reply to Supabase (using local fallback):', error);
       throw error;
     }
+    
+    console.log('Reply added successfully:', data);
     
     // If this is an admin reply, update the ticket status to in-progress
     if (isAdmin) {

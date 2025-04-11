@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, ArrowUpDown } from 'lucide-react';
+import { Search, Filter, ArrowUpDown, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -16,6 +16,7 @@ import {
 import { getSupportTickets, SupportTicket } from '@/services/support';
 import { isAdminLoggedIn } from '@/services/adminAuthService';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function AdminTickets() {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
@@ -32,6 +33,22 @@ export default function AdminTickets() {
     }
     
     fetchTickets();
+    
+    // Set up real-time subscription to ticket changes
+    const channel = supabase
+      .channel('public:support_tickets')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'support_tickets' }, 
+        () => {
+          console.log('Tickets updated, refreshing...');
+          fetchTickets();
+        }
+      )
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [navigate]);
   
   const fetchTickets = async () => {
@@ -89,6 +106,16 @@ export default function AdminTickets() {
         <h1 className="text-3xl font-bold">Support Tickets</h1>
         
         <div className="flex w-full sm:w-auto items-center gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={fetchTickets}
+            disabled={isLoading}
+            title="Refresh tickets"
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          </Button>
+          
           <div className="relative flex-1 sm:flex-initial">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
@@ -115,7 +142,7 @@ export default function AdminTickets() {
         </div>
       </div>
       
-      <div className="border rounded-md">
+      <div className="border rounded-md overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -171,7 +198,7 @@ export default function AdminTickets() {
                       {ticket.status}
                     </div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
+                  <TableCell className="text-muted-foreground whitespace-nowrap">
                     {new Date(ticket.created_at).toLocaleDateString()}
                   </TableCell>
                 </TableRow>

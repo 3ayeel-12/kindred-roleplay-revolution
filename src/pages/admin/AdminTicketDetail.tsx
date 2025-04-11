@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Send, Clock, User, Mail } from 'lucide-react';
+import { ArrowLeft, Send, Clock, User, Mail, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { 
@@ -21,6 +22,7 @@ import {
   TicketReply
 } from '@/services/support';
 import { isAdminLoggedIn } from '@/services/adminAuthService';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function AdminTicketDetail() {
   const { ticketId } = useParams<{ ticketId: string }>();
@@ -39,6 +41,34 @@ export default function AdminTicketDetail() {
     
     if (ticketId) {
       fetchTicketDetails();
+      
+      // Set up realtime subscriptions
+      const ticketChannel = supabase
+        .channel('ticket-updates')
+        .on('postgres_changes', 
+          { event: 'UPDATE', schema: 'public', table: 'support_tickets', filter: `id=eq.${ticketId}` }, 
+          () => {
+            console.log('Ticket updated, refreshing details...');
+            fetchTicketDetails();
+          }
+        )
+        .subscribe();
+        
+      const repliesChannel = supabase
+        .channel('ticket-replies')
+        .on('postgres_changes', 
+          { event: 'INSERT', schema: 'public', table: 'ticket_replies', filter: `ticket_id=eq.${ticketId}` }, 
+          (payload) => {
+            console.log('New reply received:', payload);
+            fetchTicketDetails();
+          }
+        )
+        .subscribe();
+      
+      return () => {
+        supabase.removeChannel(ticketChannel);
+        supabase.removeChannel(repliesChannel);
+      };
     }
   }, [ticketId, navigate]);
   
@@ -84,15 +114,32 @@ export default function AdminTicketDetail() {
     setIsSending(true);
     
     try {
-      const newReply = await addTicketReply(ticketId, replyMessage, true);
+      // Try direct Supabase insert first for better reliability
+      const { data, error } = await supabase
+        .from('ticket_replies')
+        .insert({
+          ticket_id: ticketId,
+          message: replyMessage,
+          is_admin: true
+        })
+        .select();
       
-      // Add the new reply to the list
-      setReplies(prev => [...prev, newReply]);
-      
-      // Update ticket status in the UI
-      setTicket(prev => prev ? { ...prev, status: 'in-progress' } : null);
+      if (error) {
+        console.error('Direct reply insert failed, trying fallback:', error);
+        await addTicketReply(ticketId, replyMessage, true);
+      } else {
+        console.log('Reply added successfully:', data);
+        
+        // Also update ticket status to in-progress
+        await updateTicketStatus(ticketId, 'in-progress');
+        
+        if (ticket) {
+          setTicket({ ...ticket, status: 'in-progress' });
+        }
+      }
       
       setReplyMessage('');
+      await fetchTicketDetails(); // Refresh ticket details
       toast.success('Reply sent successfully');
     } catch (error) {
       console.error('Failed to send reply:', error);
@@ -105,7 +152,10 @@ export default function AdminTicketDetail() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <p>Loading ticket details...</p>
+        <div className="text-center">
+          <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4 text-muted-foreground" />
+          <p>Loading ticket details...</p>
+        </div>
       </div>
     );
   }
@@ -133,6 +183,16 @@ export default function AdminTicketDetail() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <h1 className="text-2xl font-bold">Ticket Details</h1>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={fetchTicketDetails}
+          disabled={isLoading}
+          className="ml-auto"
+          title="Refresh ticket"
+        >
+          <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+        </Button>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

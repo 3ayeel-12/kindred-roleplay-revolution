@@ -9,6 +9,7 @@ import { LifeBuoy, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { createSupportTicket } from '@/services/support';
+import { supabase } from '@/integrations/supabase/client';
 
 export const TechSupport = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,7 +32,28 @@ export const TechSupport = () => {
     setIsLoading(true);
     
     try {
-      await createSupportTicket(email, message, name);
+      // Create subject from first few words of message
+      const subject = message.split(' ').slice(0, 5).join(' ') + '...';
+      
+      // Try direct Supabase insert first for better reliability
+      const { data, error } = await supabase
+        .from('support_tickets')
+        .insert({
+          user_email: email,
+          user_name: name || '',
+          subject,
+          message,
+          status: 'open'
+        })
+        .select()
+        .single();
+        
+      if (error) {
+        console.error('Direct insert failed, trying fallback:', error);
+        await createSupportTicket(email, message, name, subject);
+      } else {
+        console.log('Support ticket created successfully:', data);
+      }
       
       // Show success message
       toast.success(t('supportRequest'), {

@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { SupportTicket } from './types';
 import { getLocalTickets, saveLocalTickets } from './localStorage';
@@ -26,6 +27,8 @@ export const createSupportTicket = async (
       console.error('Error creating support ticket in Supabase (using local fallback):', error);
       throw error;
     }
+    
+    console.log('Support ticket created successfully:', data);
     
     // Cast the status to the expected type
     return {
@@ -67,6 +70,8 @@ export const getSupportTickets = async (): Promise<SupportTicket[]> => {
       throw error;
     }
     
+    console.log('Fetched support tickets:', data?.length || 0);
+    
     // Cast each ticket's status to the expected type
     return (data || []).map(ticket => ({
       ...ticket,
@@ -86,11 +91,16 @@ export const getSupportTicketById = async (id: string): Promise<SupportTicket | 
       .from('support_tickets')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
     
     if (error) {
       console.error('Error fetching support ticket from Supabase (using local fallback):', error);
       throw error;
+    }
+    
+    if (!data) {
+      console.log('No ticket found with ID:', id);
+      return null;
     }
     
     // Cast the status to the expected type
@@ -122,6 +132,8 @@ export const updateTicketStatus = async (id: string, status: 'open' | 'in-progre
       console.error('Error updating ticket status in Supabase (using local fallback):', error);
       throw error;
     }
+    
+    console.log(`Ticket ${id} status updated to ${status}`);
   } catch (error) {
     // Fallback to local storage
     console.log('Updating ticket status in local storage instead');
