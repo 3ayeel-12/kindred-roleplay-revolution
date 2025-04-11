@@ -15,6 +15,11 @@ export const adminLogin = async (email: string, password: string): Promise<boole
         .eq('email', 'admin@kindred.com')
         .maybeSingle();
       
+      if (error) {
+        console.error('Error checking for admin user:', error);
+        return false;
+      }
+      
       if (!data) {
         // Create the default admin user if it doesn't exist
         console.log('Creating default admin user...');
@@ -117,6 +122,11 @@ export const initializeAdminUser = async (): Promise<void> => {
       .select('*')
       .eq('email', 'admin@kindred.com')
       .maybeSingle();
+    
+    if (error) {
+      console.error('Error checking for admin user:', error);
+      return;
+    }
     
     if (!data) {
       console.log('Admin user does not exist, creating...');

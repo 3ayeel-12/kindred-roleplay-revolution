@@ -1,25 +1,31 @@
 
 import { useState, useEffect } from 'react';
-import { Navigate, Outlet, useNavigate } from 'react-router-dom';
+import { Navigate, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { 
   MessageSquare, 
   BellDot, 
   Settings, 
   LogOut,
-  ChevronLeft
+  ChevronLeft,
+  Menu,
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 import { adminLogin, adminLogout, isAdminLoggedIn } from '@/services/adminAuthService';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export const AdminLayout = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const { t, theme } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     // Check if admin is already authenticated
@@ -29,7 +35,14 @@ export const AdminLayout = () => {
     if (email === '') {
       setEmail('admin@kindred.com');
     }
-  }, []);
+    
+    // Auto-close sidebar on mobile
+    if (isMobile) {
+      setSidebarOpen(false);
+    } else {
+      setSidebarOpen(true);
+    }
+  }, [isMobile]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,6 +71,15 @@ export const AdminLayout = () => {
     setIsAdmin(false);
     navigate('/admin');
     toast.success('Logged out successfully');
+  };
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  // Is the current route active?
+  const isRouteActive = (path: string) => {
+    return location.pathname === path;
   };
 
   if (!isAdmin) {
@@ -114,63 +136,95 @@ export const AdminLayout = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row">
-      {/* Sidebar */}
-      <div className={`${theme === 'light' ? 'bg-gray-100 text-gray-800' : 'bg-gray-900 text-white'} w-full md:w-64 p-4 md:min-h-screen flex flex-col border-r border-gray-200 dark:border-gray-700`}>
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-xl font-bold text-kindred-accent">Admin Dashboard</h1>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="md:hidden"
-            onClick={() => navigate('/admin')}
-          >
-            <ChevronLeft />
-          </Button>
-        </div>
-        
-        <nav className="space-y-2 flex-1">
-          <Button 
-            variant="ghost" 
-            className="w-full justify-start"
-            onClick={() => navigate('/admin/tickets')}
-          >
-            <MessageSquare className="mr-2 h-5 w-5" />
-            Support Tickets
-          </Button>
-          
-          <Button 
-            variant="ghost" 
-            className="w-full justify-start"
-            onClick={() => navigate('/admin/announcements')}
-          >
-            <BellDot className="mr-2 h-5 w-5" />
-            Announcements
-          </Button>
-          
-          <Button 
-            variant="ghost" 
-            className="w-full justify-start"
-            onClick={() => navigate('/admin/settings')}
-          >
-            <Settings className="mr-2 h-5 w-5" />
-            Settings
-          </Button>
-        </nav>
-        
+    <div className="min-h-screen flex flex-col">
+      {/* Mobile header */}
+      <div className={`${theme === 'light' ? 'bg-gray-100 text-gray-800' : 'bg-gray-900 text-white'} p-4 flex justify-between items-center md:hidden border-b border-gray-200 dark:border-gray-700`}>
+        <h1 className="text-xl font-bold text-kindred-accent">Admin Dashboard</h1>
         <Button 
           variant="ghost" 
-          className="justify-start text-red-500 hover:text-red-600 hover:bg-red-100/10 mt-auto"
-          onClick={handleLogout}
+          size="icon"
+          onClick={toggleSidebar}
         >
-          <LogOut className="mr-2 h-5 w-5" />
-          Logout
+          {sidebarOpen ? <X /> : <Menu />}
         </Button>
       </div>
       
-      {/* Main content */}
-      <div className="flex-1 p-6 overflow-auto bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
-        <Outlet />
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <div 
+          className={`${theme === 'light' ? 'bg-gray-100 text-gray-800' : 'bg-gray-900 text-white'} 
+            ${sidebarOpen ? 'block' : 'hidden'} md:block
+            w-full md:w-64 p-4 md:min-h-screen flex flex-col border-r border-gray-200 dark:border-gray-700
+            fixed md:static top-[60px] left-0 h-[calc(100vh-60px)] md:h-auto z-40`}
+        >
+          <div className="flex items-center justify-between mb-8 md:mt-0">
+            <h1 className="text-xl font-bold text-kindred-accent hidden md:block">Admin Dashboard</h1>
+          </div>
+          
+          <nav className="space-y-2 flex-1">
+            <Button 
+              variant={isRouteActive('/admin') && !isRouteActive('/admin/tickets') && !isRouteActive('/admin/announcements') && !isRouteActive('/admin/settings') ? "secondary" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => {
+                navigate('/admin');
+                if (isMobile) setSidebarOpen(false);
+              }}
+            >
+              <MessageSquare className="mr-2 h-5 w-5" />
+              Dashboard
+            </Button>
+            
+            <Button 
+              variant={isRouteActive('/admin/tickets') ? "secondary" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => {
+                navigate('/admin/tickets');
+                if (isMobile) setSidebarOpen(false);
+              }}
+            >
+              <MessageSquare className="mr-2 h-5 w-5" />
+              Support Tickets
+            </Button>
+            
+            <Button 
+              variant={isRouteActive('/admin/announcements') ? "secondary" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => {
+                navigate('/admin/announcements');
+                if (isMobile) setSidebarOpen(false);
+              }}
+            >
+              <BellDot className="mr-2 h-5 w-5" />
+              Announcements
+            </Button>
+            
+            <Button 
+              variant={isRouteActive('/admin/settings') ? "secondary" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => {
+                navigate('/admin/settings');
+                if (isMobile) setSidebarOpen(false);
+              }}
+            >
+              <Settings className="mr-2 h-5 w-5" />
+              Settings
+            </Button>
+          </nav>
+          
+          <Button 
+            variant="ghost" 
+            className="justify-start text-red-500 hover:text-red-600 hover:bg-red-100/10 mt-auto"
+            onClick={handleLogout}
+          >
+            <LogOut className="mr-2 h-5 w-5" />
+            Logout
+          </Button>
+        </div>
+        
+        {/* Main content */}
+        <div className="flex-1 p-4 md:p-6 overflow-auto bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+          <Outlet />
+        </div>
       </div>
     </div>
   );
