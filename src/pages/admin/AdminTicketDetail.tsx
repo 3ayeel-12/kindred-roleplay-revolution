@@ -1,19 +1,21 @@
+
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Card, CardContent } from '@/components/ui/card';
 import { toast } from 'sonner';
+import { Separator } from '@/components/ui/separator';
 import { 
-  getSupportTicketById, 
-  getTicketReplies, 
-  addTicketReply, 
-  updateTicketStatus,
-  SupportTicket,
-  TicketReply
-} from '@/services/support';
-import { isAdminLoggedIn } from '@/services/adminAuthService';
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { Settings } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { isAdminLoggedIn } from '@/services/adminAuthService';
 import { useGetSupportTickets } from '@/hooks/use-support-tickets';
+import { getTicketReplies, TicketReply } from '@/services/support';
 
-// Import the refactored components
 import { TicketHeader } from '@/components/admin/tickets/TicketHeader';
 import { TicketMessage } from '@/components/admin/tickets/TicketMessage';
 import { ConversationList } from '@/components/admin/tickets/ConversationList';
@@ -24,11 +26,11 @@ import { TicketNotFound } from '@/components/admin/tickets/TicketNotFound';
 
 export default function AdminTicketDetail() {
   const { ticketId } = useParams<{ ticketId: string }>();
-  const navigate = useNavigate();
-  const [ticket, setTicket] = useState<SupportTicket | null>(null);
+  const [isSending, setIsSending] = useState(false);
+  const [ticket, setTicket] = useState(null);
   const [replies, setReplies] = useState<TicketReply[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSending, setIsSending] = useState(false);
+  const navigate = useNavigate();
   const { updateTicket, addReply } = useGetSupportTickets();
   
   useEffect(() => {
@@ -37,112 +39,93 @@ export default function AdminTicketDetail() {
       return;
     }
     
-    if (ticketId) {
-      fetchTicketDetails();
-      
-      // Set up realtime subscriptions
-      const ticketChannel = supabase
-        .channel('ticket-updates')
-        .on('postgres_changes', 
-          { event: 'UPDATE', schema: 'public', table: 'support_tickets', filter: `id=eq.${ticketId}` }, 
-          () => {
-            console.log('Ticket updated, refreshing details...');
-            fetchTicketDetails();
-          }
-        )
-        .subscribe();
-        
-      const repliesChannel = supabase
-        .channel('ticket-replies')
-        .on('postgres_changes', 
-          { event: 'INSERT', schema: 'public', table: 'ticket_replies', filter: `ticket_id=eq.${ticketId}` }, 
-          (payload) => {
-            console.log('New reply received:', payload);
-            fetchTicketDetails();
-          }
-        )
-        .subscribe();
-      
-      return () => {
-        supabase.removeChannel(ticketChannel);
-        supabase.removeChannel(repliesChannel);
-      };
+    if (!ticketId) {
+      navigate('/admin/tickets');
+      return;
     }
+    
+    loadTicketData();
+    
+    // Set up real-time subscription for changes
+    const channel = supabase
+      .channel('ticket-updates')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'support_tickets', filter: `id=eq.${ticketId}` }, 
+        () => {
+          console.log('Ticket updated, refreshing...');
+          loadTicketData();
+        }
+      )
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'ticket_replies', filter: `ticket_id=eq.${ticketId}` }, 
+        () => {
+          console.log('Replies updated, refreshing...');
+          loadReplies();
+        }
+      )
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [ticketId, navigate]);
   
-  const fetchTicketDetails = async () => {
-    if (!ticketId) return;
-    
+  const loadTicketData = async () => {
     setIsLoading(true);
     try {
-      const ticketData = await getSupportTicketById(ticketId);
-      if (ticketData) {
-        setTicket(ticketData);
-        
-        const repliesData = await getTicketReplies(ticketId);
-        setReplies(repliesData);
-      }
+      if (!ticketId) return;
+      
+      // Load the ticket
+      const updatedTicket = await updateTicket(ticketId, { status: 'open' });
+      setTicket(updatedTicket);
+      
+      // Load replies
+      await loadReplies();
     } catch (error) {
-      console.error('Error fetching ticket details:', error);
-      toast.error('Failed to load ticket details');
+      console.error('Error loading ticket data:', error);
+      toast.error('Failed to load ticket data');
     } finally {
       setIsLoading(false);
     }
   };
   
-  const handleStatusChange = async (status: 'open' | 'in-progress' | 'resolved') => {
-    if (!ticketId || !ticket) return;
-    
+  const loadReplies = async () => {
     try {
-      await updateTicket(ticketId, status);
+      if (!ticketId) return;
       
-      // Update local state
-      setTicket(prev => prev ? { ...prev, status } : null);
-      
-      toast.success(`Ticket status updated to ${status}`);
+      const ticketReplies = await getTicketReplies(ticketId);
+      setReplies(ticketReplies);
     } catch (error) {
-      console.error('Failed to update ticket status:', error);
-      toast.error('Failed to update ticket status');
+      console.error('Error loading replies:', error);
     }
   };
   
-  const handleSendReply = async (replyMessage: string) => {
-    if (!ticketId) return;
+  const handleSendReply = async (message: string) => {
+    if (!ticketId || !message.trim()) return;
     
     setIsSending(true);
-    
     try {
-      // Try direct Supabase insert first for better reliability
-      const { data, error } = await supabase
-        .from('ticket_replies')
-        .insert({
-          ticket_id: ticketId,
-          message: replyMessage,
-          is_admin: true
-        })
-        .select();
-      
-      if (error) {
-        console.error('Direct reply insert failed, trying fallback:', error);
-        await addReply(ticketId, replyMessage, true);
-      } else {
-        console.log('Reply added successfully:', data);
-        
-        // Also update ticket status to in-progress
-        await updateTicket(ticketId, 'in-progress');
-        
-        if (ticket) {
-          setTicket({ ...ticket, status: 'in-progress' });
-        }
-      }
-      
-      await fetchTicketDetails(); // Refresh ticket details
-      toast.success('Reply sent successfully');
+      await addReply(ticketId, message, true);
+      loadReplies();
+      toast.success('Reply sent');
     } catch (error) {
-      console.error('Failed to send reply:', error);
+      console.error('Error sending reply:', error);
       toast.error('Failed to send reply');
     } finally {
       setIsSending(false);
+    }
+  };
+  
+  const handleStatusChange = async (newStatus: 'open' | 'in-progress' | 'resolved') => {
+    if (!ticketId) return;
+    
+    try {
+      await updateTicket(ticketId, { status: newStatus });
+      toast.success(`Ticket marked as ${newStatus}`);
+      loadTicketData();
+    } catch (error) {
+      console.error('Error updating ticket status:', error);
+      toast.error('Failed to update ticket status');
     }
   };
   
@@ -156,28 +139,45 @@ export default function AdminTicketDetail() {
   
   return (
     <div className="space-y-6">
-      <TicketHeader onRefresh={fetchTicketDetails} isLoading={isLoading} />
+      <TicketHeader onRefresh={loadTicketData} isLoading={isLoading} />
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Ticket details */}
-        <div className="md:col-span-2 space-y-6">
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 space-y-6">
           <TicketMessage ticket={ticket} />
           
-          {/* Conversation */}
-          <div className="space-y-4">
-            <ConversationList ticket={ticket} replies={replies} />
-            
-            {/* Reply form */}
-            <TicketReplyForm onSendReply={handleSendReply} isSending={isSending} />
-          </div>
+          <Card>
+            <CardContent className="p-6">
+              <ConversationList ticket={ticket} replies={replies} />
+              
+              <Separator className="my-6" />
+              
+              <TicketReplyForm onSendReply={handleSendReply} isSending={isSending} />
+            </CardContent>
+          </Card>
         </div>
         
-        {/* Sidebar details */}
-        <TicketSidebar 
-          ticket={ticket} 
-          repliesCount={replies.length} 
-          onStatusChange={handleStatusChange} 
-        />
+        <div className="lg:col-span-1">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" className="lg:hidden w-full mb-4">
+                <Settings className="mr-2 h-4 w-4" />
+                Ticket Settings
+              </Button>
+            </SheetTrigger>
+            <div className="hidden lg:block">
+              <TicketSidebar 
+                ticket={ticket} 
+                onStatusChange={handleStatusChange} 
+              />
+            </div>
+            <SheetContent>
+              <TicketSidebar 
+                ticket={ticket} 
+                onStatusChange={handleStatusChange} 
+              />
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </div>
   );
