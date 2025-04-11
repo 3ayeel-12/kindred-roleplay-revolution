@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Filter, ArrowUpDown, RefreshCw } from 'lucide-react';
@@ -17,6 +16,7 @@ import { getSupportTickets, SupportTicket } from '@/services/support';
 import { isAdminLoggedIn } from '@/services/adminAuthService';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useGetSupportTickets } from '@/hooks/use-support-tickets';
 
 export default function AdminTickets() {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);

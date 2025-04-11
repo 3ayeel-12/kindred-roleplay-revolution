@@ -1,7 +1,5 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { 
   getSupportTicketById, 
@@ -13,6 +11,7 @@ import {
 } from '@/services/support';
 import { isAdminLoggedIn } from '@/services/adminAuthService';
 import { supabase } from '@/integrations/supabase/client';
+import { useGetSupportTickets } from '@/hooks/use-support-tickets';
 
 // Import the refactored components
 import { TicketHeader } from '@/components/admin/tickets/TicketHeader';
@@ -30,6 +29,7 @@ export default function AdminTicketDetail() {
   const [replies, setReplies] = useState<TicketReply[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
+  const { updateTicket, addReply } = useGetSupportTickets();
   
   useEffect(() => {
     if (!isAdminLoggedIn()) {
@@ -94,7 +94,7 @@ export default function AdminTicketDetail() {
     if (!ticketId || !ticket) return;
     
     try {
-      await updateTicketStatus(ticketId, status);
+      await updateTicket(ticketId, status);
       
       // Update local state
       setTicket(prev => prev ? { ...prev, status } : null);
@@ -124,12 +124,12 @@ export default function AdminTicketDetail() {
       
       if (error) {
         console.error('Direct reply insert failed, trying fallback:', error);
-        await addTicketReply(ticketId, replyMessage, true);
+        await addReply(ticketId, replyMessage, true);
       } else {
         console.log('Reply added successfully:', data);
         
         // Also update ticket status to in-progress
-        await updateTicketStatus(ticketId, 'in-progress');
+        await updateTicket(ticketId, 'in-progress');
         
         if (ticket) {
           setTicket({ ...ticket, status: 'in-progress' });

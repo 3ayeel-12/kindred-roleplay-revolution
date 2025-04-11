@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { createSupportTicket } from '@/services/support';
 import { supabase } from '@/integrations/supabase/client';
+import { useCreateSupportTicket } from '@/hooks/use-create-ticket';
 
 export const TechSupport = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,6 +19,7 @@ export const TechSupport = () => {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { t, theme, language } = useLanguage();
+  const { createTicket } = useCreateSupportTicket();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +52,7 @@ export const TechSupport = () => {
         
       if (error) {
         console.error('Direct insert failed, trying fallback:', error);
-        await createSupportTicket(email, message, name, subject);
+        await createTicket({ email, message, userName: name, subject });
       } else {
         console.log('Support ticket created successfully:', data);
       }
