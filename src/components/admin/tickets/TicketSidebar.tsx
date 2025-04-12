@@ -13,11 +13,11 @@ import { toast } from "sonner";
 
 interface TicketSidebarProps {
   ticket: SupportTicket;
-  repliesCount: number;
   onStatusChange: (status: 'open' | 'in-progress' | 'resolved') => void;
+  repliesCount?: number; // Make repliesCount optional
 }
 
-export function TicketSidebar({ ticket, repliesCount, onStatusChange }: TicketSidebarProps) {
+export function TicketSidebar({ ticket, repliesCount = 0, onStatusChange }: TicketSidebarProps) {
   return (
     <div className="space-y-6">
       <div className="border rounded-lg p-4 space-y-4 bg-card">

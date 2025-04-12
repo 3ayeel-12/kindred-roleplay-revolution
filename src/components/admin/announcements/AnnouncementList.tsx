@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { Announcement } from '@/services/announcementService';
+import { Announcement } from '@/hooks/use-admin-announcements';
 import { AnnouncementCard } from './AnnouncementCard';
 import { 
   Pagination, 

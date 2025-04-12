@@ -167,13 +167,15 @@ export default function AdminTicketDetail() {
             <div className="hidden lg:block">
               <TicketSidebar 
                 ticket={ticket} 
-                onStatusChange={handleStatusChange} 
+                onStatusChange={handleStatusChange}
+                repliesCount={replies.length}
               />
             </div>
             <SheetContent>
               <TicketSidebar 
                 ticket={ticket} 
-                onStatusChange={handleStatusChange} 
+                onStatusChange={handleStatusChange}
+                repliesCount={replies.length}
               />
             </SheetContent>
           </Sheet>

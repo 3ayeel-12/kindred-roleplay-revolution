@@ -7,7 +7,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Announcement } from '@/services/announcementService';
+import { Announcement } from '@/hooks/use-admin-announcements';
 
 interface DeleteAnnouncementDialogProps {
   announcement: Announcement | null;

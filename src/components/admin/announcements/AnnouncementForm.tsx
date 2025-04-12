@@ -8,7 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import {
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Announcement } from '@/services/announcementService';
+import { Announcement } from '@/hooks/use-admin-announcements';
 
 interface AnnouncementFormProps {
   announcement: Announcement | null;
@@ -20,9 +20,9 @@ interface AnnouncementFormProps {
 export interface AnnouncementFormData {
   title: string;
   content: string;
-  image_url: string;
-  video_url: string;
-  is_published: boolean;
+  imageUrl?: string;
+  videoUrl?: string;
+  isPublished: boolean;
 }
 
 export const AnnouncementForm = ({ 
@@ -34,9 +34,9 @@ export const AnnouncementForm = ({
   const [formData, setFormData] = useState<AnnouncementFormData>({
     title: announcement?.title || '',
     content: announcement?.content || '',
-    image_url: announcement?.image_url || '',
-    video_url: announcement?.video_url || '',
-    is_published: announcement?.is_published ?? true
+    imageUrl: announcement?.imageUrl || '',
+    videoUrl: announcement?.videoUrl || '',
+    isPublished: announcement?.isPublished ?? true
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -45,7 +45,7 @@ export const AnnouncementForm = ({
   };
   
   const handleSwitchChange = (checked: boolean) => {
-    setFormData(prev => ({ ...prev, is_published: checked }));
+    setFormData(prev => ({ ...prev, isPublished: checked }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -90,18 +90,18 @@ export const AnnouncementForm = ({
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="image_url">Image URL (optional)</Label>
+        <Label htmlFor="imageUrl">Image URL (optional)</Label>
         <Input
-          id="image_url"
-          name="image_url"
-          value={formData.image_url}
+          id="imageUrl"
+          name="imageUrl"
+          value={formData.imageUrl}
           onChange={handleInputChange}
           placeholder="https://example.com/image.jpg"
         />
-        {formData.image_url && (
+        {formData.imageUrl && (
           <div className="mt-2 aspect-video max-h-[150px] overflow-hidden rounded-md border">
             <img
-              src={formData.image_url}
+              src={formData.imageUrl}
               alt="Preview"
               className="w-full h-full object-cover"
               onError={(e) => {
@@ -113,20 +113,20 @@ export const AnnouncementForm = ({
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="video_url">YouTube Video URL (optional)</Label>
+        <Label htmlFor="videoUrl">YouTube Video URL (optional)</Label>
         <Input
-          id="video_url"
-          name="video_url"
-          value={formData.video_url}
+          id="videoUrl"
+          name="videoUrl"
+          value={formData.videoUrl}
           onChange={handleInputChange}
           placeholder="https://youtube.com/watch?v=..."
         />
-        {formData.video_url && getYouTubeId(formData.video_url) && (
+        {formData.videoUrl && getYouTubeId(formData.videoUrl) && (
           <div className="mt-2 aspect-video max-h-[150px] overflow-hidden rounded-md border">
             <iframe
               width="100%"
               height="100%"
-              src={`https://www.youtube.com/embed/${getYouTubeId(formData.video_url)}`}
+              src={`https://www.youtube.com/embed/${getYouTubeId(formData.videoUrl)}`}
               title="YouTube video"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -138,11 +138,11 @@ export const AnnouncementForm = ({
       
       <div className="flex items-center space-x-2">
         <Switch
-          id="is_published"
-          checked={formData.is_published}
+          id="isPublished"
+          checked={formData.isPublished}
           onCheckedChange={handleSwitchChange}
         />
-        <Label htmlFor="is_published">Publish announcement</Label>
+        <Label htmlFor="isPublished">Publish announcement</Label>
       </div>
       
       <DialogFooter>

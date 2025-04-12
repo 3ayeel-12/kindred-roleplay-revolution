@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { isAdminLoggedIn } from '@/services/adminAuthService';
@@ -6,11 +7,15 @@ import { AnnouncementHeader } from '@/components/admin/announcements/Announcemen
 import { AnnouncementList } from '@/components/admin/announcements/AnnouncementList';
 import { AnnouncementDialogManager } from '@/components/admin/announcements/AnnouncementDialogManager';
 import { Announcement, useAdminAnnouncements } from '@/hooks/use-admin-announcements';
+import { AnnouncementFormData } from '@/components/admin/announcements/AnnouncementForm';
 
 export default function AdminAnnouncements() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
   const { 
     isLoading, 
@@ -33,6 +38,7 @@ export default function AdminAnnouncements() {
     try {
       const fetchedAnnouncements = await getAnnouncements();
       setAnnouncements(fetchedAnnouncements);
+      setTotalPages(Math.max(1, Math.ceil(fetchedAnnouncements.length / 6)));
     } catch (error) {
       console.error('Error fetching announcements:', error);
       toast.error('Failed to load announcements');
@@ -42,35 +48,34 @@ export default function AdminAnnouncements() {
   const handleCreateAnnouncement = async (announcement: Omit<Announcement, 'id' | 'createdAt'>) => {
     try {
       const newAnnouncement = await createAnnouncement(announcement);
-      setAnnouncements(prev => [...prev, newAnnouncement]);
+      setAnnouncements(prev => [newAnnouncement, ...prev]);
       toast.success('Announcement created successfully');
+      return newAnnouncement;
     } catch (error) {
       console.error('Error creating announcement:', error);
       toast.error('Failed to create announcement');
-    } finally {
-      setIsDialogOpen(false);
+      throw error;
     }
   };
 
   const handleUpdateAnnouncement = async (id: string, updates: Partial<Announcement>) => {
     try {
-      const updatedAnnouncement = await updateAnnouncement(id, updates);
+      await updateAnnouncement(id, updates);
       setAnnouncements(prev => 
-        prev.map(announcement => announcement.id === id ? { ...announcement, ...updatedAnnouncement } : announcement)
+        prev.map(announcement => announcement.id === id ? { ...announcement, ...updates } : announcement)
       );
       toast.success('Announcement updated successfully');
     } catch (error) {
       console.error('Error updating announcement:', error);
       toast.error('Failed to update announcement');
-    } finally {
-      setIsDialogOpen(false);
+      throw error;
     }
   };
 
-  const handleDeleteAnnouncement = async (id: string) => {
+  const handleDeleteAnnouncement = async (announcement: Announcement) => {
     try {
-      await deleteAnnouncement(id);
-      setAnnouncements(prev => prev.filter(announcement => announcement.id !== id));
+      await deleteAnnouncement(announcement.id);
+      setAnnouncements(prev => prev.filter(a => a.id !== announcement.id));
       toast.success('Announcement deleted successfully');
     } catch (error) {
       console.error('Error deleting announcement:', error);
@@ -88,15 +93,42 @@ export default function AdminAnnouncements() {
     setIsDialogOpen(false);
   };
 
+  const handlePreview = (announcement: Announcement) => {
+    setSelectedAnnouncement(announcement);
+    setIsPreviewOpen(true);
+  };
+
+  const handleClosePreview = () => {
+    setIsPreviewOpen(false);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  // Filter announcements for current page
+  const startIndex = (currentPage - 1) * 6;
+  const endIndex = startIndex + 6;
+  const paginatedAnnouncements = announcements.slice(startIndex, endIndex);
+
   return (
     <div className="space-y-6">
-      <AnnouncementHeader onCreate={handleOpenDialog} onRefresh={fetchAnnouncements} isLoading={isLoading} />
+      <AnnouncementHeader 
+        onCreateNew={() => handleOpenDialog()} 
+        onRefresh={fetchAnnouncements} 
+        isLoading={isLoading} 
+      />
       
       <AnnouncementList 
-        announcements={announcements} 
-        onEdit={handleOpenDialog} 
-        onDelete={handleDeleteAnnouncement} 
-        isLoading={isLoading} 
+        announcements={paginatedAnnouncements}
+        isLoading={isLoading}
+        onCreateNew={() => handleOpenDialog()}
+        onEdit={handleOpenDialog}
+        onDelete={handleDeleteAnnouncement}
+        onPreview={handlePreview}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
       />
       
       <AnnouncementDialogManager
@@ -105,6 +137,13 @@ export default function AdminAnnouncements() {
         onCreate={handleCreateAnnouncement}
         onUpdate={handleUpdateAnnouncement}
         announcement={selectedAnnouncement}
+      />
+
+      {/* Preview Dialog */}
+      <AnnouncementPreview
+        announcement={selectedAnnouncement}
+        isOpen={isPreviewOpen}
+        onClose={handleClosePreview}
       />
     </div>
   );
