@@ -2,14 +2,12 @@
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Announcement } from '@/hooks/use-admin-announcements';
 import { AnnouncementForm, AnnouncementFormData } from '@/components/admin/announcements/AnnouncementForm';
-import { DeleteAnnouncementDialog } from '@/components/admin/announcements/DeleteAnnouncementDialog';
-import { AnnouncementPreview } from '@/components/admin/announcements/AnnouncementPreview';
 
 interface AnnouncementDialogManagerProps {
   announcement: Announcement | null;
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (formData: Omit<Announcement, 'id' | 'createdAt'>) => Promise<void>;
+  onCreate: (formData: Omit<Announcement, 'id' | 'createdAt'>) => Promise<Announcement>;
   onUpdate: (id: string, updates: Partial<Announcement>) => Promise<void>;
 }
 

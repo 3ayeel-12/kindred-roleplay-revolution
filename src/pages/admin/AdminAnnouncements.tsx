@@ -8,6 +8,7 @@ import { AnnouncementList } from '@/components/admin/announcements/AnnouncementL
 import { AnnouncementDialogManager } from '@/components/admin/announcements/AnnouncementDialogManager';
 import { Announcement, useAdminAnnouncements } from '@/hooks/use-admin-announcements';
 import { AnnouncementFormData } from '@/components/admin/announcements/AnnouncementForm';
+import { AnnouncementPreview } from '@/components/admin/announcements/AnnouncementPreview';
 
 export default function AdminAnnouncements() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
@@ -132,14 +133,13 @@ export default function AdminAnnouncements() {
       />
       
       <AnnouncementDialogManager
+        announcement={selectedAnnouncement}
         isOpen={isDialogOpen}
         onClose={handleCloseDialog}
         onCreate={handleCreateAnnouncement}
         onUpdate={handleUpdateAnnouncement}
-        announcement={selectedAnnouncement}
       />
 
-      {/* Preview Dialog */}
       <AnnouncementPreview
         announcement={selectedAnnouncement}
         isOpen={isPreviewOpen}
