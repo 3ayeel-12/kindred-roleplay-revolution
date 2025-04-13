@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ServerStatusPage from "./pages/ServerStatus";
+import AnnouncementsPage from "./pages/Announcements";
 import { TechSupport } from "./components/TechSupport";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AdminLayout } from "./components/layout/AdminLayout";
@@ -38,6 +39,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/server-status" element={<ServerStatusPage />} />
+              <Route path="/announcements" element={<AnnouncementsPage />} />
               
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminLayout />}>

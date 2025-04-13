@@ -1,7 +1,7 @@
 
 import { motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LucideIcon } from "lucide-react";
 
 interface MobileNavLinkProps {
   id: string;
@@ -9,28 +9,40 @@ interface MobileNavLinkProps {
   href: string;
   isActive: boolean;
   index: number;
-  onClick: () => void;
+  onClick?: () => void;
+  icon?: LucideIcon;
+  hasNotification?: boolean;
 }
 
-export function MobileNavLink({ id, label, href, isActive, index, onClick }: MobileNavLinkProps) {
+export function MobileNavLink({ id, label, href, isActive, index, onClick, icon: Icon, hasNotification }: MobileNavLinkProps) {
   return (
-    <motion.a 
-      key={id}
-      href={href} 
+    <motion.a
+      href={href}
       className={cn(
-        "px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-between font-bold",
+        "block py-3 px-4 rounded-md text-base font-medium relative flex items-center",
         isActive 
-          ? "bg-kindred-primary/20 text-kindred-highlight light-mode:bg-kindred-primary/10 light-mode:text-kindred-primary" 
-          : "text-white light-mode:text-kindred-dark hover:bg-kindred-primary/10"
+          ? "bg-kindred-primary/10 text-kindred-accent light-mode:bg-kindred-primary/5 light-mode:text-kindred-primary" 
+          : "text-white/80 hover:bg-kindred-primary/5 hover:text-white light-mode:text-kindred-dark light-mode:hover:bg-kindred-primary/5 light-mode:hover:text-kindred-primary"
       )}
       onClick={onClick}
-      initial={{ x: -20, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ delay: index * 0.1 }}
-      whileTap={{ scale: 0.95 }}
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.3, delay: 0.1 * index }}
     >
-      <span>{label}</span>
-      {isActive && <ChevronDown className="h-4 w-4" />}
+      {Icon && (
+        <Icon 
+          className={cn(
+            "mr-3 h-5 w-5",
+            hasNotification ? "text-kindred-accent animate-pulse" : ""
+          )} 
+        />
+      )}
+      
+      {hasNotification && !Icon && (
+        <span className="absolute top-3 left-0 w-2 h-2 bg-kindred-accent rounded-full animate-pulse"></span>
+      )}
+      
+      {label}
     </motion.a>
   );
 }

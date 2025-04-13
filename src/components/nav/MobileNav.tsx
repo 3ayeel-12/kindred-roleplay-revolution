@@ -6,10 +6,19 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { MobileNavLink } from "./MobileNavLink";
 import { ThemeToggle } from "./ThemeToggle";
 import { LanguageSwitcher } from "../LanguageSwitcher";
+import { LucideIcon } from "lucide-react";
+
+interface NavItem {
+  id: string;
+  label: string;
+  href: string;
+  icon?: LucideIcon;
+  hasNotification?: boolean;
+}
 
 interface MobileNavProps {
   isOpen: boolean;
-  navItems: Array<{ id: string; label: string; href: string }>;
+  navItems: NavItem[];
   activeSection: string;
   ctaText: string;
   onClose: () => void;
@@ -48,6 +57,8 @@ export function MobileNav({ isOpen, navItems, activeSection, ctaText, onClose }:
               isActive={activeSection === item.id}
               index={index}
               onClick={onClose}
+              icon={item.icon}
+              hasNotification={item.hasNotification}
             />
           ))}
           <motion.div

@@ -5,9 +5,18 @@ import { NavLink } from "./NavLink";
 import { ThemeToggle } from "./ThemeToggle";
 import { LanguageSwitcher } from "../LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { LucideIcon } from "lucide-react";
+
+interface NavItem {
+  id: string;
+  label: string;
+  href: string;
+  icon?: LucideIcon;
+  hasNotification?: boolean;
+}
 
 interface DesktopNavProps {
-  navItems: Array<{ id: string; label: string; href: string }>;
+  navItems: NavItem[];
   activeSection: string;
   ctaText: string;
 }
@@ -24,6 +33,8 @@ export function DesktopNav({ navItems, activeSection, ctaText }: DesktopNavProps
             href={item.href}
             isActive={activeSection === item.id}
             index={i}
+            icon={item.icon}
+            hasNotification={item.hasNotification}
           />
         ))}
       </nav>

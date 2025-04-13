@@ -1,6 +1,7 @@
 
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { LucideIcon } from "lucide-react";
 
 interface NavLinkProps {
   id: string;
@@ -8,46 +9,48 @@ interface NavLinkProps {
   href: string;
   isActive: boolean;
   index: number;
+  onClick?: () => void;
+  icon?: LucideIcon;
+  hasNotification?: boolean;
 }
 
-export function NavLink({ id, label, href, isActive, index }: NavLinkProps) {
-  const itemVariants = {
-    hidden: { opacity: 0, y: -10 },
-    visible: (i: number) => ({ 
-      opacity: 1, 
-      y: 0, 
-      transition: { 
-        delay: i * 0.1,
-        duration: 0.3
-      } 
-    })
-  };
-
+export function NavLink({ id, label, href, isActive, index, onClick, icon: Icon, hasNotification }: NavLinkProps) {
   return (
-    <motion.a 
-      key={id}
-      href={href} 
+    <motion.a
+      href={href}
       className={cn(
-        "nav-link relative overflow-hidden group px-4 py-2 rounded-md font-bold",
+        "px-3 py-2 rounded-md text-sm font-medium transition-colors relative flex items-center",
         isActive 
-          ? "text-kindred-highlight light-mode:text-kindred-primary" 
-          : "text-white light-mode:text-kindred-dark hover:text-kindred-accent light-mode:hover:text-kindred-primary"
+          ? "text-kindred-accent light-mode:text-kindred-primary" 
+          : "text-white/80 hover:text-white light-mode:text-kindred-dark light-mode:hover:text-kindred-primary"
       )}
-      custom={index}
-      variants={itemVariants}
-      initial="hidden"
-      animate="visible"
-      whileHover={{ scale: 1.05 }}
+      onClick={onClick}
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: 0.1 * index }}
     >
-      <span className="relative z-10 text-shadow drop-shadow-sm">{label}</span>
-      {isActive && (
-        <motion.span 
-          className="absolute bottom-0 left-0 w-full h-0.5 bg-kindred-highlight light-mode:bg-kindred-primary"
-          layoutId="activeIndicator"
-          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+      {Icon && (
+        <Icon 
+          className={cn(
+            "mr-1 h-4 w-4",
+            hasNotification ? "text-kindred-accent animate-pulse" : ""
+          )} 
         />
       )}
-      <span className="absolute inset-0 bg-kindred-primary/10 light-mode:bg-kindred-primary/5 scale-0 group-hover:scale-100 transition-transform duration-300 rounded-md" />
+      
+      {hasNotification && !Icon && (
+        <span className="absolute -top-1 -right-1 w-2 h-2 bg-kindred-accent rounded-full animate-pulse"></span>
+      )}
+      
+      {label}
+      
+      {isActive && (
+        <motion.div
+          className="absolute -bottom-1 left-0 right-0 h-0.5 bg-kindred-accent light-mode:bg-kindred-primary"
+          layoutId="activeSection"
+          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+        />
+      )}
     </motion.a>
   );
 }

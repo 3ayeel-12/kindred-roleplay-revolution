@@ -1,25 +1,36 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Bell, BellDot } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { AnimatedLogo } from './AnimatedLogo';
 import { DesktopNav } from './nav/DesktopNav';
 import { MobileNav } from './nav/MobileNav';
+import { useAnnouncementNotifications } from '@/hooks/useAnnouncementNotifications';
+import { useLocation } from 'react-router-dom';
 
 export function Navbar() {
   const { theme, t } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const { hasNewAnnouncements, markAnnouncementsAsViewed } = useAnnouncementNotifications();
+  const location = useLocation();
   
   const navItems = [
-    { id: "home", label: t("home"), href: "#" },
-    { id: "about", label: t("about"), href: "#about" },
-    { id: "how-to-play", label: t("howToPlay"), href: "#how-to-play" },
-    { id: "features", label: t("features"), href: "#features" },
-    { id: "community", label: t("community"), href: "#community" }
+    { id: "home", label: t("home"), href: "/" },
+    { id: "about", label: t("about"), href: "/#about" },
+    { id: "how-to-play", label: t("howToPlay"), href: "/#how-to-play" },
+    { id: "features", label: t("features"), href: "/#features" },
+    { id: "community", label: t("community"), href: "/#community" },
+    { 
+      id: "announcements", 
+      label: t("announcements"), 
+      href: "/announcements",
+      icon: hasNewAnnouncements ? BellDot : Bell,
+      hasNotification: hasNewAnnouncements 
+    }
   ];
   
   const ctaText = t("startPlaying");
@@ -45,6 +56,13 @@ export function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Check if we're on the announcements page and mark as viewed if so
+  useEffect(() => {
+    if (location.pathname === '/announcements' && hasNewAnnouncements) {
+      markAnnouncementsAsViewed();
+    }
+  }, [location.pathname, hasNewAnnouncements, markAnnouncementsAsViewed]);
 
   const navbarVariants = {
     initial: { y: -20, opacity: 0 },
