@@ -1,33 +1,26 @@
 
 import { useState } from 'react';
 import { toast } from 'sonner';
-
-export interface Announcement {
-  id: string;
-  title: string;
-  content: string;
-  imageUrl?: string;
-  videoUrl?: string;
-  createdAt: string;
-  isPublished: boolean;
-}
+import {
+  getAllAnnouncements,
+  createAnnouncement,
+  updateAnnouncement,
+  deleteAnnouncement,
+  Announcement,
+  AnnouncementInput
+} from '@/services/announcementService';
 
 /**
  * Hook for managing admin announcements
  */
 export const useAdminAnnouncements = () => {
-  const ANNOUNCEMENTS_KEY = 'admin-announcements';
   const [isLoading, setIsLoading] = useState(false);
 
   const getAnnouncements = async () => {
     setIsLoading(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const storedData = localStorage.getItem(ANNOUNCEMENTS_KEY);
-      const announcements: Announcement[] = storedData ? JSON.parse(storedData) : [];
-      
+      const announcements = await getAllAnnouncements();
       return announcements;
     } catch (error) {
       console.error('Error fetching announcements:', error);
@@ -38,24 +31,11 @@ export const useAdminAnnouncements = () => {
     }
   };
 
-  const createAnnouncement = async (announcement: Omit<Announcement, 'id' | 'createdAt'>) => {
+  const createAnnouncement = async (announcement: AnnouncementInput) => {
     setIsLoading(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const storedData = localStorage.getItem(ANNOUNCEMENTS_KEY);
-      const announcements: Announcement[] = storedData ? JSON.parse(storedData) : [];
-      
-      const newAnnouncement: Announcement = {
-        ...announcement,
-        id: Date.now().toString(),
-        createdAt: new Date().toISOString()
-      };
-      
-      const updatedAnnouncements = [...announcements, newAnnouncement];
-      localStorage.setItem(ANNOUNCEMENTS_KEY, JSON.stringify(updatedAnnouncements));
-      
+      const newAnnouncement = await createAnnouncement(announcement);
       return newAnnouncement;
     } catch (error) {
       console.error('Error creating announcement:', error);
@@ -66,22 +46,12 @@ export const useAdminAnnouncements = () => {
     }
   };
 
-  const updateAnnouncement = async (id: string, updates: Partial<Announcement>) => {
+  const updateAnnouncement = async (id: string, updates: Partial<AnnouncementInput>) => {
     setIsLoading(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      const storedData = localStorage.getItem(ANNOUNCEMENTS_KEY);
-      const announcements: Announcement[] = storedData ? JSON.parse(storedData) : [];
-      
-      const updatedAnnouncements = announcements.map(announcement => 
-        announcement.id === id ? { ...announcement, ...updates } : announcement
-      );
-      
-      localStorage.setItem(ANNOUNCEMENTS_KEY, JSON.stringify(updatedAnnouncements));
-      
-      return updatedAnnouncements.find(a => a.id === id);
+      const updatedAnnouncement = await updateAnnouncement(id, updates);
+      return updatedAnnouncement;
     } catch (error) {
       console.error('Error updating announcement:', error);
       toast.error('Failed to update announcement');
@@ -95,14 +65,7 @@ export const useAdminAnnouncements = () => {
     setIsLoading(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      const storedData = localStorage.getItem(ANNOUNCEMENTS_KEY);
-      const announcements: Announcement[] = storedData ? JSON.parse(storedData) : [];
-      
-      const updatedAnnouncements = announcements.filter(a => a.id !== id);
-      localStorage.setItem(ANNOUNCEMENTS_KEY, JSON.stringify(updatedAnnouncements));
-      
+      await deleteAnnouncement(id);
       return true;
     } catch (error) {
       console.error('Error deleting announcement:', error);

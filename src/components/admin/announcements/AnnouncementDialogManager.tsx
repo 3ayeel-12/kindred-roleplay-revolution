@@ -1,7 +1,7 @@
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Announcement } from '@/hooks/use-admin-announcements';
-import { AnnouncementForm, AnnouncementFormData } from '@/components/admin/announcements/AnnouncementForm';
+import { Announcement, AnnouncementInput } from '@/services/announcementService';
+import { AnnouncementForm } from '@/components/admin/announcements/AnnouncementForm';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -9,8 +9,8 @@ interface AnnouncementDialogManagerProps {
   announcement: Announcement | null;
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (formData: Omit<Announcement, 'id' | 'createdAt'>) => Promise<Announcement>;
-  onUpdate: (id: string, updates: Partial<Announcement>) => Promise<void>;
+  onCreate: (formData: AnnouncementInput) => Promise<Announcement>;
+  onUpdate: (id: string, updates: Partial<AnnouncementInput>) => Promise<void>;
 }
 
 export const AnnouncementDialogManager = ({
@@ -22,7 +22,7 @@ export const AnnouncementDialogManager = ({
 }: AnnouncementDialogManagerProps) => {
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleSubmit = async (formData: AnnouncementFormData) => {
+  const handleSubmit = async (formData: any) => {
     try {
       setIsSaving(true);
       
@@ -30,10 +30,10 @@ export const AnnouncementDialogManager = ({
         await onUpdate(announcement.id, formData);
         toast.success('Announcement updated successfully');
       } else {
-        const newAnnouncement = await onCreate(formData as Omit<Announcement, 'id' | 'createdAt'>);
+        const newAnnouncement = await onCreate(formData);
         toast.success('Announcement created successfully');
         
-        if (formData.isPublished) {
+        if (formData.is_published) {
           toast('New announcement published', {
             description: 'Users will be notified about this announcement.',
             action: {

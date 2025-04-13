@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff, Edit, Trash2, Monitor } from 'lucide-react';
-import { Announcement } from '@/hooks/use-admin-announcements';
+import { Announcement } from '@/services/announcementService';
 
 interface AnnouncementCardProps {
   announcement: Announcement;
@@ -27,10 +27,10 @@ export const AnnouncementCard = ({
 
   return (
     <div className="border rounded-lg overflow-hidden bg-card">
-      {announcement.imageUrl && (
+      {announcement.image_url && (
         <div className="aspect-video w-full overflow-hidden bg-muted">
           <img
-            src={announcement.imageUrl}
+            src={announcement.image_url}
             alt={announcement.title}
             className="w-full h-full object-cover"
             onError={(e) => {
@@ -44,7 +44,7 @@ export const AnnouncementCard = ({
         <div className="flex items-start justify-between">
           <h2 className="text-lg font-semibold">{announcement.title}</h2>
           <div className="flex items-center gap-1">
-            {announcement.isPublished ? (
+            {announcement.is_published ? (
               <Eye className="h-4 w-4 text-green-500" />
             ) : (
               <EyeOff className="h-4 w-4 text-muted-foreground" />
@@ -54,7 +54,7 @@ export const AnnouncementCard = ({
         
         <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{announcement.content}</p>
         
-        {announcement.videoUrl && getYouTubeId(announcement.videoUrl) && (
+        {announcement.video_url && getYouTubeId(announcement.video_url) && (
           <div className="mt-3 text-xs text-blue-500">
             YouTube video embedded
           </div>
@@ -62,7 +62,7 @@ export const AnnouncementCard = ({
         
         <div className="mt-4 flex justify-between items-center">
           <span className="text-xs text-muted-foreground">
-            {new Date(announcement.createdAt).toLocaleString()}
+            {new Date(announcement.created_at).toLocaleString()}
           </span>
           
           <div className="flex items-center gap-2">
