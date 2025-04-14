@@ -4,6 +4,7 @@ import { Users } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { ServerInfo } from "@/lib/samp-api";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { cn } from "@/lib/utils";
 
 interface PlayerStatsProps {
   serverInfo: ServerInfo;
@@ -26,18 +27,36 @@ export function PlayerStats({ serverInfo }: PlayerStatsProps) {
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Users size={18} className="text-kindred-accent" />
-          <span className={`text-sm font-medium ${theme === 'light' ? 'text-kindred-dark' : 'text-white'}`}>
+          <Users size={18} className={theme === 'light' ? 'text-kindred-primary' : 'text-kindred-accent'} />
+          <span className={cn(
+            "text-sm font-medium",
+            theme === 'light' ? 'text-kindred-dark' : 'text-white/90'
+          )}>
             Players Online
           </span>
         </div>
-        <span className="text-kindred-highlight font-bold">
+        <span className={cn(
+          "font-bold",
+          theme === 'light' ? 'text-kindred-primary' : 'text-kindred-highlight'
+        )}>
           {serverInfo.players} / {serverInfo.maxplayers}
         </span>
       </div>
-      <Progress value={playerPercentage} className={`h-2 ${theme === 'light' ? 'bg-gray-200' : 'bg-kindred-darker/80'}`}>
-        <div className="h-full bg-gradient-to-r from-kindred-accent to-kindred-highlight" style={{ width: `${playerPercentage}%` }} />
-      </Progress>
+      
+      <div className={cn(
+        "relative h-2 overflow-hidden rounded-full",
+        theme === 'light' ? 'bg-gray-200' : 'bg-kindred-darker/80'
+      )}>
+        <div 
+          className={cn(
+            "h-full rounded-full transition-all duration-300",
+            theme === 'light' 
+              ? 'bg-gradient-to-r from-kindred-primary to-kindred-secondary' 
+              : 'bg-gradient-to-r from-kindred-accent to-kindred-highlight'
+          )} 
+          style={{ width: `${playerPercentage}%` }} 
+        />
+      </div>
     </motion.div>
   );
 }

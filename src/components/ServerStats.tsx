@@ -55,7 +55,11 @@ const ServerStats = () => {
       <Announcements />
       
       <motion.div 
-        className={`sa-card p-6 mb-8 ${theme === 'light' ? 'bg-white/70 border-kindred-primary/30' : 'bg-black/40 border-kindred-orange/30'} border-2 rounded-xl transition-all duration-300`}
+        className={`glass-card p-6 mb-8 rounded-xl shadow-lg transition-all duration-300 ${
+          theme === 'light' 
+            ? 'bg-white/70 border-kindred-primary/30 shadow-kindred-primary/10' 
+            : 'bg-kindred-darker/40 border-kindred-accent/20 shadow-kindred-accent/10'
+        }`}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
