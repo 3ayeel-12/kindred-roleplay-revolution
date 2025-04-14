@@ -90,7 +90,7 @@ export default function AdminAnnouncements() {
   };
 
   return (
-    <div className="space-y-6 bg-black/20 p-6 rounded-xl backdrop-blur-sm border border-kindred-primary/20">
+    <div className="space-y-6 bg-[#111111] p-6 rounded-xl backdrop-blur-sm border border-[#333333]">
       <AnnouncementHeader 
         onCreateNew={() => handleOpenDialog()} 
         onRefresh={loadAnnouncements} 

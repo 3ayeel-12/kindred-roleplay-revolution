@@ -8,7 +8,8 @@ import {
   LogOut,
   ChevronLeft,
   Menu,
-  X
+  X,
+  Circle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -84,9 +85,12 @@ export const AdminLayout = () => {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-kindred-darker to-black p-4">
-        <div className={`w-full max-w-md p-8 rounded-xl ${theme === 'light' ? 'bg-white/90 text-gray-800' : 'bg-black/60 text-gray-100'} shadow-2xl`}>
-          <h1 className="text-2xl font-bold text-center mb-6 text-kindred-accent">Admin Login</h1>
+      <div className="min-h-screen flex items-center justify-center bg-black p-4 admin-layout">
+        <div className="geometric-lines"></div>
+        <div className="geometric-circle"></div>
+        
+        <div className="w-full max-w-md p-8 rounded-xl bg-black/90 text-white shadow-2xl border border-[#333333] relative z-10">
+          <h1 className="text-2xl font-bold text-center mb-6 text-white">Admin Login</h1>
           
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
@@ -95,7 +99,7 @@ export const AdminLayout = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
-                className="w-full p-3 rounded-md bg-black/30 border border-kindred-primary/30 text-white focus:outline-none focus:ring-2 focus:ring-kindred-accent/50"
+                className="w-full p-3 rounded-md bg-black border border-[#333333] text-white focus:outline-none focus:ring-2 focus:ring-white/50"
                 required
               />
             </div>
@@ -106,14 +110,14 @@ export const AdminLayout = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                className="w-full p-3 rounded-md bg-black/30 border border-kindred-primary/30 text-white focus:outline-none focus:ring-2 focus:ring-kindred-accent/50"
+                className="w-full p-3 rounded-md bg-black border border-[#333333] text-white focus:outline-none focus:ring-2 focus:ring-white/50"
                 required
               />
             </div>
             
             <Button 
               type="submit" 
-              className="w-full bg-kindred-accent hover:bg-kindred-accent/90"
+              className="w-full bg-white text-black hover:bg-white/90"
               disabled={isAuthenticating}
             >
               {isAuthenticating ? 'Logging in...' : 'Login'}
@@ -124,7 +128,7 @@ export const AdminLayout = () => {
             <Button 
               variant="link" 
               onClick={() => navigate('/')}
-              className="text-kindred-primary hover:text-kindred-accent"
+              className="text-white hover:text-white/80"
             >
               <ChevronLeft className="w-4 h-4 mr-1" />
               Back to Website
@@ -136,14 +140,17 @@ export const AdminLayout = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-black text-white admin-layout">
+      <div className="geometric-lines"></div>
+      
       {/* Mobile header */}
-      <div className={`${theme === 'light' ? 'bg-gray-100 text-gray-800' : 'bg-gray-900 text-white'} p-4 flex justify-between items-center md:hidden border-b border-gray-200 dark:border-gray-700`}>
-        <h1 className="text-xl font-bold text-kindred-accent">Admin Dashboard</h1>
+      <div className="bg-black p-4 flex justify-between items-center md:hidden border-b border-[#333333]">
+        <h1 className="text-xl font-bold text-white">Admin Dashboard</h1>
         <Button 
           variant="ghost" 
           size="icon"
           onClick={toggleSidebar}
+          className="text-white"
         >
           {sidebarOpen ? <X /> : <Menu />}
         </Button>
@@ -152,19 +159,20 @@ export const AdminLayout = () => {
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <div 
-          className={`${theme === 'light' ? 'bg-gray-100 text-gray-800' : 'bg-gray-900 text-white'} 
+          className={`
+            bg-black text-white
             ${sidebarOpen ? 'block' : 'hidden'} md:block
-            w-full md:w-64 p-4 md:min-h-screen flex flex-col border-r border-gray-200 dark:border-gray-700
+            w-full md:w-64 p-4 md:min-h-screen flex flex-col border-r border-[#333333]
             fixed md:static top-[60px] left-0 h-[calc(100vh-60px)] md:h-auto z-40`}
         >
           <div className="flex items-center justify-between mb-8 md:mt-0">
-            <h1 className="text-xl font-bold text-kindred-accent hidden md:block">Admin Dashboard</h1>
+            <h1 className="text-xl font-bold text-white hidden md:block">Admin Dashboard</h1>
           </div>
           
           <nav className="space-y-2 flex-1">
             <Button 
               variant={isRouteActive('/admin') && !isRouteActive('/admin/tickets') && !isRouteActive('/admin/announcements') && !isRouteActive('/admin/settings') ? "secondary" : "ghost"} 
-              className="w-full justify-start"
+              className="w-full justify-start bg-transparent hover:bg-[#333333] text-white"
               onClick={() => {
                 navigate('/admin');
                 if (isMobile) setSidebarOpen(false);
@@ -176,7 +184,7 @@ export const AdminLayout = () => {
             
             <Button 
               variant={isRouteActive('/admin/tickets') ? "secondary" : "ghost"} 
-              className="w-full justify-start"
+              className="w-full justify-start bg-transparent hover:bg-[#333333] text-white"
               onClick={() => {
                 navigate('/admin/tickets');
                 if (isMobile) setSidebarOpen(false);
@@ -188,7 +196,7 @@ export const AdminLayout = () => {
             
             <Button 
               variant={isRouteActive('/admin/announcements') ? "secondary" : "ghost"} 
-              className="w-full justify-start"
+              className="w-full justify-start bg-transparent hover:bg-[#333333] text-white"
               onClick={() => {
                 navigate('/admin/announcements');
                 if (isMobile) setSidebarOpen(false);
@@ -200,7 +208,7 @@ export const AdminLayout = () => {
             
             <Button 
               variant={isRouteActive('/admin/settings') ? "secondary" : "ghost"} 
-              className="w-full justify-start"
+              className="w-full justify-start bg-transparent hover:bg-[#333333] text-white"
               onClick={() => {
                 navigate('/admin/settings');
                 if (isMobile) setSidebarOpen(false);
@@ -213,7 +221,7 @@ export const AdminLayout = () => {
           
           <Button 
             variant="ghost" 
-            className="justify-start text-red-500 hover:text-red-600 hover:bg-red-100/10 mt-auto"
+            className="justify-start text-red-400 hover:text-red-300 hover:bg-[#333333] mt-auto"
             onClick={handleLogout}
           >
             <LogOut className="mr-2 h-5 w-5" />
@@ -222,7 +230,7 @@ export const AdminLayout = () => {
         </div>
         
         {/* Main content */}
-        <div className="flex-1 p-4 md:p-6 overflow-auto bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+        <div className="flex-1 p-4 md:p-6 overflow-auto bg-black text-white">
           <Outlet />
         </div>
       </div>

@@ -30,7 +30,8 @@ export const AnnouncementDialogManager = ({
         await onUpdate(announcement.id, formData);
         toast.success('Announcement updated successfully');
       } else {
-        await onCreate(formData);
+        const newAnnouncement = await onCreate(formData);
+        toast.success('Announcement created successfully');
       }
       
       onClose();
@@ -44,7 +45,7 @@ export const AnnouncementDialogManager = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-xl bg-kindred-darker/90 border-kindred-primary/30 text-white">
+      <DialogContent className="max-w-xl bg-black border-[#333333] text-white">
         <AnnouncementForm
           announcement={announcement}
           onSubmit={handleSubmit}

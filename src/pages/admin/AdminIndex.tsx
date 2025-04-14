@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageSquare, Users, Bell, AlertCircle } from 'lucide-react';
@@ -62,7 +63,7 @@ export default function AdminIndex() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <h1 className="text-3xl font-bold text-white">Dashboard</h1>
       </div>
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -71,26 +72,26 @@ export default function AdminIndex() {
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
           <Card 
-            className={`hover:shadow-md transition-shadow cursor-pointer ${hasNewTicket ? 'border-red-500 bg-red-500/10 animate-pulse' : ''}`} 
+            className={`hover:shadow-md transition-shadow cursor-pointer border-[#333333] bg-[#111111] ${hasNewTicket ? 'border-white animate-pulse' : ''}`} 
             onClick={() => {
               navigate('/admin/tickets');
               setHasNewTicket(false);
             }}
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-sm font-medium text-white">
                 Support Tickets
               </CardTitle>
               <div className="relative">
-                <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                <MessageSquare className="h-4 w-4 text-white" />
                 {hasNewTicket && (
-                  <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full" />
+                  <span className="absolute -top-1 -right-1 h-2 w-2 bg-white rounded-full" />
                 )}
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{isLoading ? '...' : tickets.length}</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="text-2xl font-bold text-white">{isLoading ? '...' : tickets.length}</div>
+              <p className="text-xs text-[#999999]">
                 {openTickets} open, {inProgressTickets} in progress, {resolvedTickets} resolved
               </p>
             </CardContent>
@@ -101,16 +102,16 @@ export default function AdminIndex() {
           whileHover={{ scale: 1.02 }}
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
-          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/admin/announcements')}>
+          <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#333333] bg-[#111111]" onClick={() => navigate('/admin/announcements')}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-sm font-medium text-white">
                 Announcements
               </CardTitle>
-              <Bell className="h-4 w-4 text-muted-foreground" />
+              <Bell className="h-4 w-4 text-white" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">Manage</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="text-2xl font-bold text-white">Manage</div>
+              <p className="text-xs text-[#999999]">
                 Create and manage site announcements
               </p>
             </CardContent>
@@ -121,16 +122,16 @@ export default function AdminIndex() {
           whileHover={{ scale: 1.02 }}
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
-          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/admin/settings')}>
+          <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#333333] bg-[#111111]" onClick={() => navigate('/admin/settings')}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-sm font-medium text-white">
                 User Analytics
               </CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <Users className="h-4 w-4 text-white" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">Stats</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="text-2xl font-bold text-white">Stats</div>
+              <p className="text-xs text-[#999999]">
                 User stats and site analytics
               </p>
             </CardContent>
@@ -145,19 +146,19 @@ export default function AdminIndex() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
           >
-            <Card className="bg-red-500/10 border-red-500 mb-4">
+            <Card className="bg-[#111111] border-white mb-4">
               <CardHeader className="pb-2">
                 <div className="flex items-center space-x-2">
-                  <AlertCircle className="h-5 w-5 text-red-500" />
-                  <CardTitle className="text-base">New Support Request</CardTitle>
+                  <AlertCircle className="h-5 w-5 text-white" />
+                  <CardTitle className="text-base text-white">New Support Request</CardTitle>
                 </div>
-                <CardDescription>
+                <CardDescription className="text-[#999999]">
                   A new support ticket has been submitted and needs attention
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 
-                  className="w-full bg-kindred-primary"
+                  className="w-full bg-white text-black hover:bg-white/90"
                   onClick={() => {
                     navigate('/admin/tickets');
                     setHasNewTicket(false);
@@ -172,43 +173,50 @@ export default function AdminIndex() {
       </AnimatePresence>
       
       <div className="mt-6">
-        <Card className="bg-kindred-darker/70 border-kindred-primary/20 text-white">
+        <Card className="bg-[#111111] border-[#333333] text-white">
           <CardHeader>
-            <CardTitle>Recent Support Tickets</CardTitle>
-            <CardDescription className="text-gray-300">
+            <CardTitle className="text-white">Recent Support Tickets</CardTitle>
+            <CardDescription className="text-[#999999]">
               View the most recent support requests from users
             </CardDescription>
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <p>Loading tickets...</p>
+              <div className="flex items-center justify-center py-4">
+                <div className="animate-spin h-5 w-5 border-2 border-white rounded-full border-t-transparent mr-2"></div>
+                <p>Loading tickets...</p>
+              </div>
             ) : tickets.length === 0 ? (
-              <p className="text-center py-4 text-muted-foreground">No tickets found</p>
+              <div className="text-center py-8 border border-[#333333] rounded-md">
+                <AlertCircle className="h-8 w-8 mb-2 mx-auto text-[#555555]" />
+                <p className="text-center text-[#999999]">No tickets found</p>
+              </div>
             ) : (
               <div className="space-y-4">
                 {tickets.slice(0, 5).map(ticket => (
                   <motion.div 
                     key={ticket.id} 
-                    className="p-3 border border-kindred-primary/20 rounded-md hover:bg-kindred-primary/10 transition-colors cursor-pointer"
+                    className="p-3 border border-[#333333] rounded-md hover:bg-[#222222] transition-colors cursor-pointer"
                     onClick={() => navigate(`/admin/tickets/${ticket.id}`)}
                     whileHover={{ x: 5 }}
                   >
                     <div className="flex justify-between items-start">
                       <div>
-                        <p className="font-medium">{ticket.user_email}</p>
-                        <p className="text-sm text-gray-300 line-clamp-1">{ticket.message}</p>
+                        <p className="font-medium text-white">{ticket.user_email}</p>
+                        <p className="text-sm text-[#999999] line-clamp-1">{ticket.message}</p>
                       </div>
-                      <div className={`px-2 py-1 rounded-full text-xs ${
-                        ticket.status === 'open' 
-                          ? 'bg-yellow-100 text-yellow-800' 
-                          : ticket.status === 'in-progress' 
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-green-100 text-green-800'
-                      }`}>
-                        {ticket.status}
+                      <div className="flex items-center">
+                        <span className={`status-indicator ${
+                          ticket.status === 'open' 
+                            ? 'status-open' 
+                            : ticket.status === 'in-progress' 
+                            ? 'status-in-progress'
+                            : 'status-resolved'
+                        }`}></span>
+                        <span className="text-xs text-white">{ticket.status}</span>
                       </div>
                     </div>
-                    <div className="text-xs text-gray-400 mt-2">
+                    <div className="text-xs text-[#666666] mt-2">
                       {new Date(ticket.created_at).toLocaleString()}
                     </div>
                   </motion.div>

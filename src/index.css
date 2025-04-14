@@ -10,3 +10,6 @@
 
 /* Import scrollbar styles and RTL support */
 @import './styles/scrollbars.css';
+
+/* Import admin theme */
+@import './styles/admin-theme.css';

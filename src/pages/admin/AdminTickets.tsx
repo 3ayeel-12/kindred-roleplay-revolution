@@ -76,16 +76,17 @@ export default function AdminTickets() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-kindred-primary/10 border border-kindred-primary/30 p-4 rounded-lg flex items-center justify-between"
+          className="bg-[#111111] border border-white p-4 rounded-lg flex items-center justify-between"
         >
           <div className="flex items-center gap-2">
-            <AlertCircle className="h-5 w-5 text-kindred-accent" />
-            <span>You have a new support ticket waiting for action</span>
+            <AlertCircle className="h-5 w-5 text-white" />
+            <span className="text-white">You have a new support ticket waiting for action</span>
           </div>
           <Button 
             variant="outline" 
             size="sm"
             onClick={() => setHasNewTicket(false)}
+            className="border-white text-white hover:bg-[#333333]"
           >
             Dismiss
           </Button>
@@ -106,7 +107,7 @@ export default function AdminTickets() {
         />
       </div>
       
-      <div className="bg-kindred-darker/70 border border-kindred-primary/20 rounded-xl p-4">
+      <div className="bg-[#111111] border border-[#333333] rounded-xl p-4">
         <TicketsTable
           tickets={filteredTickets}
           isLoading={isLoading}
