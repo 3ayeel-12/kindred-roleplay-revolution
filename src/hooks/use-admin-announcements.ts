@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import {
   getAllAnnouncements,
-  createAnnouncement,
-  updateAnnouncement,
-  deleteAnnouncement,
+  createAnnouncement as createAnnouncementService,
+  updateAnnouncement as updateAnnouncementService,
+  deleteAnnouncement as deleteAnnouncementService,
   Announcement,
   AnnouncementInput
 } from '@/services/announcementService';
@@ -35,7 +35,7 @@ export const useAdminAnnouncements = () => {
     setIsLoading(true);
     
     try {
-      const newAnnouncement = await createAnnouncement(announcement);
+      const newAnnouncement = await createAnnouncementService(announcement);
       return newAnnouncement;
     } catch (error) {
       console.error('Error creating announcement:', error);
@@ -50,7 +50,7 @@ export const useAdminAnnouncements = () => {
     setIsLoading(true);
     
     try {
-      const updatedAnnouncement = await updateAnnouncement(id, updates);
+      const updatedAnnouncement = await updateAnnouncementService(id, updates);
       return updatedAnnouncement;
     } catch (error) {
       console.error('Error updating announcement:', error);
@@ -65,7 +65,7 @@ export const useAdminAnnouncements = () => {
     setIsLoading(true);
     
     try {
-      await deleteAnnouncement(id);
+      await deleteAnnouncementService(id);
       return true;
     } catch (error) {
       console.error('Error deleting announcement:', error);

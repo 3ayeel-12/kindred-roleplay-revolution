@@ -8,7 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import {
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Announcement } from '@/hooks/use-admin-announcements';
+import { Announcement } from '@/services/announcementService';
 
 interface AnnouncementFormProps {
   announcement: Announcement | null;
