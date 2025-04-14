@@ -9,10 +9,14 @@ import { TicketsHeader } from '@/components/admin/tickets/TicketsHeader';
 import { TicketsSearchBar } from '@/components/admin/tickets/TicketsSearchBar';
 import { TicketsTable } from '@/components/admin/tickets/TicketsTable';
 import { useTicketFilters } from '@/hooks/use-ticket-filters';
+import { motion } from 'framer-motion';
+import { AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function AdminTickets() {
   const { tickets, isLoading, getTickets } = useGetSupportTickets();
   const navigate = useNavigate();
+  const [hasNewTicket, setHasNewTicket] = useState(false);
   
   const {
     searchQuery,
@@ -37,8 +41,16 @@ export default function AdminTickets() {
       .channel('public:support_tickets')
       .on('postgres_changes', 
         { event: '*', schema: 'public', table: 'support_tickets' }, 
-        () => {
-          console.log('Tickets updated, refreshing...');
+        (payload) => {
+          console.log('Tickets updated, refreshing...', payload);
+          
+          if (payload.eventType === 'INSERT') {
+            setHasNewTicket(true);
+            toast.info('New support ticket received!', {
+              description: 'A user has submitted a new support request.',
+            });
+          }
+          
           fetchTickets();
         }
       )
@@ -60,6 +72,26 @@ export default function AdminTickets() {
   
   return (
     <div className="space-y-6">
+      {hasNewTicket && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-kindred-primary/10 border border-kindred-primary/30 p-4 rounded-lg flex items-center justify-between"
+        >
+          <div className="flex items-center gap-2">
+            <AlertCircle className="h-5 w-5 text-kindred-accent" />
+            <span>You have a new support ticket waiting for action</span>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setHasNewTicket(false)}
+          >
+            Dismiss
+          </Button>
+        </motion.div>
+      )}
+    
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <TicketsHeader 
           isLoading={isLoading} 
@@ -74,12 +106,14 @@ export default function AdminTickets() {
         />
       </div>
       
-      <TicketsTable
-        tickets={filteredTickets}
-        isLoading={isLoading}
-        sortDirection={sortDirection}
-        onSortChange={handleSortChange}
-      />
+      <div className="bg-kindred-darker/70 border border-kindred-primary/20 rounded-xl p-4">
+        <TicketsTable
+          tickets={filteredTickets}
+          isLoading={isLoading}
+          sortDirection={sortDirection}
+          onSortChange={handleSortChange}
+        />
+      </div>
     </div>
   );
 }

@@ -30,18 +30,7 @@ export const AnnouncementDialogManager = ({
         await onUpdate(announcement.id, formData);
         toast.success('Announcement updated successfully');
       } else {
-        const newAnnouncement = await onCreate(formData);
-        toast.success('Announcement created successfully');
-        
-        if (formData.is_published) {
-          toast('New announcement published', {
-            description: 'Users will be notified about this announcement.',
-            action: {
-              label: 'View',
-              onClick: () => window.open('/announcements', '_blank')
-            }
-          });
-        }
+        await onCreate(formData);
       }
       
       onClose();
@@ -55,7 +44,7 @@ export const AnnouncementDialogManager = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-xl">
+      <DialogContent className="max-w-xl bg-kindred-darker/90 border-kindred-primary/30 text-white">
         <AnnouncementForm
           announcement={announcement}
           onSubmit={handleSubmit}

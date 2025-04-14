@@ -3,9 +3,11 @@ import { useState, useEffect } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { getPublishedAnnouncements, Announcement } from '@/services/announcementService';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Bell } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export default function AnnouncementsPage() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
@@ -26,6 +28,25 @@ export default function AnnouncementsPage() {
     };
     
     fetchAnnouncements();
+    
+    // Setup real-time subscription to announcements
+    const channel = supabase
+      .channel('public:announcements:page')
+      .on('postgres_changes', 
+        { event: 'INSERT', schema: 'public', table: 'announcements', filter: 'is_published=eq.true' }, 
+        (payload) => {
+          console.log('New announcement received:', payload);
+          fetchAnnouncements();
+          toast.info('New announcement published!', {
+            description: 'A new announcement has been added.',
+          });
+        }
+      )
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
   
   const getYouTubeId = (url: string) => {
@@ -58,50 +79,55 @@ export default function AnnouncementsPage() {
               <p className="text-xl">No announcements available at this time.</p>
             </div>
           ) : (
-            <div className="space-y-8 max-w-5xl mx-auto">
-              {announcements.map((announcement) => (
-                <div 
-                  key={announcement.id}
-                  className={`w-full ${theme === 'light' ? 'bg-white/70 text-gray-800' : 'bg-black/40 text-white'} border-2 ${theme === 'light' ? 'border-kindred-primary/30' : 'border-kindred-orange/30'} rounded-xl overflow-hidden transition-all duration-300`}
-                >
-                  <div className="p-4 bg-kindred-primary/10 flex items-center">
-                    <Bell className="mr-2 h-5 w-5 text-kindred-accent" />
-                    <h3 className="font-bold text-kindred-accent">{announcement.title}</h3>
-                    <div className="ml-auto text-xs text-muted-foreground">
-                      {new Date(announcement.created_at).toLocaleDateString()}
+            <AnimatePresence>
+              <div className="space-y-8 max-w-5xl mx-auto">
+                {announcements.map((announcement) => (
+                  <motion.div 
+                    key={announcement.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className={`w-full ${theme === 'light' ? 'bg-white/70 text-gray-800' : 'bg-black/40 text-white'} border-2 ${theme === 'light' ? 'border-kindred-primary/30' : 'border-kindred-orange/30'} rounded-xl overflow-hidden transition-all duration-300`}
+                  >
+                    <div className="p-4 bg-kindred-primary/10 flex items-center">
+                      <Bell className="mr-2 h-5 w-5 text-kindred-accent" />
+                      <h3 className="font-bold text-kindred-accent">{announcement.title}</h3>
+                      <div className="ml-auto text-xs text-muted-foreground">
+                        {new Date(announcement.created_at).toLocaleDateString()}
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="p-4">
-                    {announcement.image_url && (
-                      <div className="mb-4 rounded-md overflow-hidden">
-                        <img
-                          src={announcement.image_url}
-                          alt={announcement.title}
-                          className="w-full h-auto max-h-96 object-cover"
-                        />
-                      </div>
-                    )}
                     
-                    <p className="whitespace-pre-wrap mb-4">{announcement.content}</p>
-                    
-                    {announcement.video_url && getYouTubeId(announcement.video_url) && (
-                      <div className="aspect-video w-full mb-4 rounded-md overflow-hidden">
-                        <iframe
-                          width="100%"
-                          height="100%"
-                          src={`https://www.youtube.com/embed/${getYouTubeId(announcement.video_url)}`}
-                          title="YouTube video"
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        ></iframe>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
+                    <div className="p-4">
+                      {announcement.image_url && (
+                        <div className="mb-4 rounded-md overflow-hidden">
+                          <img
+                            src={announcement.image_url}
+                            alt={announcement.title}
+                            className="w-full h-auto max-h-96 object-cover"
+                          />
+                        </div>
+                      )}
+                      
+                      <p className="whitespace-pre-wrap mb-4">{announcement.content}</p>
+                      
+                      {announcement.video_url && getYouTubeId(announcement.video_url) && (
+                        <div className="aspect-video w-full mb-4 rounded-md overflow-hidden">
+                          <iframe
+                            width="100%"
+                            height="100%"
+                            src={`https://www.youtube.com/embed/${getYouTubeId(announcement.video_url)}`}
+                            title="YouTube video"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          ></iframe>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </AnimatePresence>
           )}
         </motion.div>
       </main>

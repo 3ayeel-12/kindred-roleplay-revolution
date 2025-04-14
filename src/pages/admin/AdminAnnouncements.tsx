@@ -66,8 +66,31 @@ export default function AdminAnnouncements() {
     }
   };
 
+  const handleCreate = async (formData: any) => {
+    try {
+      const newAnnouncement = await handleCreateAnnouncement(formData);
+      toast.success('Announcement created successfully');
+      
+      if (formData.is_published) {
+        toast('New announcement published', {
+          description: 'Users will be notified about this announcement.',
+          action: {
+            label: 'View',
+            onClick: () => window.open('/announcements', '_blank')
+          }
+        });
+      }
+      
+      return newAnnouncement;
+    } catch (error) {
+      console.error('Error creating announcement:', error);
+      toast.error('Failed to create announcement');
+      throw error;
+    }
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 bg-black/20 p-6 rounded-xl backdrop-blur-sm border border-kindred-primary/20">
       <AnnouncementHeader 
         onCreateNew={() => handleOpenDialog()} 
         onRefresh={loadAnnouncements} 
@@ -90,7 +113,7 @@ export default function AdminAnnouncements() {
         announcement={selectedAnnouncement}
         isOpen={isDialogOpen}
         onClose={handleCloseDialog}
-        onCreate={handleCreateAnnouncement}
+        onCreate={handleCreate}
         onUpdate={handleUpdateAnnouncement}
       />
 
