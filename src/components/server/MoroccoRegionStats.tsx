@@ -24,22 +24,24 @@ export function MoroccoRegionStats() {
       transition={{ delay: 0.5 }}
       className="col-span-1 md:col-span-5"
     >
-      <Card className={`${theme === 'light' 
-        ? 'bg-gradient-to-r from-kindred-primary/10 to-kindred-highlight/5 border-kindred-primary/20' 
-        : 'bg-gradient-to-r from-kindred-orange/20 to-kindred-highlight/10 border-kindred-orange/20'}`}>
+      <Card className={`backdrop-blur-md ${theme === 'light' 
+        ? 'bg-white/80 border-kindred-primary/30 shadow-kindred-primary/10' 
+        : 'bg-gradient-to-r from-kindred-darker/70 to-kindred-darkest/80 border-kindred-highlight/20 shadow-kindred-accent/10'}`}>
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Flag className="text-kindred-highlight" />
-              <CardTitle className="text-base">Morocco Player Distribution</CardTitle>
+              <Flag className={theme === 'light' ? 'text-kindred-primary' : 'text-kindred-highlight'} />
+              <CardTitle className={`text-base ${theme === 'light' ? 'text-kindred-primary' : 'text-kindred-highlight'}`}>
+                Morocco Player Distribution
+              </CardTitle>
             </div>
             <Badge variant="outline" className={`${theme === 'light' 
-              ? 'bg-kindred-highlight/5 text-kindred-primary border-kindred-highlight/10' 
+              ? 'bg-kindred-primary/10 text-kindred-primary border-kindred-primary/20' 
               : 'bg-kindred-highlight/10 text-kindred-highlight border-kindred-highlight/20'}`}>
               Arabic/French
             </Badge>
           </div>
-          <CardDescription className={theme === 'light' ? 'text-gray-600' : ''}>
+          <CardDescription className={theme === 'light' ? 'text-kindred-dark/80' : 'text-gray-400'}>
             Player distribution across different regions of Morocco
           </CardDescription>
         </CardHeader>
@@ -52,13 +54,13 @@ export function MoroccoRegionStats() {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.6 + index * 0.1 }}
                 className={`flex flex-col items-center p-3 rounded-lg ${theme === 'light' 
-                  ? 'bg-kindred-primary/5 border border-kindred-primary/10'
-                  : 'bg-black/30 border border-kindred-highlight/10'}`}
+                  ? 'bg-gradient-to-br from-white to-kindred-light/50 border border-kindred-primary/20 shadow-sm'
+                  : 'bg-gradient-to-br from-kindred-darkest/90 to-black/70 border border-kindred-highlight/15 shadow-inner shadow-kindred-highlight/5'}`}
               >
-                <span className="text-xl font-bold text-kindred-highlight">
+                <span className={`text-xl font-bold ${theme === 'light' ? 'text-kindred-primary' : 'text-kindred-highlight'}`}>
                   {region.players}
                 </span>
-                <span className={`text-xs ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'} mt-1`}>
+                <span className={`text-xs font-medium mt-1 ${theme === 'light' ? 'text-kindred-dark/70' : 'text-gray-400'}`}>
                   {region.region}
                 </span>
               </motion.div>
