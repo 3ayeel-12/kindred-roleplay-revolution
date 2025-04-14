@@ -7,6 +7,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import { getPublishedAnnouncements, Announcement } from '@/services/announcementService';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export const Announcements = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
