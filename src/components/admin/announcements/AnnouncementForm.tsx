@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -20,9 +19,9 @@ interface AnnouncementFormProps {
 export interface AnnouncementFormData {
   title: string;
   content: string;
-  imageUrl?: string;
-  videoUrl?: string;
-  isPublished: boolean;
+  image_url?: string;
+  video_url?: string;
+  is_published: boolean;
 }
 
 export const AnnouncementForm = ({ 
@@ -34,9 +33,9 @@ export const AnnouncementForm = ({
   const [formData, setFormData] = useState<AnnouncementFormData>({
     title: announcement?.title || '',
     content: announcement?.content || '',
-    imageUrl: announcement?.imageUrl || '',
-    videoUrl: announcement?.videoUrl || '',
-    isPublished: announcement?.isPublished ?? true
+    image_url: announcement?.image_url || '',
+    video_url: announcement?.video_url || '',
+    is_published: announcement?.is_published ?? true
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -45,7 +44,7 @@ export const AnnouncementForm = ({
   };
   
   const handleSwitchChange = (checked: boolean) => {
-    setFormData(prev => ({ ...prev, isPublished: checked }));
+    setFormData(prev => ({ ...prev, is_published: checked }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -93,15 +92,15 @@ export const AnnouncementForm = ({
         <Label htmlFor="imageUrl">Image URL (optional)</Label>
         <Input
           id="imageUrl"
-          name="imageUrl"
-          value={formData.imageUrl}
+          name="image_url"
+          value={formData.image_url}
           onChange={handleInputChange}
           placeholder="https://example.com/image.jpg"
         />
-        {formData.imageUrl && (
+        {formData.image_url && (
           <div className="mt-2 aspect-video max-h-[150px] overflow-hidden rounded-md border">
             <img
-              src={formData.imageUrl}
+              src={formData.image_url}
               alt="Preview"
               className="w-full h-full object-cover"
               onError={(e) => {
@@ -116,17 +115,17 @@ export const AnnouncementForm = ({
         <Label htmlFor="videoUrl">YouTube Video URL (optional)</Label>
         <Input
           id="videoUrl"
-          name="videoUrl"
-          value={formData.videoUrl}
+          name="video_url"
+          value={formData.video_url}
           onChange={handleInputChange}
           placeholder="https://youtube.com/watch?v=..."
         />
-        {formData.videoUrl && getYouTubeId(formData.videoUrl) && (
+        {formData.video_url && getYouTubeId(formData.video_url) && (
           <div className="mt-2 aspect-video max-h-[150px] overflow-hidden rounded-md border">
             <iframe
               width="100%"
               height="100%"
-              src={`https://www.youtube.com/embed/${getYouTubeId(formData.videoUrl)}`}
+              src={`https://www.youtube.com/embed/${getYouTubeId(formData.video_url)}`}
               title="YouTube video"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -139,7 +138,7 @@ export const AnnouncementForm = ({
       <div className="flex items-center space-x-2">
         <Switch
           id="isPublished"
-          checked={formData.isPublished}
+          checked={formData.is_published}
           onCheckedChange={handleSwitchChange}
         />
         <Label htmlFor="isPublished">Publish announcement</Label>
