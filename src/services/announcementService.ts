@@ -44,6 +44,15 @@ export const getAllAnnouncements = async (): Promise<Announcement[]> => {
 };
 
 export const createAnnouncement = async (announcement: AnnouncementInput): Promise<Announcement> => {
+  // Validate required fields
+  if (!announcement.title.trim()) {
+    throw new Error('Title is required');
+  }
+  
+  if (!announcement.content.trim()) {
+    throw new Error('Content is required');
+  }
+  
   const { data, error } = await supabase
     .from('announcements')
     .insert(announcement)
@@ -62,6 +71,15 @@ export const updateAnnouncement = async (
   id: string, 
   updates: Partial<AnnouncementInput>
 ): Promise<Announcement> => {
+  // Validate required fields if they are being updated
+  if (updates.title !== undefined && !updates.title.trim()) {
+    throw new Error('Title is required');
+  }
+  
+  if (updates.content !== undefined && !updates.content.trim()) {
+    throw new Error('Content is required');
+  }
+  
   const { data, error } = await supabase
     .from('announcements')
     .update({

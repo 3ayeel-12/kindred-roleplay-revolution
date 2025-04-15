@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -8,6 +9,8 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Announcement } from '@/services/announcementService';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 interface AnnouncementFormProps {
   announcement: Announcement | null;
@@ -35,21 +38,52 @@ export const AnnouncementForm = ({
     content: announcement?.content || '',
     image_url: announcement?.image_url || '',
     video_url: announcement?.video_url || '',
-    is_published: announcement?.is_published ?? true
+    is_published: announcement?.is_published ?? false
   });
+  
+  const [errors, setErrors] = useState<{
+    title?: string;
+    content?: string;
+  }>({});
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Clear error when field is edited
+    if (errors[name as keyof typeof errors]) {
+      setErrors(prev => ({ ...prev, [name]: undefined }));
+    }
   };
   
   const handleSwitchChange = (checked: boolean) => {
     setFormData(prev => ({ ...prev, is_published: checked }));
   };
 
+  const validateForm = (): boolean => {
+    const newErrors: {
+      title?: string;
+      content?: string;
+    } = {};
+    
+    if (!formData.title.trim()) {
+      newErrors.title = 'Title is required';
+    }
+    
+    if (!formData.content.trim()) {
+      newErrors.content = 'Content is required';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    
+    if (validateForm()) {
+      onSubmit(formData);
+    }
   };
 
   const getYouTubeId = (url: string) => {
@@ -64,19 +98,22 @@ export const AnnouncementForm = ({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="title">Title</Label>
+        <Label htmlFor="title" className={errors.title ? "text-destructive" : ""}>Title</Label>
         <Input
           id="title"
           name="title"
           value={formData.title}
           onChange={handleInputChange}
           placeholder="Announcement title"
-          required
+          className={errors.title ? "border-destructive" : ""}
         />
+        {errors.title && (
+          <p className="text-sm text-destructive">{errors.title}</p>
+        )}
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="content">Content</Label>
+        <Label htmlFor="content" className={errors.content ? "text-destructive" : ""}>Content</Label>
         <Textarea
           id="content"
           name="content"
@@ -84,8 +121,11 @@ export const AnnouncementForm = ({
           onChange={handleInputChange}
           placeholder="Write your announcement here..."
           rows={5}
-          required
+          className={errors.content ? "border-destructive" : ""}
         />
+        {errors.content && (
+          <p className="text-sm text-destructive">{errors.content}</p>
+        )}
       </div>
       
       <div className="space-y-2">

@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import {
   getAllAnnouncements,
@@ -17,6 +17,7 @@ export interface UseAnnouncementsReturn {
   allAnnouncements: Announcement[];
   paginatedAnnouncements: Announcement[];
   isLoading: boolean;
+  error: Error | null;
   isSaving: boolean;
   currentPage: number;
   totalPages: number;
@@ -33,21 +34,22 @@ export const useAnnouncements = (): UseAnnouncementsReturn => {
   const [allAnnouncements, setAllAnnouncements] = useState<Announcement[]>([]);
   const [paginatedAnnouncements, setPaginatedAnnouncements] = useState<Announcement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
 
-  useEffect(() => {
-    // Update paginated announcements when all announcements change or page changes
-    updatePaginatedAnnouncements();
-  }, [allAnnouncements, currentPage]);
-
-  const updatePaginatedAnnouncements = () => {
+  const updatePaginatedAnnouncements = useCallback(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
     setPaginatedAnnouncements(allAnnouncements.slice(startIndex, endIndex));
-  };
+  }, [allAnnouncements, currentPage]);
+
+  useEffect(() => {
+    // Update paginated announcements when all announcements change or page changes
+    updatePaginatedAnnouncements();
+  }, [allAnnouncements, currentPage, updatePaginatedAnnouncements]);
 
   const handlePageChange = (page: number) => {
     if (page < 1 || page > totalPages) return;
@@ -56,15 +58,17 @@ export const useAnnouncements = (): UseAnnouncementsReturn => {
 
   const loadAnnouncements = async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const data = await getAllAnnouncements();
       setAllAnnouncements(data);
       
       // Calculate total pages
       setTotalPages(Math.max(1, Math.ceil(data.length / ITEMS_PER_PAGE)));
-    } catch (error) {
-      console.error('Error loading announcements:', error);
-      toast.error('Failed to load announcements');
+    } catch (err) {
+      console.error('Error loading announcements:', err);
+      setError(err instanceof Error ? err : new Error('Failed to load announcements'));
+      toast.error('Failed to load announcements. Please refresh or try later.');
     } finally {
       setIsLoading(false);
     }
@@ -73,6 +77,15 @@ export const useAnnouncements = (): UseAnnouncementsReturn => {
   const handleCreateAnnouncement = async (formData: AnnouncementInput) => {
     setIsSaving(true);
     try {
+      // Validate required fields
+      if (!formData.title.trim()) {
+        throw new Error('Title is required');
+      }
+      
+      if (!formData.content.trim()) {
+        throw new Error('Content is required');
+      }
+      
       const newAnnouncement = await createAnnouncement(formData);
       
       // Update local state
@@ -86,10 +99,10 @@ export const useAnnouncements = (): UseAnnouncementsReturn => {
       
       toast.success('Announcement created');
       return newAnnouncement;
-    } catch (error) {
-      console.error('Error creating announcement:', error);
-      toast.error('Failed to create announcement');
-      throw error;
+    } catch (err) {
+      console.error('Error creating announcement:', err);
+      toast.error(err instanceof Error ? err.message : 'Failed to create announcement');
+      throw err;
     } finally {
       setIsSaving(false);
     }
@@ -98,6 +111,15 @@ export const useAnnouncements = (): UseAnnouncementsReturn => {
   const handleUpdateAnnouncement = async (id: string, formData: AnnouncementInput) => {
     setIsSaving(true);
     try {
+      // Validate required fields
+      if (!formData.title.trim()) {
+        throw new Error('Title is required');
+      }
+      
+      if (!formData.content.trim()) {
+        throw new Error('Content is required');
+      }
+      
       await updateAnnouncement(id, formData);
       
       // Update local state
@@ -108,10 +130,10 @@ export const useAnnouncements = (): UseAnnouncementsReturn => {
       );
       
       toast.success('Announcement updated');
-    } catch (error) {
-      console.error('Error updating announcement:', error);
-      toast.error('Failed to update announcement');
-      throw error;
+    } catch (err) {
+      console.error('Error updating announcement:', err);
+      toast.error(err instanceof Error ? err.message : 'Failed to update announcement');
+      throw err;
     } finally {
       setIsSaving(false);
     }
@@ -133,10 +155,10 @@ export const useAnnouncements = (): UseAnnouncementsReturn => {
       }
       
       toast.success('Announcement deleted');
-    } catch (error) {
-      console.error('Error deleting announcement:', error);
+    } catch (err) {
+      console.error('Error deleting announcement:', err);
       toast.error('Failed to delete announcement');
-      throw error;
+      throw err;
     }
   };
 
@@ -144,6 +166,7 @@ export const useAnnouncements = (): UseAnnouncementsReturn => {
     allAnnouncements,
     paginatedAnnouncements,
     isLoading,
+    error,
     isSaving,
     currentPage,
     totalPages,

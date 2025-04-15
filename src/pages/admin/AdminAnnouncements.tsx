@@ -9,6 +9,9 @@ import { AnnouncementDialogManager } from '@/components/admin/announcements/Anno
 import { AnnouncementPreview } from '@/components/admin/announcements/AnnouncementPreview';
 import { useAnnouncements } from '@/hooks/useAnnouncements';
 import { Announcement } from '@/services/announcementService';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function AdminAnnouncements() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -19,6 +22,7 @@ export default function AdminAnnouncements() {
   const {
     paginatedAnnouncements: announcements,
     isLoading,
+    error,
     currentPage,
     totalPages,
     handlePageChange,
@@ -68,6 +72,17 @@ export default function AdminAnnouncements() {
 
   const handleCreate = async (formData: any) => {
     try {
+      // Validate required fields
+      if (!formData.title.trim()) {
+        toast.error('Title is required');
+        throw new Error('Title is required');
+      }
+      
+      if (!formData.content.trim()) {
+        toast.error('Content is required');
+        throw new Error('Content is required');
+      }
+      
       const newAnnouncement = await handleCreateAnnouncement(formData);
       toast.success('Announcement created successfully');
       
@@ -84,7 +99,9 @@ export default function AdminAnnouncements() {
       return newAnnouncement;
     } catch (error) {
       console.error('Error creating announcement:', error);
-      toast.error('Failed to create announcement');
+      if (!(error instanceof Error) || !error.message.includes('required')) {
+        toast.error('Failed to create announcement');
+      }
       throw error;
     }
   };
@@ -97,17 +114,34 @@ export default function AdminAnnouncements() {
         isLoading={isLoading} 
       />
       
-      <AnnouncementList 
-        announcements={announcements}
-        isLoading={isLoading}
-        onCreateNew={() => handleOpenDialog()}
-        onEdit={handleOpenDialog}
-        onDelete={handleDelete}
-        onPreview={handlePreview}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+      {error ? (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Failed to load announcements. Please try again.
+          </AlertDescription>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => loadAnnouncements()}
+            className="mt-2"
+          >
+            Retry
+          </Button>
+        </Alert>
+      ) : (
+        <AnnouncementList 
+          announcements={announcements}
+          isLoading={isLoading}
+          onCreateNew={() => handleOpenDialog()}
+          onEdit={handleOpenDialog}
+          onDelete={handleDelete}
+          onPreview={handlePreview}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
       
       <AnnouncementDialogManager
         announcement={selectedAnnouncement}

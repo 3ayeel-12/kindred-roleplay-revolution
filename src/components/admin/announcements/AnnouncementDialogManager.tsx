@@ -26,6 +26,17 @@ export const AnnouncementDialogManager = ({
     try {
       setIsSaving(true);
       
+      // Validate required fields
+      if (!formData.title.trim()) {
+        toast.error('Title is required');
+        return;
+      }
+      
+      if (!formData.content.trim()) {
+        toast.error('Content is required');
+        return;
+      }
+      
       if (announcement) {
         await onUpdate(announcement.id, formData);
         toast.success('Announcement updated successfully');
@@ -37,7 +48,7 @@ export const AnnouncementDialogManager = ({
       onClose();
     } catch (error) {
       console.error('Error submitting announcement:', error);
-      toast.error('Failed to save announcement');
+      toast.error(error instanceof Error ? error.message : 'Failed to save announcement');
     } finally {
       setIsSaving(false);
     }

@@ -1,29 +1,34 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Bell, ChevronRight, ChevronLeft, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import { getPublishedAnnouncements, Announcement } from '@/services/announcementService';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export const Announcements = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   const { theme, language } = useLanguage();
   
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
         setIsLoading(true);
+        setError(null);
         const data = await getPublishedAnnouncements();
         setAnnouncements(data);
         setCurrentIndex(0); // Reset to first announcement when list updates
-      } catch (error) {
-        console.error('Error fetching announcements', error);
+      } catch (err) {
+        console.error('Error fetching announcements', err);
+        setError(err instanceof Error ? err : new Error('Failed to load announcements'));
+        toast.error('Announcements failed to load. Please refresh or try later.');
       } finally {
         setIsLoading(false);
       }
@@ -73,7 +78,37 @@ export const Announcements = () => {
   };
   
   if (isLoading) {
-    return null; // Don't show anything while loading
+    return (
+      <div className={`w-full mb-8 ${theme === 'light' ? 'bg-white/70' : 'bg-black/40'} border-2 border-kindred-primary/30 rounded-xl p-6`}>
+        <div className="flex items-center">
+          <Bell className="mr-2 h-5 w-5 text-kindred-accent" />
+          <h3 className="font-bold text-kindred-accent">Announcements</h3>
+        </div>
+        <div className="animate-pulse mt-4 space-y-3">
+          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+          <div className="h-24 bg-gray-200 dark:bg-gray-700 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <Alert variant="destructive" className={`mb-8 ${theme === 'light' ? 'bg-white/70' : 'bg-black/40'} border-2 border-red-500 rounded-xl`}>
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          Announcements failed to load. Please refresh or try later.
+        </AlertDescription>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => window.location.reload()}
+          className="mt-2"
+        >
+          Refresh
+        </Button>
+      </Alert>
+    );
   }
   
   if (announcements.length === 0) {
@@ -130,6 +165,9 @@ export const Announcements = () => {
                 src={currentAnnouncement.image_url}
                 alt={currentAnnouncement.title}
                 className="w-full h-auto max-h-96 object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x225?text=Invalid+Image+URL';
+                }}
               />
             </div>
           )}

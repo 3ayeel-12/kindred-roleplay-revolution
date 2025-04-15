@@ -5,23 +5,29 @@ import { Footer } from '@/components/Footer';
 import { getPublishedAnnouncements, Announcement } from '@/services/announcementService';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Bell } from 'lucide-react';
+import { Bell, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 
 export default function AnnouncementsPage() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   const { theme } = useLanguage();
   
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
         setIsLoading(true);
+        setError(null);
         const data = await getPublishedAnnouncements();
         setAnnouncements(data);
-      } catch (error) {
-        console.error('Error fetching announcements:', error);
+      } catch (err) {
+        console.error('Error fetching announcements:', err);
+        setError(err instanceof Error ? err : new Error('Failed to load announcements'));
+        toast.error('Announcements failed to load. Please refresh or try later.');
       } finally {
         setIsLoading(false);
       }
@@ -74,6 +80,21 @@ export default function AnnouncementsPage() {
             <div className="flex justify-center">
               <div className="animate-pulse h-96 w-full max-w-3xl bg-kindred-primary/10 rounded-xl"></div>
             </div>
+          ) : error ? (
+            <Alert variant="destructive" className="max-w-3xl mx-auto border border-red-500">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Announcements failed to load. Please refresh or try later.
+              </AlertDescription>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => window.location.reload()}
+                className="mt-2"
+              >
+                Refresh
+              </Button>
+            </Alert>
           ) : announcements.length === 0 ? (
             <div className="text-center p-10 border border-kindred-primary/20 rounded-xl bg-kindred-primary/5">
               <p className="text-xl">No announcements available at this time.</p>
@@ -104,6 +125,9 @@ export default function AnnouncementsPage() {
                             src={announcement.image_url}
                             alt={announcement.title}
                             className="w-full h-auto max-h-96 object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x225?text=Invalid+Image+URL';
+                            }}
                           />
                         </div>
                       )}
@@ -135,4 +159,4 @@ export default function AnnouncementsPage() {
       <Footer />
     </div>
   );
-}
+};
