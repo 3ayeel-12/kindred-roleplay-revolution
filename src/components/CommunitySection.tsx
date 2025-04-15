@@ -2,9 +2,16 @@
 import { cn } from "@/lib/utils";
 import { Youtube, MessageCircle, Video } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useState } from "react";
+import { subscribeToNewsletter } from "@/services/newsletterService";
+import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export function CommunitySection() {
   const { t, language } = useLanguage();
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const socialPlatforms = [
     {
@@ -32,6 +39,37 @@ export function CommunitySection() {
       url: "https://www.tiktok.com/@splintatv"
     }
   ];
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email || !email.includes('@')) {
+      toast.error(t('pleaseEnterValidEmail'));
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      await subscribeToNewsletter(email);
+      toast.success(t('thanksForSubscribing'));
+      setEmail(''); // Reset email field after successful subscription
+    } catch (error) {
+      console.error('Error subscribing to newsletter:', error);
+      if (error instanceof Error) {
+        // Check if this is a duplicate email error
+        if (error.message.includes('already subscribed')) {
+          toast.error(t('emailAlreadySubscribed'));
+        } else {
+          toast.error(error.message);
+        }
+      } else {
+        toast.error(t('errorSubscribing'));
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <section id="community" className="py-20 bg-gradient-to-b from-kindred-dark to-kindred-darker light-mode:from-kindred-light/90 light-mode:to-white">
@@ -98,19 +136,26 @@ export function CommunitySection() {
               {t('stayUpdated')}
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input 
+            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+              <Input 
                 type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder={t('emailAddress')} 
                 className={cn(
                   "flex-1 px-4 py-3 rounded-md bg-kindred-dark border border-kindred-primary/30 text-white focus:outline-none focus:border-kindred-accent/50 light-mode:bg-white light-mode:border-kindred-primary/30 light-mode:text-kindred-darker",
                   language === 'ar' ? "text-right" : ""
                 )}
+                required
               />
-              <button className="btn-accent light-mode:bg-kindred-primary light-mode:text-white">
-                {t('subscribe').toUpperCase()}
-              </button>
-            </div>
+              <Button 
+                type="submit"
+                disabled={isSubmitting}
+                className="btn-accent light-mode:bg-kindred-primary light-mode:text-white"
+              >
+                {isSubmitting ? t('subscribing') : t('subscribe').toUpperCase()}
+              </Button>
+            </form>
           </div>
         </div>
       </div>

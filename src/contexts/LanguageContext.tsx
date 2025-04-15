@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 
 export type Language = 'en' | 'fr' | 'ar';
@@ -17,7 +16,6 @@ interface LanguageProviderProps {
   children: ReactNode;
 }
 
-// Enhanced translation object with more keys
 const translations = {
   en: {
     'home': 'Home',
@@ -57,7 +55,7 @@ const translations = {
     'rabat': 'Rabat',
     'marrakech': 'Marrakech',
     'fes': 'Fes',
-    'tangier': 'Tangier',
+    'tangier': 'Tanger',
     'aboutUs': 'About Us',
     'kindredCommunity': 'Kindred Community',
     'roleplayAndChill': 'Roleplay & Chill',
@@ -125,10 +123,14 @@ const translations = {
     'send': 'Send',
     'supportRequest': 'Support request submitted',
     'getBackToYou': 'We\'ll get back to you as soon as possible.',
-    // Additions for creating legendary moments text in hero
     'kindredCommunityTitle': 'KINDRED COMMUNITY',
     'sampRoleplayAndChill': 'SA-MP ROLEPLAY & CHILL',
     'creatingLegendaryMoments': 'CREATING LEGENDARY ROLEPLAY MOMENTS WITH OUR COMMUNITY',
+    'pleaseEnterValidEmail': "Please enter a valid email address",
+    'thanksForSubscribing': "Thanks for subscribing to our newsletter!",
+    'emailAlreadySubscribed': "This email is already subscribed to our newsletter",
+    'errorSubscribing': "An error occurred while subscribing. Please try again later.",
+    'subscribing': "Subscribing...",
   },
   fr: {
     'home': 'Accueil',
@@ -236,10 +238,14 @@ const translations = {
     'send': 'Envoyer',
     'supportRequest': 'Demande de support envoyée',
     'getBackToYou': 'Nous vous répondrons dès que possible.',
-    // Additions for hero section
     'kindredCommunityTitle': 'COMMUNAUTÉ KINDRED',
     'sampRoleplayAndChill': 'SA-MP ROLEPLAY & CHILL',
     'creatingLegendaryMoments': 'CRÉER DES MOMENTS LÉGENDAIRES DE ROLEPLAY AVEC NOTRE COMMUNAUTÉ',
+    'pleaseEnterValidEmail': "Veuillez entrer une adresse e-mail valide",
+    'thanksForSubscribing': "Merci d'avoir souscrit à notre newsletter!",
+    'emailAlreadySubscribed': "Cette adresse e-mail est déjà souscrite à notre newsletter",
+    'errorSubscribing': "Une erreur s'est produite lors de l'inscription. Veuillez réessayer plus tard.",
+    'subscribing': "Souscription en cours...",
   },
   ar: {
     'home': 'الرئيسية',
@@ -347,23 +353,25 @@ const translations = {
     'send': 'إرسال',
     'supportRequest': 'تم إرسال طلب الدعم',
     'getBackToYou': 'سنرد عليك في أقرب وقت ممكن.',
-    // Additions for hero section
     'kindredCommunityTitle': 'مجتمع KINDRED',
     'sampRoleplayAndChill': 'SA-MP لعب الأدوار والاسترخاء',
     'creatingLegendaryMoments': 'خلق لحظات لعب أدوار أسطورية مع مجتمعنا',
+    'pleaseEnterValidEmail': "يرجى إدخال عنوان بريد إلكتروني صالح",
+    'thanksForSubscribing': "شكرا للاشتراك في نشرتنا الإخبارية!",
+    'emailAlreadySubscribed': "هذا البريد الإلكتروني مشترك بالفعل في نشرتنا الإخبارية",
+    'errorSubscribing': "حدث خطأ أثناء الاشتراك. الرجاء معاودة المحاولة في وقت لاحق.",
+    'subscribing': "جاري الاشتراك...",
   }
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export const LanguageProvider = ({ children }: LanguageProviderProps) => {
+export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
   const [language, setLanguage] = useState<Language>('en');
   const [theme, setTheme] = useState<Theme>('dark');
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
 
-  // Load preferences on mount
   useEffect(() => {
-    // Check for saved preferences in localStorage
     const savedLanguage = localStorage.getItem('language') as Language;
     const savedTheme = localStorage.getItem('theme') as Theme;
     
@@ -378,15 +386,12 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
     }
   }, []);
 
-  // Save preferences when they change
   useEffect(() => {
     localStorage.setItem('language', language);
     setDirection(language === 'ar' ? 'rtl' : 'ltr');
     
-    // Apply RTL/LTR to document
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
     
-    // Apply Arabic font if needed
     if (language === 'ar') {
       document.documentElement.classList.add('font-ar');
     } else {
@@ -403,7 +408,6 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
 
-  // Translation function with fallback
   const t = (key: string): string => {
     return translations[language][key as keyof typeof translations[typeof language]] || key;
   };
