@@ -1,14 +1,8 @@
 
-import { useNavigate, useLocation } from 'react-router-dom';
-import { 
-  MessageSquare, 
-  BellDot, 
-  Settings, 
-  LogOut,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import { adminLogout } from '@/services/adminAuthService';
+import { useNavigate } from 'react-router-dom';
+import { SidebarNavItem } from './SidebarNavItem';
+import { LogoutButton } from './LogoutButton';
+import { sidebarNavItems } from './sidebarNavConfig';
 
 interface AdminSidebarProps {
   sidebarOpen: boolean;
@@ -18,18 +12,6 @@ interface AdminSidebarProps {
 
 export const AdminSidebar = ({ sidebarOpen, isMobile, onCloseSidebar }: AdminSidebarProps) => {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleLogout = () => {
-    adminLogout();
-    navigate('/admin');
-    toast.success('Logged out successfully');
-  };
-
-  // Is the current route active?
-  const isRouteActive = (path: string) => {
-    return location.pathname === path;
-  };
 
   const handleNavClick = (path: string) => {
     navigate(path);
@@ -51,51 +33,18 @@ export const AdminSidebar = ({ sidebarOpen, isMobile, onCloseSidebar }: AdminSid
       </div>
       
       <nav className="space-y-2 flex-1">
-        <Button 
-          variant={isRouteActive('/admin') && !isRouteActive('/admin/tickets') && !isRouteActive('/admin/announcements') && !isRouteActive('/admin/settings') ? "secondary" : "ghost"} 
-          className="w-full justify-start bg-transparent hover:bg-[#333333] text-white"
-          onClick={() => handleNavClick('/admin')}
-        >
-          <MessageSquare className="mr-2 h-5 w-5" />
-          Dashboard
-        </Button>
-        
-        <Button 
-          variant={isRouteActive('/admin/tickets') ? "secondary" : "ghost"} 
-          className="w-full justify-start bg-transparent hover:bg-[#333333] text-white"
-          onClick={() => handleNavClick('/admin/tickets')}
-        >
-          <MessageSquare className="mr-2 h-5 w-5" />
-          Support Tickets
-        </Button>
-        
-        <Button 
-          variant={isRouteActive('/admin/announcements') ? "secondary" : "ghost"} 
-          className="w-full justify-start bg-transparent hover:bg-[#333333] text-white"
-          onClick={() => handleNavClick('/admin/announcements')}
-        >
-          <BellDot className="mr-2 h-5 w-5" />
-          Announcements
-        </Button>
-        
-        <Button 
-          variant={isRouteActive('/admin/settings') ? "secondary" : "ghost"} 
-          className="w-full justify-start bg-transparent hover:bg-[#333333] text-white"
-          onClick={() => handleNavClick('/admin/settings')}
-        >
-          <Settings className="mr-2 h-5 w-5" />
-          Settings
-        </Button>
+        {sidebarNavItems.map((item) => (
+          <SidebarNavItem
+            key={item.path}
+            path={item.path}
+            label={item.label}
+            icon={item.icon}
+            onClick={handleNavClick}
+          />
+        ))}
       </nav>
       
-      <Button 
-        variant="ghost" 
-        className="justify-start text-red-400 hover:text-red-300 hover:bg-[#333333] mt-auto"
-        onClick={handleLogout}
-      >
-        <LogOut className="mr-2 h-5 w-5" />
-        Logout
-      </Button>
+      <LogoutButton />
     </div>
   );
 };
