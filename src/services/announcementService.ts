@@ -30,6 +30,13 @@ export const getPublishedAnnouncements = async (): Promise<Announcement[]> => {
 };
 
 export const getAllAnnouncements = async (): Promise<Announcement[]> => {
+  // Check if we have an active session
+  const { data: sessionData } = await supabase.auth.getSession();
+  
+  if (!sessionData.session) {
+    console.log('No active session found for fetching announcements');
+  }
+  
   const { data, error } = await supabase
     .from('announcements')
     .select('*')
@@ -44,6 +51,14 @@ export const getAllAnnouncements = async (): Promise<Announcement[]> => {
 };
 
 export const createAnnouncement = async (announcement: AnnouncementInput): Promise<Announcement> => {
+  // Check if we have an active session
+  const { data: sessionData } = await supabase.auth.getSession();
+  
+  if (!sessionData.session) {
+    console.error('No active session found. Authentication required to create announcements.');
+    throw new Error('Authentication required to create announcements');
+  }
+  
   // Validate required fields
   if (!announcement.title.trim()) {
     throw new Error('Title is required');
@@ -71,6 +86,14 @@ export const updateAnnouncement = async (
   id: string, 
   updates: Partial<AnnouncementInput>
 ): Promise<Announcement> => {
+  // Check if we have an active session
+  const { data: sessionData } = await supabase.auth.getSession();
+  
+  if (!sessionData.session) {
+    console.error('No active session found. Authentication required to update announcements.');
+    throw new Error('Authentication required to update announcements');
+  }
+  
   // Validate required fields if they are being updated
   if (updates.title !== undefined && !updates.title.trim()) {
     throw new Error('Title is required');
@@ -99,6 +122,14 @@ export const updateAnnouncement = async (
 };
 
 export const deleteAnnouncement = async (id: string): Promise<void> => {
+  // Check if we have an active session
+  const { data: sessionData } = await supabase.auth.getSession();
+  
+  if (!sessionData.session) {
+    console.error('No active session found. Authentication required to delete announcements.');
+    throw new Error('Authentication required to delete announcements');
+  }
+  
   const { error } = await supabase
     .from('announcements')
     .delete()
