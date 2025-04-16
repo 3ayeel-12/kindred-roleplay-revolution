@@ -30,11 +30,12 @@ export const getPublishedAnnouncements = async (): Promise<Announcement[]> => {
 };
 
 export const getAllAnnouncements = async (): Promise<Announcement[]> => {
-  // Check if we have an active session
-  const { data: sessionData } = await supabase.auth.getSession();
+  // Check admin authentication from localStorage
+  const isAdmin = localStorage.getItem('adminAuth') === 'true';
   
-  if (!sessionData.session) {
-    console.log('No active session found for fetching announcements');
+  if (!isAdmin) {
+    console.error('Admin authentication required to fetch all announcements');
+    throw new Error('Authentication required');
   }
   
   const { data, error } = await supabase
@@ -51,12 +52,12 @@ export const getAllAnnouncements = async (): Promise<Announcement[]> => {
 };
 
 export const createAnnouncement = async (announcement: AnnouncementInput): Promise<Announcement> => {
-  // Check if we have an active session
-  const { data: sessionData } = await supabase.auth.getSession();
+  // Check admin authentication from localStorage
+  const isAdmin = localStorage.getItem('adminAuth') === 'true';
   
-  if (!sessionData.session) {
-    console.error('No active session found. Authentication required to create announcements.');
-    throw new Error('Authentication required to create announcements');
+  if (!isAdmin) {
+    console.error('Admin authentication required to create announcements');
+    throw new Error('Admin authentication required to create announcements');
   }
   
   // Validate required fields
@@ -86,12 +87,12 @@ export const updateAnnouncement = async (
   id: string, 
   updates: Partial<AnnouncementInput>
 ): Promise<Announcement> => {
-  // Check if we have an active session
-  const { data: sessionData } = await supabase.auth.getSession();
+  // Check admin authentication from localStorage
+  const isAdmin = localStorage.getItem('adminAuth') === 'true';
   
-  if (!sessionData.session) {
-    console.error('No active session found. Authentication required to update announcements.');
-    throw new Error('Authentication required to update announcements');
+  if (!isAdmin) {
+    console.error('Admin authentication required to update announcements');
+    throw new Error('Admin authentication required to update announcements');
   }
   
   // Validate required fields if they are being updated
@@ -122,12 +123,12 @@ export const updateAnnouncement = async (
 };
 
 export const deleteAnnouncement = async (id: string): Promise<void> => {
-  // Check if we have an active session
-  const { data: sessionData } = await supabase.auth.getSession();
+  // Check admin authentication from localStorage
+  const isAdmin = localStorage.getItem('adminAuth') === 'true';
   
-  if (!sessionData.session) {
-    console.error('No active session found. Authentication required to delete announcements.');
-    throw new Error('Authentication required to delete announcements');
+  if (!isAdmin) {
+    console.error('Admin authentication required to delete announcements');
+    throw new Error('Admin authentication required to delete announcements');
   }
   
   const { error } = await supabase

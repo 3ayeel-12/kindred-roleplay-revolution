@@ -1,5 +1,5 @@
 
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Announcement, AnnouncementInput } from '@/services/announcementService';
 import { AnnouncementForm } from '@/components/admin/announcements/AnnouncementForm';
 import { useState } from 'react';
@@ -57,6 +57,9 @@ export const AnnouncementDialogManager = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-xl bg-black border-[#333333] text-white">
+        <DialogTitle className="text-xl font-bold mb-4">
+          {announcement ? 'Edit Announcement' : 'Create New Announcement'}
+        </DialogTitle>
         <AnnouncementForm
           announcement={announcement}
           onSubmit={handleSubmit}
