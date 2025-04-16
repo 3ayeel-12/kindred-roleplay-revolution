@@ -5,6 +5,7 @@ import { ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { adminLogin } from '@/services/adminAuthService';
+import { Input } from '@/components/ui/input';
 
 interface AdminLoginFormProps {
   defaultEmail?: string;
@@ -21,11 +22,13 @@ export const AdminLoginForm = ({ defaultEmail = 'admin@kindred.com' }: AdminLogi
     setIsAuthenticating(true);
     
     try {
-      console.log('Login attempt:', email, password);
+      // Remove password logging - only log the email for debugging
+      console.log('Login attempt with email:', email);
       const success = await adminLogin(email, password);
       
       if (success) {
         toast.success('Logged in successfully');
+        navigate('/admin');
       } else {
         toast.error('Invalid credentials');
       }
@@ -47,7 +50,7 @@ export const AdminLoginForm = ({ defaultEmail = 'admin@kindred.com' }: AdminLogi
         
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <input
+            <Input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -58,13 +61,14 @@ export const AdminLoginForm = ({ defaultEmail = 'admin@kindred.com' }: AdminLogi
           </div>
           
           <div>
-            <input
+            <Input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
               className="w-full p-3 rounded-md bg-black border border-[#333333] text-white focus:outline-none focus:ring-2 focus:ring-white/50"
               required
+              autoComplete="current-password"
             />
           </div>
           

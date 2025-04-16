@@ -38,7 +38,7 @@ export const adminLogin = async (email: string, password: string): Promise<boole
           return false;
         }
         
-        console.log('Default admin user created successfully:', insertData);
+        console.log('Default admin user created successfully');
         
         // Store admin session in localStorage for persistent login
         localStorage.setItem('adminAuth', 'true');
@@ -83,7 +83,7 @@ export const adminLogin = async (email: string, password: string): Promise<boole
     // For demo purposes, we're doing a direct comparison
     // In a production app, you would use proper password hashing
     if (data.password_hash === password) {
-      console.log('Password matches, login successful');
+      console.log('Login successful');
       
       // Store admin session in localStorage for persistent login
       localStorage.setItem('adminAuth', 'true');
@@ -93,8 +93,7 @@ export const adminLogin = async (email: string, password: string): Promise<boole
       return true;
     } else {
       console.error('Password does not match');
-      console.log('Expected:', data.password_hash);
-      console.log('Received:', password);
+      // Remove the lines that log the expected and received passwords
       return false;
     }
   } catch (error) {
@@ -130,13 +129,13 @@ export const initializeAdminUser = async (): Promise<void> => {
     
     if (!data) {
       console.log('Admin user does not exist, creating...');
-      // Create default admin user
+      // Create default admin user with a more secure password
       const { error: insertError } = await supabase
         .from('admin_users')
         .insert([
           { 
             email: 'admin@kindred.com', 
-            password_hash: 'admin123' 
+            password_hash: 'admin2025#kindred' 
           }
         ]);
         
