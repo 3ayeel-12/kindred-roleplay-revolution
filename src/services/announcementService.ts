@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Announcement {
@@ -29,6 +30,14 @@ export const getPublishedAnnouncements = async (): Promise<Announcement[]> => {
 };
 
 export const getAllAnnouncements = async (): Promise<Announcement[]> => {
+  // Check admin authentication before proceeding
+  const { data: sessionData } = await supabase.auth.getSession();
+  
+  if (!sessionData.session) {
+    console.error('Admin authentication required to fetch all announcements');
+    throw new Error('Authentication required');
+  }
+  
   const { data, error } = await supabase
     .from('announcements')
     .select('*')
@@ -43,6 +52,23 @@ export const getAllAnnouncements = async (): Promise<Announcement[]> => {
 };
 
 export const createAnnouncement = async (announcement: AnnouncementInput): Promise<Announcement> => {
+  // Check admin authentication before proceeding
+  const { data: sessionData } = await supabase.auth.getSession();
+  
+  if (!sessionData.session) {
+    console.error('Admin authentication required to create announcements');
+    throw new Error('Admin authentication required to create announcements');
+  }
+  
+  // Validate required fields
+  if (!announcement.title.trim()) {
+    throw new Error('Title is required');
+  }
+  
+  if (!announcement.content.trim()) {
+    throw new Error('Content is required');
+  }
+  
   const { data, error } = await supabase
     .from('announcements')
     .insert(announcement)
@@ -61,6 +87,23 @@ export const updateAnnouncement = async (
   id: string, 
   updates: Partial<AnnouncementInput>
 ): Promise<Announcement> => {
+  // Check admin authentication before proceeding
+  const { data: sessionData } = await supabase.auth.getSession();
+  
+  if (!sessionData.session) {
+    console.error('Admin authentication required to update announcements');
+    throw new Error('Admin authentication required to update announcements');
+  }
+  
+  // Validate required fields if they are being updated
+  if (updates.title !== undefined && !updates.title.trim()) {
+    throw new Error('Title is required');
+  }
+  
+  if (updates.content !== undefined && !updates.content.trim()) {
+    throw new Error('Content is required');
+  }
+  
   const { data, error } = await supabase
     .from('announcements')
     .update({
@@ -80,6 +123,14 @@ export const updateAnnouncement = async (
 };
 
 export const deleteAnnouncement = async (id: string): Promise<void> => {
+  // Check admin authentication before proceeding
+  const { data: sessionData } = await supabase.auth.getSession();
+  
+  if (!sessionData.session) {
+    console.error('Admin authentication required to delete announcements');
+    throw new Error('Admin authentication required to delete announcements');
+  }
+  
   const { error } = await supabase
     .from('announcements')
     .delete()
