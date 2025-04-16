@@ -41,7 +41,7 @@ export function FeatureSection() {
       <div className="absolute inset-0 opacity-20">
         <div 
           className="w-full h-full bg-cover bg-center"
-          style={{ backgroundImage: "url('/lovable-uploads/31674479-6469-4909-a1c9-986643d69ef6.png')" }}
+          style={{ backgroundImage: "url('https://media.discordapp.net/attachments/1086646892135460916/1342948782597476423/For-Insta.png?ex=6800b4c4&is=67ff6344&hm=689fe285237851765d15c6ee37368fb481e76d7c4c4234607f776cdec913fb63&=&format=webp')" }}
         ></div>
         <div className="absolute inset-0 bg-kindred-dark/70"></div>
       </div>
