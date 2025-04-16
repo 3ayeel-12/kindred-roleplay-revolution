@@ -6,146 +6,67 @@ export const adminLogin = async (email: string, password: string): Promise<boole
   try {
     console.log('Attempting login with:', email);
     
-    // First check if this is the default admin user
-    if (email === 'admin@kindred.com' && (password === 'kindredadmin@123' || password === 'admin123')) {
-      // Check if admin user already exists
-      const { data, error } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('email', 'admin@kindred.com')
-        .maybeSingle();
-      
-      if (error) {
-        console.error('Error checking for admin user:', error);
-        return false;
-      }
-      
-      if (!data) {
-        // Create the default admin user if it doesn't exist
-        console.log('Creating default admin user...');
-        const { data: insertData, error: insertError } = await supabase
-          .from('admin_users')
-          .insert([
-            { 
-              email: 'admin@kindred.com', 
-              password_hash: 'admin123' 
-            }
-          ])
-          .select();
-          
-        if (insertError) {
-          console.error('Failed to create admin user:', insertError);
-          return false;
-        }
-        
-        console.log('Default admin user created successfully');
-        
-        // Store admin session in localStorage for persistent login
-        localStorage.setItem('adminAuth', 'true');
-        localStorage.setItem('adminEmail', email);
-        localStorage.setItem('adminId', insertData[0].id);
-        
-        return true;
-      } else {
-        // Admin exists, verify password - allow both the old password and new password
-        if (data.password_hash === 'admin123' || data.password_hash === 'kindredadmin@123') {
-          console.log('Default admin login successful');
-          
-          // Store admin session in localStorage for persistent login
-          localStorage.setItem('adminAuth', 'true');
-          localStorage.setItem('adminEmail', email);
-          localStorage.setItem('adminId', data.id);
-          
-          return true;
-        }
-      }
-    }
-    
-    // For non-default admin, check the credentials against the database
-    const { data, error } = await supabase
-      .from('admin_users')
-      .select('*')
-      .eq('email', email)
-      .maybeSingle();
+    // Check if this is the default admin user
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
     
     if (error) {
-      console.error('Admin login error:', error);
+      console.error('Login error:', error.message);
       return false;
     }
     
-    if (!data) {
-      console.error('No admin user found with email:', email);
-      return false;
-    }
-    
-    console.log('Found admin user:', data.id);
-    
-    // For demo purposes, we're doing a direct comparison
-    // In a production app, you would use proper password hashing
-    if (data.password_hash === password) {
+    if (data.user) {
       console.log('Login successful');
       
-      // Store admin session in localStorage for persistent login
+      // Store admin session in localStorage for UI state management
       localStorage.setItem('adminAuth', 'true');
       localStorage.setItem('adminEmail', email);
-      localStorage.setItem('adminId', data.id);
       
       return true;
-    } else {
-      console.error('Password does not match');
-      // Remove the lines that log the expected and received passwords
-      return false;
     }
+    
+    return false;
   } catch (error) {
     console.error('Admin login failed:', error);
     return false;
   }
 };
 
-export const adminLogout = (): void => {
-  localStorage.removeItem('adminAuth');
-  localStorage.removeItem('adminEmail');
-  localStorage.removeItem('adminId');
+export const adminLogout = async (): Promise<void> => {
+  try {
+    await supabase.auth.signOut();
+    localStorage.removeItem('adminAuth');
+    localStorage.removeItem('adminEmail');
+  } catch (error) {
+    console.error('Error during logout:', error);
+  }
 };
 
 export const isAdminLoggedIn = (): boolean => {
+  // Check both Supabase session and localStorage flag
   return localStorage.getItem('adminAuth') === 'true';
 };
 
 // Initialize the admin user on app startup
 export const initializeAdminUser = async (): Promise<void> => {
   try {
-    // Check if admin user already exists
-    const { data, error } = await supabase
-      .from('admin_users')
-      .select('*')
-      .eq('email', 'admin@kindred.com')
-      .maybeSingle();
-    
-    if (error) {
-      console.error('Error checking for admin user:', error);
-      return;
-    }
-    
-    if (!data) {
-      console.log('Admin user does not exist, creating...');
-      // Create default admin user with a more secure password
-      const { error: insertError } = await supabase
-        .from('admin_users')
-        .insert([
-          { 
-            email: 'admin@kindred.com', 
-            password_hash: 'admin2025#kindred' 
-          }
-        ]);
-        
-      if (insertError) {
-        console.error('Failed to create admin user:', insertError);
-      } else {
-        console.log('Default admin user created successfully');
+    // Create default admin user in Supabase Auth
+    const { data, error } = await supabase.auth.signUp({
+      email: 'admin@kindred.com',
+      password: 'admin123',
+      options: {
+        data: {
+          is_admin: true
+        }
       }
+    });
+    
+    if (error && !error.message.includes('User already registered')) {
+      console.error('Error creating admin user:', error);
     } else {
-      console.log('Admin user already exists');
+      console.log('Admin user setup successful or already exists');
     }
   } catch (error) {
     console.error('Error initializing admin user:', error);

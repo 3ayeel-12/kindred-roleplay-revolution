@@ -41,7 +41,7 @@ export function FeatureSection() {
       <div className="absolute inset-0 opacity-20">
         <div 
           className="w-full h-full bg-cover bg-center"
-          style={{ backgroundImage: "url('https://media.discordapp.net/attachments/1086646892135460916/1342948782597476423/For-Insta.png?ex=6800b4c4&is=67ff6344&hm=689fe285237851765d15c6ee37368fb481e76d7c4c4234607f776cdec913fb63&=&format=webp')" }}
+          style={{ backgroundImage: "url('/lovable-uploads/31674479-6469-4909-a1c9-986643d69ef6.png')" }}
         ></div>
         <div className="absolute inset-0 bg-kindred-dark/70"></div>
       </div>
@@ -73,7 +73,7 @@ export function FeatureSection() {
           <div className="glass-card overflow-hidden group relative">
             <div 
               className="w-full h-full bg-cover bg-center aspect-square md:aspect-auto md:min-h-[500px] transition-transform duration-700 group-hover:scale-105"
-              style={{ backgroundImage: "url('/lovable-uploads/fad85541-f410-4c51-b858-d5c293c3a2b4.png')" }}
+              style={{ backgroundImage: "url('https://media.discordapp.net/attachments/1086646892135460916/1342948782597476423/For-Insta.png?ex=6800b4c4&is=67ff6344&hm=689fe285237851765d15c6ee37368fb481e76d7c4c4234607f776cdec913fb63&=&format=webp')" }}
             ></div>
             <div className="absolute inset-0 bg-gradient-to-t from-kindred-darkest via-transparent to-transparent opacity-40"></div>
           </div>
