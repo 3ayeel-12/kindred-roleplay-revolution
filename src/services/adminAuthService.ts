@@ -18,13 +18,13 @@ export const adminLogin = async (email: string, password: string): Promise<boole
 };
 
 export const adminLogout = async (): Promise<void> => {
-  localStorage.removeItem('adminAuth');
-  localStorage.removeItem('adminEmail');
+  // No-op since we're bypassing authentication
+  console.log('Admin logout bypassed');
 };
 
 export const isAdminLoggedIn = (): boolean => {
-  // Simply check if the localStorage flag is set
-  return localStorage.getItem('adminAuth') === 'true';
+  // Always return true to bypass authentication
+  return true;
 };
 
 // Initialize the admin user on app startup - no longer needed but kept for compatibility
