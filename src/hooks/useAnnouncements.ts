@@ -57,8 +57,6 @@ export const useAnnouncements = (): UseAnnouncementsReturn => {
   };
 
   const loadAnnouncements = async () => {
-    // Removed authentication check
-    
     setIsLoading(true);
     setError(null);
     try {
@@ -77,8 +75,6 @@ export const useAnnouncements = (): UseAnnouncementsReturn => {
   };
 
   const handleCreateAnnouncement = async (formData: AnnouncementInput) => {
-    // Removed authentication check
-    
     setIsSaving(true);
     try {
       // Validate required fields
@@ -113,8 +109,6 @@ export const useAnnouncements = (): UseAnnouncementsReturn => {
   };
 
   const handleUpdateAnnouncement = async (id: string, formData: AnnouncementInput) => {
-    // Removed authentication check
-    
     setIsSaving(true);
     try {
       // Validate required fields
@@ -146,8 +140,6 @@ export const useAnnouncements = (): UseAnnouncementsReturn => {
   };
 
   const handleDeleteAnnouncement = async (id: string) => {
-    // Removed authentication check
-    
     try {
       await deleteAnnouncement(id);
       

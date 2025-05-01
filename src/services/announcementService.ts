@@ -30,23 +30,49 @@ export const getPublishedAnnouncements = async (): Promise<Announcement[]> => {
 };
 
 export const getAllAnnouncements = async (): Promise<Announcement[]> => {
-  // Removed authentication check
-  const { data, error } = await supabase
-    .from('announcements')
-    .select('*')
-    .order('created_at', { ascending: false });
-  
-  if (error) {
-    console.error('Error fetching all announcements:', error);
-    throw error;
+  try {
+    const { data, error } = await supabase
+      .from('announcements')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching all announcements:', error);
+      throw error;
+    }
+    
+    // If no data is returned, create a default announcement
+    if (!data || data.length === 0) {
+      const defaultAnnouncement = {
+        title: "Server Opening Soon",
+        content: "We're working hard to bring the server online. For more information and updates, please join our Discord community!",
+        image_url: "https://media.discordapp.net/attachments/1086646892135460916/1342948782597476423/For-Insta.png?ex=6800b4c4&is=67ff6344&hm=689fe285237851765d15c6ee37368fb481e76d7c4c4234607f776cdec913fb63&=&format=webp",
+        is_published: true
+      };
+      
+      const { data: newAnnouncement, error: createError } = await supabase
+        .from('announcements')
+        .insert(defaultAnnouncement)
+        .select()
+        .single();
+      
+      if (createError) {
+        console.error('Error creating default announcement:', createError);
+        return [];
+      }
+      
+      return [newAnnouncement];
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Error in getAllAnnouncements:', error);
+    // Return an empty array instead of throwing to prevent UI errors
+    return [];
   }
-  
-  return data || [];
 };
 
 export const createAnnouncement = async (announcement: AnnouncementInput): Promise<Announcement> => {
-  // Removed authentication check
-  
   // Validate required fields
   if (!announcement.title.trim()) {
     throw new Error('Title is required');
@@ -74,8 +100,6 @@ export const updateAnnouncement = async (
   id: string, 
   updates: Partial<AnnouncementInput>
 ): Promise<Announcement> => {
-  // Removed authentication check
-  
   // Validate required fields if they are being updated
   if (updates.title !== undefined && !updates.title.trim()) {
     throw new Error('Title is required');
@@ -104,8 +128,6 @@ export const updateAnnouncement = async (
 };
 
 export const deleteAnnouncement = async (id: string): Promise<void> => {
-  // Removed authentication check
-  
   const { error } = await supabase
     .from('announcements')
     .delete()

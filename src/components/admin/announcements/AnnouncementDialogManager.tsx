@@ -61,7 +61,16 @@ export const AnnouncementDialogManager = ({
           {announcement ? 'Edit Announcement' : 'Create New Announcement'}
         </DialogTitle>
         <AnnouncementForm
-          announcement={announcement}
+          announcement={announcement || {
+            id: '',
+            title: '',
+            content: 'Wait for the server to open! For more info join our Discord.',
+            image_url: 'https://media.discordapp.net/attachments/1086646892135460916/1342948782597476423/For-Insta.png?ex=6800b4c4&is=67ff6344&hm=689fe285237851765d15c6ee37368fb481e76d7c4c4234607f776cdec913fb63&=&format=webp',
+            video_url: '',
+            is_published: true,
+            created_at: '',
+            updated_at: ''
+          }}
           onSubmit={handleSubmit}
           onCancel={onClose}
           isSaving={isSaving}
