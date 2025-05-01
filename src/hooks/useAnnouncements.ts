@@ -9,7 +9,6 @@ import {
   Announcement,
   AnnouncementInput
 } from '@/services/announcementService';
-import { isAdminLoggedIn } from '@/services/adminAuthService';
 
 // Number of announcements per page
 export const ITEMS_PER_PAGE = 6;
@@ -58,12 +57,7 @@ export const useAnnouncements = (): UseAnnouncementsReturn => {
   };
 
   const loadAnnouncements = async () => {
-    // Check if admin is logged in
-    if (!isAdminLoggedIn()) {
-      setError(new Error('Admin authentication required'));
-      setIsLoading(false);
-      return;
-    }
+    // Removed authentication check
     
     setIsLoading(true);
     setError(null);
@@ -83,11 +77,7 @@ export const useAnnouncements = (): UseAnnouncementsReturn => {
   };
 
   const handleCreateAnnouncement = async (formData: AnnouncementInput) => {
-    // Check if admin is logged in
-    if (!isAdminLoggedIn()) {
-      toast.error('Admin authentication required');
-      throw new Error('Admin authentication required');
-    }
+    // Removed authentication check
     
     setIsSaving(true);
     try {
@@ -123,11 +113,7 @@ export const useAnnouncements = (): UseAnnouncementsReturn => {
   };
 
   const handleUpdateAnnouncement = async (id: string, formData: AnnouncementInput) => {
-    // Check if admin is logged in
-    if (!isAdminLoggedIn()) {
-      toast.error('Admin authentication required');
-      throw new Error('Admin authentication required');
-    }
+    // Removed authentication check
     
     setIsSaving(true);
     try {
@@ -160,11 +146,7 @@ export const useAnnouncements = (): UseAnnouncementsReturn => {
   };
 
   const handleDeleteAnnouncement = async (id: string) => {
-    // Check if admin is logged in
-    if (!isAdminLoggedIn()) {
-      toast.error('Admin authentication required');
-      throw new Error('Admin authentication required');
-    }
+    // Removed authentication check
     
     try {
       await deleteAnnouncement(id);

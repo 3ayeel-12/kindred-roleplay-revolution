@@ -1,8 +1,6 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { isAdminLoggedIn } from '@/services/adminAuthService';
-import { useNavigate } from 'react-router-dom';
 import { AnnouncementHeader } from '@/components/admin/announcements/AnnouncementHeader';
 import { AnnouncementList } from '@/components/admin/announcements/AnnouncementList';
 import { AnnouncementDialogManager } from '@/components/admin/announcements/AnnouncementDialogManager';
@@ -17,7 +15,6 @@ export default function AdminAnnouncements() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const navigate = useNavigate();
   
   const {
     paginatedAnnouncements: announcements,
@@ -33,24 +30,10 @@ export default function AdminAnnouncements() {
   } = useAnnouncements();
 
   useEffect(() => {
-    // Check if admin is logged in
-    if (!isAdminLoggedIn()) {
-      toast.error('Please login to access the admin area');
-      navigate('/admin');
-      return;
-    }
-
     loadAnnouncements();
-  }, [navigate, loadAnnouncements]);
+  }, [loadAnnouncements]);
 
   const handleOpenDialog = (announcement: Announcement | null = null) => {
-    // Check if admin is logged in before opening dialog
-    if (!isAdminLoggedIn()) {
-      toast.error('Please login to manage announcements');
-      navigate('/admin');
-      return;
-    }
-    
     setSelectedAnnouncement(announcement);
     setIsDialogOpen(true);
   };
@@ -70,13 +53,6 @@ export default function AdminAnnouncements() {
   };
 
   const handleDelete = async (announcement: Announcement) => {
-    // Check if admin is logged in before deleting
-    if (!isAdminLoggedIn()) {
-      toast.error('Please login to delete announcements');
-      navigate('/admin');
-      return;
-    }
-    
     try {
       await handleDeleteAnnouncement(announcement.id);
       toast.success('Announcement deleted successfully');
@@ -87,13 +63,6 @@ export default function AdminAnnouncements() {
   };
 
   const handleCreate = async (formData: any) => {
-    // Check if admin is logged in before creating
-    if (!isAdminLoggedIn()) {
-      toast.error('Please login to create announcements');
-      navigate('/admin');
-      return {} as Announcement;
-    }
-    
     try {
       // Validate required fields
       if (!formData.title.trim()) {
@@ -128,11 +97,6 @@ export default function AdminAnnouncements() {
       throw error;
     }
   };
-
-  // If not logged in as admin, redirect to admin login
-  if (!isAdminLoggedIn()) {
-    return null; // Component will unmount and redirect in useEffect
-  }
 
   return (
     <div className="space-y-6 bg-[#111111] p-6 rounded-xl backdrop-blur-sm border border-[#333333]">
