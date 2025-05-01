@@ -96,8 +96,20 @@ export default function AnnouncementsPage() {
               </Button>
             </Alert>
           ) : announcements.length === 0 ? (
-            <div className="text-center p-10 border border-kindred-primary/20 rounded-xl bg-kindred-primary/5">
-              <p className="text-xl">No announcements available at this time.</p>
+            <div className="text-center p-10 border border-kindred-primary/20 rounded-xl bg-kindred-primary/5 max-w-3xl mx-auto">
+              <h2 className="text-2xl font-bold mb-4">Server Opening Soon!</h2>
+              <img 
+                src="https://media.discordapp.net/attachments/1086646892135460916/1342948782597476423/For-Insta.png" 
+                alt="Server announcement" 
+                className="w-full max-w-md mx-auto my-6 rounded-lg"
+              />
+              <p className="text-xl mb-6">Wait for the server to open! For more updates, join our Discord.</p>
+              <Button 
+                className="bg-kindred-accent hover:bg-kindred-accent/90"
+                onClick={() => window.open('https://discord.gg/kindred', '_blank')}
+              >
+                Join Our Discord
+              </Button>
             </div>
           ) : (
             <AnimatePresence>
