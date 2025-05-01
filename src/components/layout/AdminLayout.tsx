@@ -2,14 +2,20 @@
 import { useState, useEffect } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { isAdminLoggedIn } from '@/services/adminAuthService';
+import { AdminLoginForm } from '@/components/admin/auth/AdminLoginForm';
 import { AdminSidebar } from '@/components/admin/navigation/AdminSidebar';
 import { AdminMobileHeader } from '@/components/admin/navigation/AdminMobileHeader';
 
 export const AdminLayout = () => {
+  const [isAdmin, setIsAdmin] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const isMobile = useIsMobile();
 
   useEffect(() => {
+    // Check if admin is already authenticated
+    setIsAdmin(isAdminLoggedIn());
+    
     // Auto-close sidebar on mobile
     if (isMobile) {
       setSidebarOpen(false);
@@ -22,7 +28,10 @@ export const AdminLayout = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Always considered logged in - bypassing authentication
+  if (!isAdmin) {
+    return <AdminLoginForm />;
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-black text-white admin-layout">
       <div className="geometric-lines"></div>

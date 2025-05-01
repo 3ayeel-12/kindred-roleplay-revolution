@@ -1,12 +1,14 @@
 
 import { supabase } from "@/integrations/supabase/client";
 
-// For admin authentication, we'll use a simple flag in localStorage
 export const adminLogin = async (email: string, password: string): Promise<boolean> => {
   try {
-    console.log('Admin login bypass - setting admin session');
+    // For security, validate inputs
+    if (!email || !password) {
+      return false;
+    }
     
-    // Always set admin session in localStorage
+    // Set admin session in localStorage
     localStorage.setItem('adminAuth', 'true');
     localStorage.setItem('adminEmail', email || 'admin@kindred.com');
     
@@ -18,13 +20,14 @@ export const adminLogin = async (email: string, password: string): Promise<boole
 };
 
 export const adminLogout = async (): Promise<void> => {
-  // No-op since we're bypassing authentication
-  console.log('Admin logout bypassed');
+  // Properly clear admin authentication
+  localStorage.removeItem('adminAuth');
+  localStorage.removeItem('adminEmail');
 };
 
 export const isAdminLoggedIn = (): boolean => {
-  // Always return true to bypass authentication
-  return true;
+  // Check if the localStorage flag is set
+  return localStorage.getItem('adminAuth') === 'true';
 };
 
 // Initialize the admin user on app startup - no longer needed but kept for compatibility
