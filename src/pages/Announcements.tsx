@@ -99,7 +99,7 @@ export default function AnnouncementsPage() {
             <div className="text-center p-10 border border-kindred-primary/20 rounded-xl bg-kindred-primary/5 max-w-3xl mx-auto">
               <h2 className="text-2xl font-bold mb-4">Server Opening Soon!</h2>
               <img 
-                src="/kindred-logo.png" 
+                src="/lovable-uploads/d5ced8f3-15d4-498c-ba38-4b75645c0bad.png" 
                 alt="Kindred Logo" 
                 className="w-full max-w-md mx-auto my-6 rounded-lg"
               />
