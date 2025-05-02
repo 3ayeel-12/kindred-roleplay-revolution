@@ -101,7 +101,7 @@ export default function AnnouncementsPage() {
               <img 
                 src="/lovable-uploads/d5ced8f3-15d4-498c-ba38-4b75645c0bad.png" 
                 alt="Kindred Logo" 
-                className="w-full max-w-md mx-auto my-6 rounded-lg"
+                className="w-40 h-auto mx-auto my-6 rounded-lg"
               />
               <p className="text-xl mb-6">Wait for the server to open! For more updates, join our Discord.</p>
               <Button 
