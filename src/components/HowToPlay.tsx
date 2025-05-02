@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Download, Smartphone, Laptop, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -104,7 +103,10 @@ export function HowToPlay() {
               </ol>
               
               <div className={cn("mt-6", language === 'ar' ? "text-right" : "")}>
-                <Button className="flex items-center gap-2 bg-kindred-secondary hover:bg-kindred-secondary/90 text-white border-0">
+                <Button 
+                  className="flex items-center gap-2 bg-kindred-secondary hover:bg-kindred-secondary/90 text-white border-0" 
+                  onClick={() => window.open('https://play.google.com/store/apps/details?id=ru.unisamp_mobile.launcher&pcampaignid=web_share', '_blank')}
+                >
                   <Download size={16} />
                   {t('downloadLauncherBtn')}
                 </Button>
@@ -192,7 +194,10 @@ export function HowToPlay() {
               </ol>
               
               <div className={cn("mt-6", language === 'ar' ? "text-right" : "")}>
-                <Button className="flex items-center gap-2 bg-kindred-accent hover:bg-kindred-accent/90 text-kindred-darker border-0">
+                <Button 
+                  className="flex items-center gap-2 bg-kindred-accent hover:bg-kindred-accent/90 text-kindred-darker border-0"
+                  onClick={() => window.open('https://www.sa-mp.mp/downloads/', '_blank')}
+                >
                   <Download size={16} />
                   {t('downloadSamp')}
                 </Button>
