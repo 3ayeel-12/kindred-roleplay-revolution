@@ -41,7 +41,7 @@ export const AnimatedLogo = () => {
         }}
       >
         <motion.div 
-          className="relative overflow-hidden rounded-full bg-gradient-to-r from-kindred-primary/30 to-kindred-accent/30 p-0.5"
+          className="relative bg-gradient-to-r from-kindred-primary/30 to-kindred-accent/30 p-0.5 rounded-lg"
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
@@ -49,7 +49,7 @@ export const AnimatedLogo = () => {
             src="/lovable-uploads/d5ced8f3-15d4-498c-ba38-4b75645c0bad.png" 
             alt="KindreD Logo" 
             className={cn(
-              "h-12 w-auto drop-shadow-glow rounded-full"
+              "h-12 w-auto object-contain drop-shadow-glow"
             )}
             animate={isSpinning ? {
               rotate: 360,
