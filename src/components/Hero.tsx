@@ -5,10 +5,12 @@ import ServerStats from "./ServerStats";
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 export function Hero() {
   const [activeSlide, setActiveSlide] = useState(0);
   const { t, language } = useLanguage();
+  const { toast } = useToast();
   
   const backgrounds = [
     "/lovable-uploads/fad85541-f410-4c51-b858-d5c293c3a2b4.png",
@@ -28,6 +30,14 @@ export function Hero() {
     if (aboutSection) {
       aboutSection.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+  
+  const handleTrailerClick = () => {
+    toast({
+      title: t('comingSoon'),
+      description: t('trailerComingSoonDesc'),
+      duration: 3000,
+    });
   };
 
   return (
@@ -80,7 +90,11 @@ export function Hero() {
               )}>→</span>
             </Button>
             
-            <Button variant="outline" className="bg-transparent border border-kindred-accent/30 text-white hover:bg-kindred-accent/10 hover:border-kindred-accent/50 flex items-center gap-2 group light-mode:border-kindred-primary/30 light-mode:text-kindred-primary light-mode:hover:bg-kindred-primary/10">
+            <Button 
+              variant="outline" 
+              className="bg-transparent border border-kindred-accent/30 text-white hover:bg-kindred-accent/10 hover:border-kindred-accent/50 flex items-center gap-2 group light-mode:border-kindred-primary/30 light-mode:text-kindred-primary light-mode:hover:bg-kindred-primary/10"
+              onClick={handleTrailerClick}
+            >
               <Play size={16} className="text-kindred-accent group-hover:animate-pulse light-mode:text-kindred-primary" />
               {t('watchTrailer')}
             </Button>
