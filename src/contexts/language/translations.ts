@@ -1,4 +1,3 @@
-
 import { TranslationsType } from './types';
 
 export const translations: TranslationsType = {
@@ -40,7 +39,7 @@ export const translations: TranslationsType = {
     'rabat': 'Rabat',
     'marrakech': 'Marrakech',
     'fes': 'Fes',
-    'tangier': 'Tanger',
+    'tangier': 'Tangier',
     'aboutUs': 'About Us',
     'kindredCommunity': 'Kindred Community',
     'roleplayAndChill': 'Roleplay & Chill',
@@ -116,6 +115,12 @@ export const translations: TranslationsType = {
     'emailAlreadySubscribed': "This email is already subscribed to our newsletter",
     'errorSubscribing': "An error occurred while subscribing. Please try again later.",
     'subscribing': "Subscribing...",
+    // Adding new translations for policy pages
+    'faq': 'FAQ',
+    'faqPage': 'Frequently Asked Questions',
+    'termsPage': 'Terms of Service',
+    'privacyPolicyPage': 'Privacy Policy',
+    'back': 'Back',
   },
   fr: {
     'home': 'Accueil',
@@ -231,6 +236,12 @@ export const translations: TranslationsType = {
     'emailAlreadySubscribed': "Cette adresse e-mail est déjà souscrite à notre newsletter",
     'errorSubscribing': "Une erreur s'est produite lors de l'inscription. Veuillez réessayer plus tard.",
     'subscribing': "Souscription en cours...",
+    // Adding new translations for policy pages
+    'faq': 'FAQ',
+    'faqPage': 'Foire Aux Questions',
+    'termsPage': 'Conditions d\'Utilisation',
+    'privacyPolicyPage': 'Politique de Confidentialité',
+    'back': 'Retour',
   },
   ar: {
     'home': 'الرئيسية',
@@ -346,5 +357,11 @@ export const translations: TranslationsType = {
     'emailAlreadySubscribed': "هذا البريد الإلكتروني مشترك بالفعل في نشرتنا الإخبارية",
     'errorSubscribing': "حدث خطأ أثناء الاشتراك. الرجاء معاودة المحاولة في وقت لاحق.",
     'subscribing': "جاري الاشتراك...",
+    // Adding new translations for policy pages
+    'faq': 'الأسئلة الشائعة',
+    'faqPage': 'الأسئلة الشائعة',
+    'termsPage': 'شروط الخدمة',
+    'privacyPolicyPage': 'سياسة الخصوصية',
+    'back': 'العودة',
   }
 };

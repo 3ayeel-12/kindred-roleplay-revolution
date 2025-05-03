@@ -2,6 +2,7 @@
 import { ArrowUp } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 export function Footer() {
   const { t, language } = useLanguage();
@@ -41,9 +42,9 @@ export function Footer() {
               {t('techSupport')}
             </h4>
             <ul className="space-y-2">
-              <li><a href="#" className="text-kindred-light hover:text-kindred-accent transition-colors">{t('privacyPolicy')}</a></li>
-              <li><a href="#" className="text-kindred-light hover:text-kindred-accent transition-colors">FAQ</a></li>
-              <li><a href="#" className="text-kindred-light hover:text-kindred-accent transition-colors">{t('termsOfService')}</a></li>
+              <li><Link to="/privacy-policy" className="text-kindred-light hover:text-kindred-accent transition-colors">{t('privacyPolicy')}</Link></li>
+              <li><Link to="/faq" className="text-kindred-light hover:text-kindred-accent transition-colors">FAQ</Link></li>
+              <li><Link to="/terms" className="text-kindred-light hover:text-kindred-accent transition-colors">{t('termsOfService')}</Link></li>
             </ul>
           </div>
           

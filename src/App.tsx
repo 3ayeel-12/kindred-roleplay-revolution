@@ -9,6 +9,9 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ServerStatusPage from "./pages/ServerStatus";
 import AnnouncementsPage from "./pages/Announcements";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import FAQ from "./pages/FAQ";
+import Terms from "./pages/Terms";
 import { TechSupport } from "./components/TechSupport";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AdminLayout } from "./components/layout/AdminLayout";
@@ -40,6 +43,9 @@ const App = () => {
               <Route path="/" element={<Index />} />
               <Route path="/server-status" element={<ServerStatusPage />} />
               <Route path="/announcements" element={<AnnouncementsPage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/terms" element={<Terms />} />
               
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminLayout />}>
