@@ -32,8 +32,13 @@ export function Footer() {
             <p className={cn("text-kindred-light text-sm mb-4", language === 'ar' ? "text-right" : "")}>
               {t('contactUs')}:
             </p>
-            <a href="mailto:support@kindredrp.com" className="text-kindred-accent hover:underline">
-              support@kindredrp.com
+            <a 
+              href="https://discord.com/invite/kndd" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-kindred-accent hover:underline flex items-center"
+            >
+              discord.gg/kndd
             </a>
           </div>
           

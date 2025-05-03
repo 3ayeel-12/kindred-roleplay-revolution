@@ -37,7 +37,7 @@ const PrivacyPolicy = () => {
         },
         {
           title: "7. Contact Us",
-          content: "If you have any questions about this Privacy Policy, please contact us at: support@kindredrp.com"
+          content: "If you have any questions about this Privacy Policy, please contact us on our Discord server: discord.gg/kndd"
         }
       ],
       lastUpdated: "Last Updated: May 1, 2025"
@@ -71,7 +71,7 @@ const PrivacyPolicy = () => {
         },
         {
           title: "7. Contactez-Nous",
-          content: "Si vous avez des questions concernant cette politique de confidentialité, veuillez nous contacter à : support@kindredrp.com"
+          content: "Si vous avez des questions concernant cette politique de confidentialité, veuillez nous contacter sur notre serveur Discord : discord.gg/kndd"
         }
       ],
       lastUpdated: "Dernière mise à jour : 1 mai 2025"
@@ -105,7 +105,7 @@ const PrivacyPolicy = () => {
         },
         {
           title: "٧. اتصل بنا",
-          content: "إذا كانت لديك أي أسئلة حول سياسة الخصوصية هذه، يرجى الاتصال بنا على: support@kindredrp.com"
+          content: "إذا كانت لديك أي أسئلة حول سياسة الخصوصية هذه، يرجى التواصل معنا على سيرفر Discord الخاص بنا: discord.gg/kndd"
         }
       ],
       lastUpdated: "آخر تحديث: ١ مايو ٢٠٢٥"
@@ -120,7 +120,23 @@ const PrivacyPolicy = () => {
       {currentContent.sections.map((section, index) => (
         <div key={index} className="mb-8">
           <h2 className="text-xl font-display font-semibold mb-3 text-kindred-highlight">{section.title}</h2>
-          <p className="text-kindred-light leading-relaxed">{section.content}</p>
+          <p className="text-kindred-light leading-relaxed">
+            {section.title.includes("Contact") || section.title.includes("Contactez") || section.title.includes("اتصل") ? (
+              <>
+                {section.content.split("discord.gg/kndd")[0]}
+                <a
+                  href="https://discord.com/invite/kndd"
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-kindred-accent hover:underline"
+                >
+                  discord.gg/kndd
+                </a>
+              </>
+            ) : (
+              section.content
+            )}
+          </p>
         </div>
       ))}
       <div className="mt-10 text-sm text-kindred-light/70 border-t border-kindred-primary/20 pt-4">
