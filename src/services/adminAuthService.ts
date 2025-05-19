@@ -1,6 +1,5 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import * as bcrypt from "bcryptjs";
 
 export const adminLogin = async (email: string, password: string): Promise<boolean> => {
   try {
