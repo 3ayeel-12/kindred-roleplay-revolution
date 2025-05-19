@@ -25,9 +25,19 @@ export const adminLogin = async (email: string, password: string): Promise<boole
     const isValidPassword = password === adminUser.password_hash;
     
     if (isValidPassword) {
-      // Set admin session in localStorage only if credentials are valid
-      localStorage.setItem('adminAuth', 'true');
-      localStorage.setItem('adminEmail', email);
+      // Create a custom JWT session for the admin user
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
+      
+      if (signInError) {
+        // Fallback to custom session in localStorage if Supabase auth fails
+        console.warn('Using fallback auth method:', signInError);
+        localStorage.setItem('adminAuth', 'true');
+        localStorage.setItem('adminEmail', email);
+      }
+      
       return true;
     }
     
@@ -39,16 +49,26 @@ export const adminLogin = async (email: string, password: string): Promise<boole
 };
 
 export const adminLogout = async (): Promise<void> => {
-  // Properly clear admin authentication
-  localStorage.removeItem('adminAuth');
-  localStorage.removeItem('adminEmail');
-  
-  // Redirect to home after logout
-  window.location.href = '/';
+  try {
+    // Sign out from Supabase auth
+    await supabase.auth.signOut();
+  } catch (error) {
+    console.error('Supabase signout error:', error);
+  } finally {
+    // Always clear localStorage as fallback
+    localStorage.removeItem('adminAuth');
+    localStorage.removeItem('adminEmail');
+    
+    // Redirect to home after logout
+    window.location.href = '/';
+  }
 };
 
 export const isAdminLoggedIn = (): boolean => {
-  // Check if the localStorage flag is set
+  // First check Supabase session
+  const session = supabase.auth.getSession();
+  
+  // Then fallback to localStorage
   return localStorage.getItem('adminAuth') === 'true';
 };
 

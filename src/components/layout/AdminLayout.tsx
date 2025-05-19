@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -6,6 +5,7 @@ import { isAdminLoggedIn } from '@/services/adminAuthService';
 import { AdminLoginForm } from '@/components/admin/auth/AdminLoginForm';
 import { AdminSidebar } from '@/components/admin/navigation/AdminSidebar';
 import { AdminMobileHeader } from '@/components/admin/navigation/AdminMobileHeader';
+import { supabase } from '@/integrations/supabase/client';
 
 export const AdminLayout = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -15,10 +15,22 @@ export const AdminLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Set up auth state listener for Supabase
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      const adminCheck = session?.user?.email ? true : isAdminLoggedIn();
+      setIsAdmin(adminCheck);
+      setIsLoading(false);
+    });
+    
     // Check if admin is already authenticated
-    const adminLoggedIn = isAdminLoggedIn();
-    setIsAdmin(adminLoggedIn);
-    setIsLoading(false);
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      const adminCheck = session?.user?.email ? true : isAdminLoggedIn();
+      setIsAdmin(adminCheck);
+      setIsLoading(false);
+    };
+    
+    checkAuth();
     
     // Auto-close sidebar on mobile
     if (isMobile) {
@@ -26,6 +38,10 @@ export const AdminLayout = () => {
     } else {
       setSidebarOpen(true);
     }
+    
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [isMobile]);
 
   const toggleSidebar = () => {
