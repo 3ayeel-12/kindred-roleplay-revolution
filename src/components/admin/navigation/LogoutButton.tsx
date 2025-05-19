@@ -3,15 +3,17 @@ import { LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { adminLogout } from '@/services/adminAuthService';
-import { useNavigate } from 'react-router-dom';
 
 export const LogoutButton = () => {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    adminLogout();
-    navigate('/admin');
-    toast.success('Logged out successfully');
+  const handleLogout = async () => {
+    try {
+      await adminLogout();
+      toast.success('Logged out successfully');
+      // The redirect is handled in adminLogout function
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Logout failed');
+    }
   };
 
   return (

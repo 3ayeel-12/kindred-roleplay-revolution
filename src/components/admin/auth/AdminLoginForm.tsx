@@ -22,12 +22,12 @@ export const AdminLoginForm = ({ defaultEmail = 'admin@kindred.com' }: AdminLogi
     setIsAuthenticating(true);
     
     try {
-      // Remove password logging - only log the email for debugging
       console.log('Login attempt with email:', email);
       const success = await adminLogin(email, password);
       
       if (success) {
         toast.success('Logged in successfully');
+        // Redirect to admin dashboard
         navigate('/admin');
       } else {
         toast.error('Invalid credentials');
@@ -45,7 +45,7 @@ export const AdminLoginForm = ({ defaultEmail = 'admin@kindred.com' }: AdminLogi
       <div className="geometric-lines"></div>
       <div className="geometric-circle"></div>
       
-      <div className="w-full max-w-md p-8 rounded-xl bg-black/90 text-white shadow-2xl border border-[#333333] relative z-10">
+      <div className="w-full max-w-md p-6 sm:p-8 rounded-xl bg-black/90 text-white shadow-2xl border border-[#333333] relative z-10">
         <h1 className="text-2xl font-bold text-center mb-6 text-white">Admin Login</h1>
         
         <form onSubmit={handleLogin} className="space-y-4">

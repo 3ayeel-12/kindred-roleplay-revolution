@@ -23,6 +23,9 @@ export const adminLogout = async (): Promise<void> => {
   // Properly clear admin authentication
   localStorage.removeItem('adminAuth');
   localStorage.removeItem('adminEmail');
+  
+  // Redirect to home after logout
+  window.location.href = '/';
 };
 
 export const isAdminLoggedIn = (): boolean => {

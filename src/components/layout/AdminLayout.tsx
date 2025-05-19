@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { isAdminLoggedIn } from '@/services/adminAuthService';
 import { AdminLoginForm } from '@/components/admin/auth/AdminLoginForm';
@@ -11,10 +11,12 @@ export const AdminLayout = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Check if admin is already authenticated
-    setIsAdmin(isAdminLoggedIn());
+    const adminLoggedIn = isAdminLoggedIn();
+    setIsAdmin(adminLoggedIn);
     
     // Auto-close sidebar on mobile
     if (isMobile) {
@@ -40,15 +42,15 @@ export const AdminLayout = () => {
       <AdminMobileHeader sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
+        {/* Sidebar - responsive layout */}
         <AdminSidebar 
           sidebarOpen={sidebarOpen} 
           isMobile={isMobile} 
           onCloseSidebar={() => setSidebarOpen(false)} 
         />
         
-        {/* Main content */}
-        <div className="flex-1 p-4 md:p-6 overflow-auto bg-black text-white">
+        {/* Main content - responsive padding */}
+        <div className="flex-1 p-3 md:p-6 overflow-auto bg-black text-white w-full">
           <Outlet />
         </div>
       </div>
