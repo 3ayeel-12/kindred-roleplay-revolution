@@ -8,11 +8,20 @@ export const adminLogin = async (email: string, password: string): Promise<boole
       return false;
     }
     
-    // Set admin session in localStorage
-    localStorage.setItem('adminAuth', 'true');
-    localStorage.setItem('adminEmail', email || 'admin@kindred.com');
+    // Add proper password validation
+    // For demonstration purposes, we're using a hardcoded password check
+    // In a real application, this should use proper authentication methods
+    const isAdmin = email.toLowerCase().includes('admin');
+    const isValidPassword = password === 'admin123'; // Example password validation
     
-    return true;
+    if (isAdmin && isValidPassword) {
+      // Set admin session in localStorage only if credentials are valid
+      localStorage.setItem('adminAuth', 'true');
+      localStorage.setItem('adminEmail', email || 'admin@kindred.com');
+      return true;
+    }
+    
+    return false;
   } catch (error) {
     console.error('Admin login failed:', error);
     return false;

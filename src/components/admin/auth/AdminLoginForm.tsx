@@ -30,7 +30,7 @@ export const AdminLoginForm = ({ defaultEmail = 'admin@kindred.com' }: AdminLogi
         // Redirect to admin dashboard
         navigate('/admin');
       } else {
-        toast.error('Invalid credentials');
+        toast.error('Invalid email or password');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -95,3 +95,5 @@ export const AdminLoginForm = ({ defaultEmail = 'admin@kindred.com' }: AdminLogi
     </div>
   );
 };
+
+export default AdminLoginForm;
