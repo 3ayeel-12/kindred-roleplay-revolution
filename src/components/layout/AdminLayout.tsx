@@ -10,6 +10,7 @@ import { AdminMobileHeader } from '@/components/admin/navigation/AdminMobileHead
 export const AdminLayout = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 
@@ -17,6 +18,7 @@ export const AdminLayout = () => {
     // Check if admin is already authenticated
     const adminLoggedIn = isAdminLoggedIn();
     setIsAdmin(adminLoggedIn);
+    setIsLoading(false);
     
     // Auto-close sidebar on mobile
     if (isMobile) {
@@ -29,6 +31,12 @@ export const AdminLayout = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
+  if (isLoading) {
+    return <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+    </div>;
+  }
 
   if (!isAdmin) {
     return <AdminLoginForm />;

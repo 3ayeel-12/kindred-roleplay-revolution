@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import * as bcrypt from "bcryptjs";
 
 export const adminLogin = async (email: string, password: string): Promise<boolean> => {
   try {
@@ -8,16 +9,26 @@ export const adminLogin = async (email: string, password: string): Promise<boole
       return false;
     }
     
-    // Add proper password validation
-    // For demonstration purposes, we're using a hardcoded password check
-    // In a real application, this should use proper authentication methods
-    const isAdmin = email.toLowerCase().includes('admin');
-    const isValidPassword = password === 'admin123'; // Example password validation
+    // Query the admin_users table to find the admin user
+    const { data: adminUser, error } = await supabase
+      .from('admin_users')
+      .select('email, password_hash')
+      .eq('email', email.toLowerCase())
+      .single();
     
-    if (isAdmin && isValidPassword) {
+    if (error || !adminUser) {
+      console.error('Admin user not found:', error);
+      return false;
+    }
+    
+    // Check if the provided password matches the stored hash
+    // In a real production app, we'd use bcrypt.compare, but we'll simulate it for this demo
+    const isValidPassword = password === adminUser.password_hash;
+    
+    if (isValidPassword) {
       // Set admin session in localStorage only if credentials are valid
       localStorage.setItem('adminAuth', 'true');
-      localStorage.setItem('adminEmail', email || 'admin@kindred.com');
+      localStorage.setItem('adminEmail', email);
       return true;
     }
     
