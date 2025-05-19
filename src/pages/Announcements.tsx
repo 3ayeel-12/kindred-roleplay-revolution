@@ -171,4 +171,4 @@ export default function AnnouncementsPage() {
       <Footer />
     </div>
   );
-};
+}
