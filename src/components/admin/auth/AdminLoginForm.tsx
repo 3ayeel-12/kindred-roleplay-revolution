@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
@@ -26,7 +27,7 @@ export const AdminLoginForm = ({ defaultEmail = 'admin@kindred.com' }: AdminLogi
       
       if (success) {
         toast.success('Logged in successfully');
-        // Redirect to admin dashboard
+        // Explicitly navigate to admin dashboard
         navigate('/admin');
       } else {
         toast.error('Invalid email or password');

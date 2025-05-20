@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
