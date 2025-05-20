@@ -4,18 +4,35 @@ import { Flag } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
-
-// Morocco regions with corresponding player counts (simulated)
-const moroccoRegions = [
-  { region: "CASABLANCA", players: 143, code: "MA-CAS" },
-  { region: "RABAT", players: 89, code: "MA-RAB" },
-  { region: "MARRAKECH", players: 76, code: "MA-MAR" },
-  { region: "FEZ", players: 54, code: "MA-FEZ" },
-  { region: "TANGIER", players: 48, code: "MA-TAN" },
-];
+import { useMemo } from "react";
 
 export function MoroccoRegionStats() {
   const { theme } = useLanguage();
+  
+  // Generate random but consistent player counts for each region
+  // that total to a number between 100-150
+  const moroccoRegions = useMemo(() => {
+    // Base percentages for each region (should sum to 1)
+    const regionPercentages = {
+      "CASABLANCA": 0.35, // 35%
+      "RABAT": 0.22,      // 22%
+      "MARRAKECH": 0.18,  // 18%
+      "FEZ": 0.15,        // 15%
+      "TANGIER": 0.10     // 10%
+    };
+    
+    // Generate a random total between 100-150
+    const totalPlayers = Math.floor(Math.random() * 51) + 100;
+    
+    // Calculate players for each region
+    return [
+      { region: "CASABLANCA", players: Math.floor(totalPlayers * regionPercentages["CASABLANCA"]), code: "MA-CAS" },
+      { region: "RABAT", players: Math.floor(totalPlayers * regionPercentages["RABAT"]), code: "MA-RAB" },
+      { region: "MARRAKECH", players: Math.floor(totalPlayers * regionPercentages["MARRAKECH"]), code: "MA-MAR" },
+      { region: "FEZ", players: Math.floor(totalPlayers * regionPercentages["FEZ"]), code: "MA-FEZ" },
+      { region: "TANGIER", players: Math.floor(totalPlayers * regionPercentages["TANGIER"]), code: "MA-TAN" },
+    ];
+  }, []);
   
   return (
     <motion.div 
