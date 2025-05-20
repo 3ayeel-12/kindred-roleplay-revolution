@@ -7,6 +7,7 @@ import { AdminLoginForm } from '@/components/admin/auth/AdminLoginForm';
 import { AdminSidebar } from '@/components/admin/navigation/AdminSidebar';
 import { AdminMobileHeader } from '@/components/admin/navigation/AdminMobileHeader';
 import { supabase } from '@/integrations/supabase/client';
+import { LoadingScreen } from '@/components/LoadingScreen';
 
 export const AdminLayout = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -50,9 +51,7 @@ export const AdminLayout = () => {
   };
 
   if (isLoading) {
-    return <div className="min-h-screen bg-black flex items-center justify-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
-    </div>;
+    return <LoadingScreen message="Loading Admin Panel" />;
   }
 
   if (!isAdmin) {

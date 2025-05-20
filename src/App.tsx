@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ServerStatusPage from "./pages/ServerStatus";
@@ -21,16 +21,30 @@ import AdminTicketDetail from "./pages/admin/AdminTicketDetail";
 import AdminAnnouncements from "./pages/admin/AdminAnnouncements";
 import AdminSettings from "./pages/admin/AdminSettings";
 import { initializeAdminUser } from "./services/adminAuthService";
+import { LoadingScreen } from "./components/LoadingScreen";
 
 const queryClient = new QueryClient();
 
 const App = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     // Initialize default admin user if none exists
     initializeAdminUser().catch(err => {
       console.error("Failed to initialize admin user:", err);
     });
+
+    // Simulate initial loading time
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
   }, []);
+
+  if (isLoading) {
+    return <LoadingScreen message="Initializing" />;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
