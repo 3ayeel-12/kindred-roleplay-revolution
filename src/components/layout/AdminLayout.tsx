@@ -8,6 +8,7 @@ import { AdminSidebar } from '@/components/admin/navigation/AdminSidebar';
 import { AdminMobileHeader } from '@/components/admin/navigation/AdminMobileHeader';
 import { supabase } from '@/integrations/supabase/client';
 import { LoadingScreen } from '@/components/LoadingScreen';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const AdminLayout = () => {
   const [isAdmin, setIsAdmin] = useState(false);

@@ -10,7 +10,18 @@ interface LoadingScreenProps {
 }
 
 export function LoadingScreen({ message = "Loading" }: LoadingScreenProps) {
-  const { language, theme } = useLanguage();
+  // Try to use the language context, but provide fallback values
+  let language = "en";
+  let theme = "dark";
+  
+  try {
+    const languageContext = useLanguage();
+    language = languageContext.language;
+    theme = languageContext.theme;
+  } catch (error) {
+    console.log("Language context not available, using fallbacks");
+  }
+  
   const [dots, setDots] = useState(".");
   const [isSpinning, setIsSpinning] = useState(true);
   

@@ -42,39 +42,39 @@ const App = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (isLoading) {
-    return <LoadingScreen message="Initializing" />;
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <LanguageProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/server-status" element={<ServerStatusPage />} />
-              <Route path="/announcements" element={<AnnouncementsPage />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/terms" element={<Terms />} />
-              
-              {/* Admin Routes */}
-              <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<AdminIndex />} />
-                <Route path="tickets" element={<AdminTickets />} />
-                <Route path="tickets/:ticketId" element={<AdminTicketDetail />} />
-                <Route path="announcements" element={<AdminAnnouncements />} />
-                <Route path="settings" element={<AdminSettings />} />
-              </Route>
-              
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <TechSupport />
-          </BrowserRouter>
+          {isLoading ? (
+            <LoadingScreen message="Initializing" />
+          ) : (
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/server-status" element={<ServerStatusPage />} />
+                <Route path="/announcements" element={<AnnouncementsPage />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/terms" element={<Terms />} />
+                
+                {/* Admin Routes */}
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<AdminIndex />} />
+                  <Route path="tickets" element={<AdminTickets />} />
+                  <Route path="tickets/:ticketId" element={<AdminTicketDetail />} />
+                  <Route path="announcements" element={<AdminAnnouncements />} />
+                  <Route path="settings" element={<AdminSettings />} />
+                </Route>
+                
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <TechSupport />
+            </BrowserRouter>
+          )}
         </LanguageProvider>
       </TooltipProvider>
     </QueryClientProvider>
