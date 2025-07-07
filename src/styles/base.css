@@ -5,6 +5,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import component and utility styles after Tailwind directives */
+@import './components.css';
+@import './utilities.css';
+
 @layer base {
   :root {
     --background: 0 0% 100%;

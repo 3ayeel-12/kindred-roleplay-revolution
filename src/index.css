@@ -2,12 +2,6 @@
 /* Import base styles with Tailwind directives */
 @import './styles/base.css';
 
-/* Import component styles */
-@import './styles/components.css';
-
-/* Import utility classes and animations */
-@import './styles/utilities.css';
-
 /* Import scrollbar styles and RTL support */
 @import './styles/scrollbars.css';
 
