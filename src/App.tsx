@@ -42,7 +42,7 @@ const App = () => {
       sessionStorage.setItem('hasVisited', 'true');
       const timer = setTimeout(() => {
         setIsLoading(false);
-      }, 3000);
+      }, 5000);
       return () => clearTimeout(timer);
     } else {
       // Not first visit - skip loading screen
