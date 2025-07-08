@@ -25,6 +25,9 @@ export function LoadingScreen({ message = "Loading" }: LoadingScreenProps) {
   const [dots, setDots] = useState(".");
   const [isSpinning, setIsSpinning] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [typedText, setTypedText] = useState("");
+  
+  const welcomeText = "Welcome to the Kindred Community";
   
   // Generate animated particles
   const particles = useMemo(() => {
@@ -46,6 +49,21 @@ export function LoadingScreen({ message = "Loading" }: LoadingScreenProps) {
     
     return () => clearInterval(interval);
   }, []);
+  
+  // Typing animation effect
+  useEffect(() => {
+    let currentIndex = 0;
+    const typingInterval = setInterval(() => {
+      if (currentIndex <= welcomeText.length) {
+        setTypedText(welcomeText.slice(0, currentIndex));
+        currentIndex++;
+      } else {
+        clearInterval(typingInterval);
+      }
+    }, 100);
+    
+    return () => clearInterval(typingInterval);
+  }, [welcomeText]);
   
   // Simulate loading progress
   useEffect(() => {
@@ -322,6 +340,40 @@ export function LoadingScreen({ message = "Loading" }: LoadingScreenProps) {
           >
             KindreD
           </motion.h2>
+          
+          {/* Typing animation welcome text */}
+          <motion.div 
+            className="mb-8 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1 }}
+          >
+            <motion.h3 
+              className={cn(
+                "text-2xl font-bold",
+                "bg-gradient-to-r from-kindred-accent to-kindred-highlight bg-clip-text text-transparent",
+                "light-mode:from-kindred-primary light-mode:to-kindred-secondary",
+                "min-h-[2.5rem] flex items-center justify-center",
+                "drop-shadow-lg"
+              )}
+              animate={{
+                backgroundPosition: ["0%", "100%"],
+                transition: { duration: 4, repeat: Infinity, repeatType: "reverse" }
+              }}
+            >
+              {typedText}
+              <motion.span
+                className={cn(
+                  "ml-1 inline-block w-0.5 h-6 bg-current",
+                  theme === "dark" ? "bg-kindred-accent" : "bg-kindred-primary"
+                )}
+                animate={{
+                  opacity: [0, 1, 0],
+                }}
+                transition={{ duration: 0.8, repeat: Infinity }}
+              />
+            </motion.h3>
+          </motion.div>
           
           <div className="flex items-center mb-4">
             <motion.div
