@@ -34,12 +34,20 @@ const App = () => {
       console.error("Failed to initialize admin user:", err);
     });
 
-    // Simulate initial loading time
-    const timer = setTimeout(() => {
+    // Check if this is the first visit in this session
+    const hasVisited = sessionStorage.getItem('hasVisited');
+    
+    if (!hasVisited) {
+      // First visit - show loading screen
+      sessionStorage.setItem('hasVisited', 'true');
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    } else {
+      // Not first visit - skip loading screen
       setIsLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
+    }
   }, []);
 
   return (
