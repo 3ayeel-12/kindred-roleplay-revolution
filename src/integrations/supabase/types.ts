@@ -41,8 +41,10 @@ export type Database = {
           created_at: string
           id: string
           image_url: string | null
+          is_active: boolean
           is_published: boolean | null
           title: string
+          type: string
           updated_at: string
           video_url: string | null
         }
@@ -51,8 +53,10 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          is_active?: boolean
           is_published?: boolean | null
           title: string
+          type?: string
           updated_at?: string
           video_url?: string | null
         }
@@ -61,8 +65,10 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          is_active?: boolean
           is_published?: boolean | null
           title?: string
+          type?: string
           updated_at?: string
           video_url?: string | null
         }
@@ -91,6 +97,7 @@ export type Database = {
           created_at: string
           id: string
           message: string
+          priority: string
           status: string
           subject: string
           updated_at: string
@@ -101,6 +108,7 @@ export type Database = {
           created_at?: string
           id?: string
           message: string
+          priority?: string
           status?: string
           subject: string
           updated_at?: string
@@ -111,6 +119,7 @@ export type Database = {
           created_at?: string
           id?: string
           message?: string
+          priority?: string
           status?: string
           subject?: string
           updated_at?: string
