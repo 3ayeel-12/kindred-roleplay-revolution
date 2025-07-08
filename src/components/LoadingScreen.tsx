@@ -66,21 +66,29 @@ export function LoadingScreen({ message = "Loading" }: LoadingScreenProps) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      {/* Animated background with gradient */}
+      {/* Enhanced animated background with multiple gradients */}
       <motion.div className={cn(
-        "absolute inset-0 bg-gradient-to-br",
+        "absolute inset-0",
         theme === "dark" 
-          ? "from-kindred-darkest via-black to-kindred-darkest" 
-          : "from-kindred-light via-white to-kindred-light"
+          ? "bg-gradient-radial from-kindred-primary/20 via-kindred-darkest to-black" 
+          : "bg-gradient-radial from-kindred-primary/10 via-white to-kindred-light"
       )}
       animate={{
         background: theme === "dark" 
-          ? ["linear-gradient(to bottom right, #101820 0%, #000000 50%, #101820 100%)", 
-             "linear-gradient(to bottom right, #000000 0%, #101820 50%, #000000 100%)"]
-          : ["linear-gradient(to bottom right, #f0f8ff 0%, #ffffff 50%, #f0f8ff 100%)", 
-             "linear-gradient(to bottom right, #ffffff 0%, #f0f8ff 50%, #ffffff 100%)"]
+          ? [
+              "radial-gradient(circle at 20% 50%, hsl(203 61% 32% / 0.3) 0%, #101820 30%, #000000 100%)",
+              "radial-gradient(circle at 80% 50%, hsl(187 34% 46% / 0.3) 0%, #000000 30%, #101820 100%)",
+              "radial-gradient(circle at 50% 20%, hsl(163 43% 71% / 0.2) 0%, #101820 40%, #000000 100%)",
+              "radial-gradient(circle at 50% 80%, hsl(203 61% 32% / 0.3) 0%, #000000 30%, #101820 100%)"
+            ]
+          : [
+              "radial-gradient(circle at 20% 50%, hsl(203 61% 32% / 0.1) 0%, #ffffff 30%, #f0f8ff 100%)",
+              "radial-gradient(circle at 80% 50%, hsl(187 34% 46% / 0.1) 0%, #f0f8ff 30%, #ffffff 100%)",
+              "radial-gradient(circle at 50% 20%, hsl(163 43% 71% / 0.1) 0%, #ffffff 40%, #f0f8ff 100%)",
+              "radial-gradient(circle at 50% 80%, hsl(203 61% 32% / 0.1) 0%, #f0f8ff 30%, #ffffff 100%)"
+            ]
       }}
-      transition={{ duration: 5, repeat: Infinity, repeatType: "reverse" }}
+      transition={{ duration: 8, repeat: Infinity, repeatType: "loop" }}
       ></motion.div>
       
       {/* Animated particles */}
@@ -150,35 +158,73 @@ export function LoadingScreen({ message = "Loading" }: LoadingScreenProps) {
         ))}
       </motion.div>
       
-      {/* Main content */}
+      {/* Main content with enhanced glow effects */}
       <motion.div 
         className="relative z-10 flex flex-col items-center"
-        initial={{ y: -20 }}
-        animate={{ y: 0 }}
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 300, damping: 15 }}
       >
-        {/* Animated logo section */}
+        {/* Enhanced animated logo section with multiple glow layers */}
         <div className="relative mb-12">
-          {/* Glowing circle behind logo */}
+          {/* Multiple glowing circles behind logo for enhanced effect */}
+          <motion.div
+            className={cn(
+              "absolute inset-0 rounded-full blur-3xl -z-30",
+              theme === "dark" ? "bg-kindred-accent/30" : "bg-kindred-primary/30"
+            )}
+            animate={{
+              scale: [1, 1.5, 1],
+              opacity: [0.3, 0.6, 0.3],
+            }}
+            transition={{ duration: 4, repeat: Infinity }}
+          />
+          
+          <motion.div
+            className={cn(
+              "absolute inset-0 rounded-full blur-xl -z-20",
+              theme === "dark" ? "bg-kindred-primary/40" : "bg-kindred-secondary/40"
+            )}
+            animate={{
+              scale: [1.2, 1.8, 1.2],
+              opacity: [0.2, 0.5, 0.2],
+            }}
+            transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
+          />
+          
           <motion.div
             className={cn(
               "absolute inset-0 rounded-full blur-lg -z-10",
-              theme === "dark" ? "bg-kindred-accent/20" : "bg-kindred-primary/20"
+              theme === "dark" ? "bg-kindred-highlight/50" : "bg-kindred-primary/50"
             )}
             animate={{
               scale: [1, 1.3, 1],
+              opacity: [0.4, 0.8, 0.4],
             }}
-            transition={{ duration: 3, repeat: Infinity }}
+            transition={{ duration: 2, repeat: Infinity }}
           />
           
           <motion.div 
-            className="relative bg-gradient-to-r from-kindred-primary/30 to-kindred-accent/30 p-4 rounded-full"
+            className="relative bg-gradient-to-r from-kindred-primary/40 to-kindred-accent/40 p-6 rounded-full shadow-2xl"
+            style={{
+              background: theme === "dark" 
+                ? "linear-gradient(135deg, rgba(79, 149, 157, 0.4), rgba(152, 210, 192, 0.4))"
+                : "linear-gradient(135deg, rgba(32, 87, 129, 0.3), rgba(79, 149, 157, 0.3))"
+            }}
             animate={{ 
               scale: [1, 1.05, 1],
               rotate: [0, isSpinning ? 5 : -5, 0],
               boxShadow: theme === "dark"
-                ? ['0 0 10px rgba(152,210,192,0.2)', '0 0 30px rgba(152,210,192,0.4)', '0 0 10px rgba(152,210,192,0.2)']
-                : ['0 0 10px rgba(32,87,129,0.2)', '0 0 30px rgba(32,87,129,0.4)', '0 0 10px rgba(32,87,129,0.2)']
+                ? [
+                    '0 0 20px rgba(152,210,192,0.3), 0 0 40px rgba(79,149,157,0.2), 0 0 60px rgba(152,210,192,0.1)',
+                    '0 0 40px rgba(152,210,192,0.5), 0 0 80px rgba(79,149,157,0.3), 0 0 120px rgba(152,210,192,0.2)',
+                    '0 0 20px rgba(152,210,192,0.3), 0 0 40px rgba(79,149,157,0.2), 0 0 60px rgba(152,210,192,0.1)'
+                  ]
+                : [
+                    '0 0 20px rgba(32,87,129,0.3), 0 0 40px rgba(79,149,157,0.2), 0 0 60px rgba(32,87,129,0.1)',
+                    '0 0 40px rgba(32,87,129,0.5), 0 0 80px rgba(79,149,157,0.3), 0 0 120px rgba(32,87,129,0.2)',
+                    '0 0 20px rgba(32,87,129,0.3), 0 0 40px rgba(79,149,157,0.2), 0 0 60px rgba(32,87,129,0.1)'
+                  ]
             }}
             transition={{ duration: 3, repeat: Infinity, repeatType: "reverse" }}
           >
