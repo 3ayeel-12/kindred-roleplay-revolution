@@ -92,6 +92,30 @@ export type Database = {
         }
         Relationships: []
       }
+      social_media_stats: {
+        Row: {
+          created_at: string
+          followers_count: number
+          id: string
+          last_updated: string
+          platform: string
+        }
+        Insert: {
+          created_at?: string
+          followers_count?: number
+          id?: string
+          last_updated?: string
+          platform: string
+        }
+        Update: {
+          created_at?: string
+          followers_count?: number
+          id?: string
+          last_updated?: string
+          platform?: string
+        }
+        Relationships: []
+      }
       support_tickets: {
         Row: {
           created_at: string

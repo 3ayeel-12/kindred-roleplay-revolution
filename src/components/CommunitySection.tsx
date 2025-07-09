@@ -1,22 +1,27 @@
 
 import { cn } from "@/lib/utils";
-import { Youtube, MessageCircle, Video } from "lucide-react";
+import { Youtube, MessageCircle, Video, RefreshCw } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useState } from "react";
 import { subscribeToNewsletter } from "@/services/newsletterService";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useSocialMediaStats } from "@/hooks/useSocialMediaStats";
 
 export function CommunitySection() {
   const { t, language } = useLanguage();
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  // Get real social media stats
+  const { stats, isLoading, formatCount, refreshStats, isRefreshing, getLastUpdated } = useSocialMediaStats();
+  
   const socialPlatforms = [
     {
       name: "YouTube",
-      subscribers: `7.81K ${t('followers')}`,
+      platform: "youtube",
+      subscribers: `${formatCount(stats.youtube)} ${t('followers')}`,
       color: "from-kindred-primary to-kindred-secondary",
       textColor: "text-white",
       icon: Youtube,
@@ -24,7 +29,8 @@ export function CommunitySection() {
     },
     {
       name: "Discord",
-      subscribers: `13.3K ${t('members')}`,
+      platform: "discord",
+      subscribers: `${formatCount(stats.discord)} ${t('members')}`,
       color: "from-kindred-secondary to-kindred-accent",
       textColor: "text-kindred-darker",
       icon: MessageCircle,
@@ -32,7 +38,8 @@ export function CommunitySection() {
     },
     {
       name: "TikTok",
-      subscribers: `36K ${t('likes')}`,
+      platform: "tiktok",
+      subscribers: `${formatCount(stats.tiktok)} ${t('likes')}`,
       color: "from-kindred-accent to-kindred-light",
       textColor: "text-kindred-darker",
       icon: Video,
@@ -74,12 +81,38 @@ export function CommunitySection() {
   return (
     <section id="community" className="py-20 bg-gradient-to-b from-kindred-dark to-kindred-darker light-mode:from-kindred-light/90 light-mode:to-white">
       <div className="container mx-auto px-4">
-        <h2 className={cn(
-          "text-3xl md:text-5xl font-display font-bold text-center mb-16 light-mode:text-kindred-primary",
-          language === 'ar' ? "leading-relaxed" : ""
-        )}>
-          {t('joinOurCommunity').toUpperCase()} <span className="text-kindred-accent light-mode:text-kindred-secondary">{t('community').toUpperCase()}</span>
-        </h2>
+        <div className="flex flex-col items-center mb-16">
+          <h2 className={cn(
+            "text-3xl md:text-5xl font-display font-bold text-center mb-4 light-mode:text-kindred-primary",
+            language === 'ar' ? "leading-relaxed" : ""
+          )}>
+            {t('joinOurCommunity').toUpperCase()} <span className="text-kindred-accent light-mode:text-kindred-secondary">{t('community').toUpperCase()}</span>
+          </h2>
+          
+          {/* Refresh Button */}
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => refreshStats()}
+              disabled={isRefreshing}
+              className={cn(
+                "bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30",
+                "light-mode:bg-kindred-primary/10 light-mode:border-kindred-primary/30 light-mode:text-kindred-primary light-mode:hover:bg-kindred-primary/20",
+                isRefreshing && "opacity-50 cursor-not-allowed"
+              )}
+            >
+              <RefreshCw className={cn("w-4 h-4 mr-2", isRefreshing && "animate-spin")} />
+              {isRefreshing ? 'Updating...' : 'Refresh Stats'}
+            </Button>
+            
+            {!isLoading && (
+              <span className="text-sm text-white/60 light-mode:text-kindred-darker/60">
+                Last updated: {getLastUpdated('youtube')}
+              </span>
+            )}
+          </div>
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 max-w-5xl mx-auto">
           {socialPlatforms.map((platform, index) => (
